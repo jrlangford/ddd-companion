@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ddd-implement-manifest.schema.json",
+  "title": "DDD Implementation Manifest",
+  "description": "Tracks progress of DDD implementation from bounded context definitions",
+  "type": "object",
+  "required": ["version", "project", "source"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Manifest schema version",
+      "const": "1.0"
+    },
+    "project": {
+      "type": "object",
+      "description": "Project configuration",
+      "required": ["name", "module", "language", "generator"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Project name (used for directory and display)"
+        },
+        "module": {
+          "type": "string",
+          "description": "Go module path (e.g., github.com/org/project)"
+        },
+        "language": {
+          "type": "string",
+          "description": "Target implementation language",
+          "enum": ["go"]
+        },
+        "generator": {
+          "type": "string",
+          "description": "Generator to use for code generation",
+          "enum": ["go-hex"]
+        },
+        "outputDir": {
+          "type": "string",
+          "description": "Output directory for generated code (defaults to ./output)"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "Source configuration for BCR workspace",
+      "required": ["bcrWorkspace"],
+      "properties": {
+        "bcrWorkspace": {
+          "type": "string",
+          "description": "Path to BCR workspace directory containing bounded context definitions"
+        }
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "description": "API contract generation configuration",
+      "properties": {
+        "format": {
+          "type": "string",
+          "description": "Contract specification format",
+          "enum": ["typespec", "openapi"],
+          "default": "typespec"
+        },
+        "outputDir": {
+          "type": "string",
+          "description": "Output directory for contracts (defaults to ./api)"
+        },
+        "status": {
+          "type": "string",
+          "description": "Overall contract generation status",
+          "enum": ["pending", "in_progress", "generated", "validated"],
+          "default": "pending"
+        }
+      }
+    },
+    "contexts": {
+      "type": "array",
+      "description": "Bounded contexts to implement",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Bounded context name (lowercase, used for package naming)"
+          },
+          "status": {
+            "type": "string",
+            "description": "Overall implementation status",
+            "enum": ["pending", "in_progress", "implemented", "validated"]
+          },
+          "phases": {
+            "type": "object",
+            "description": "Per-phase implementation status",
+            "properties": {
+              "domain": {
+                "$ref": "#/$defs/phaseStatus"
+              },
+              "ports": {
+                "$ref": "#/$defs/phaseStatus"
+              },
+              "application": {
+                "$ref": "#/$defs/phaseStatus"
+              },
+              "adapters": {
+                "$ref": "#/$defs/phaseStatus"
+              },
+              "mock": {
+                "$ref": "#/$defs/phaseStatus"
+              },
+              "fixtures": {
+                "$ref": "#/$defs/phaseStatus"
+              }
+            }
+          },
+          "entities": {
+            "type": "array",
+            "description": "Entities within this context",
+            "items": {
+              "type": "object",
+              "required": ["name", "isAggregateRoot"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Entity name (PascalCase)"
+                },
+                "isAggregateRoot": {
+                  "type": "boolean",
+                  "description": "Whether this entity is an aggregate root"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["pending", "implemented"]
+                }
+              }
+            }
+          },
+          "valueObjects": {
+            "type": "array",
+            "description": "Value objects within this context",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Value object name (PascalCase)"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["pending", "implemented"]
+                }
+              }
+            }
+          },
+          "domainEvents": {
+            "type": "array",
+            "description": "Domain events published by this context",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Event name (PascalCase, past tense, e.g., OrderCreated)"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["pending", "implemented"]
+                }
+              }
+            }
+          },
+          "integrations": {
+            "type": "array",
+            "description": "Integrations with other contexts",
+            "items": {
+              "type": "object",
+              "required": ["targetContext", "type"],
+              "properties": {
+                "targetContext": {
+                  "type": "string",
+                  "description": "Name of the context being integrated with"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Integration type",
+                  "enum": ["sync", "async"]
+                },
+                "direction": {
+                  "type": "string",
+                  "description": "Integration direction",
+                  "enum": ["inbound", "outbound", "bidirectional"]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["pending", "implemented"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "infrastructure": {
+      "type": "object",
+      "description": "Shared infrastructure status",
+      "properties": {
+        "support": {
+          "$ref": "#/$defs/phaseStatus",
+          "description": "Support packages (auth, config, validation, etc.)"
+        },
+        "httpAdapter": {
+          "$ref": "#/$defs/phaseStatus",
+          "description": "HTTP adapter with routes and handlers"
+        },
+        "eventBus": {
+          "$ref": "#/$defs/phaseStatus",
+          "description": "Event bus implementation"
+        },
+        "mainWiring": {
+          "$ref": "#/$defs/phaseStatus",
+          "description": "Main.go dependency wiring"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "description": "Validation status",
+      "properties": {
+        "boundaryTests": {
+          "type": "string",
+          "enum": ["pending", "generated", "passing", "failing"]
+        },
+        "contractCompliance": {
+          "type": "string",
+          "enum": ["pending", "checked", "passing", "failing"]
+        },
+        "integrationTests": {
+          "type": "string",
+          "enum": ["pending", "generated", "passing", "failing"]
+        }
+      }
+    },
+    "history": {
+      "type": "array",
+      "description": "Session history for audit trail",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "action": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "phaseStatus": {
+      "type": "string",
+      "enum": ["pending", "in_progress", "completed", "validated"]
+    }
+  }
+}
