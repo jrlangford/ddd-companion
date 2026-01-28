@@ -24,7 +24,7 @@ This skill takes BCR (Bounded Context Registry) workspace definitions and genera
 ## Goals
 
 1. **Walking skeleton for iterative development**: Generate a runnable application with all layers connected (domain → ports → application → adapters → main) but minimal business logic. Developers add flesh to the bones without structural refactoring.
-2. **Mock server for frontend teams**: The skeleton runs immediately in mock mode, providing realistic API responses for parallel frontend development.
+2. **Mock server for frontend teams**: The skeleton can run in mock mode (`APP_MODE=mock`), providing realistic API responses for parallel frontend development.
 3. **Spec-first API design**: API contracts (TypeSpec) are the source of truth for the HTTP layer.
 
 ## Prerequisites
@@ -195,7 +195,7 @@ The manifest tracks granular progress for reliable session resumption.
     {
       "name": "role-management",
       "contextId": "CTX-001",
-      "fqbcFile": "fqbc/fqbc-role-management.md",
+      "fqbcFile": "fqbc/role-management.md",
       "status": "pending",
       "phases": {
         "domain": "pending",
@@ -546,7 +546,7 @@ Requirements:
 1. Generate `cmd/server/main.go`
 2. Wire all repositories, services, handlers
 3. Subscribe event handlers to event bus
-4. Support APP_MODE env var for mock/live switching
+4. Support APP_MODE env var (default: live, set to "mock" for test data)
 5. **Generate `README.md`** with usage instructions (see below)
 
 **Checkpoint**: Update `infrastructure.mainWiring`
@@ -568,11 +568,11 @@ Generate a `README.md` file with the following sections:
 ### Running the Server
 
 ```bash
-# Run in mock mode (default, uses in-memory repositories with test data)
+# Run in live mode (default)
 go run ./cmd/server
 
-# Run in live mode (requires actual repository implementations)
-APP_MODE=live go run ./cmd/server
+# Run in mock mode (uses in-memory repositories with test data)
+APP_MODE=mock go run ./cmd/server
 ```
 
 The server starts on `http://localhost:8080` by default.

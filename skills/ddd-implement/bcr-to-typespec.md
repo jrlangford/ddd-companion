@@ -16,7 +16,7 @@ ddd-workspace/
 │   ├── context-map.md          # Phase 2: Context relationships
 │   └── coherence-review.md     # Phase 4: Cross-context consistency
 └── fqbc/
-    └── fqbc-{context-name}.md  # Phase 3: Fully Qualified Bounded Context
+    └── {context-name}.md       # Phase 3: Fully Qualified Bounded Context
 ```
 
 ### manifest.json Structure
@@ -41,7 +41,7 @@ ddd-workspace/
     "fqbc_generation": {
       "status": "complete",
       "contexts": {
-        "context-a": { "status": "complete", "file": "fqbc/fqbc-context-a.md" }
+        "context-a": { "status": "complete", "file": "fqbc/context-a.md" }
       }
     },
     "coherence_review": { "status": "complete" }
