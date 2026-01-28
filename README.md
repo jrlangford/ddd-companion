@@ -1,4 +1,4 @@
-# Isomorph - A Walking Skeleton Pipeline
+# DDD Companion
 
 Transform product requirements into a production-shaped **walking skeleton** using Claude Code skills.
 
@@ -25,9 +25,11 @@ flowchart LR
 ```claude
 # 1. Extract PRD from your product documentation
 /extract-prd ./requirements.md
+/clear
 
 # 2. Model bounded contexts (DDD)
 /ddd-model
+/clear
 
 # 3. Generate the walking skeleton
 /ddd-implement
@@ -327,30 +329,36 @@ This allows complex modeling and generation work to span multiple chat sessions 
 
 ## Installation
 
-### Option 1: Project Skills (Recommended)
+### Option 1: User-Level Skills via Symlinks (Recommended)
 
-Clone or copy the `.claude/skills/` directory into your project:
+Install skills globally using symbolic links. This keeps skills synced with the source repository:
+
+```bash
+# Clone or download this repository
+git clone https://github.com/jrlangford/ddd-companion.git
+cd ddd-companion
+
+# Create user skills directory if it doesn't exist
+mkdir -p ~/.claude/skills
+
+# Create symbolic links for each skill
+ln -s "$(pwd)/skills/ddd-extract-prd" ~/.claude/skills/ddd-extract-prd
+ln -s "$(pwd)/skills/ddd-model" ~/.claude/skills/ddd-model
+ln -s "$(pwd)/skills/ddd-prd" ~/.claude/skills/ddd-prd
+```
+
+Skills are now available in all your projects. Updates to the source repository are reflected immediately.
+
+### Option 2: Project Skills
+
+Copy skills directly into a specific project:
 
 ```bash
 # Copy skills to your project
-cp -r path/to/this-repo/.claude/skills/ your-project/.claude/skills/
+cp -r {path/to/ddd-companion}/skills/ {your-project}/.claude/skills/
 ```
 
-Skills are automatically available when you run Claude Code in that directory.
-
-### Option 2: User-Level Skills
-
-Install skills globally for use across all your projects:
-
-```bash
-# Create skills directory if it doesn't exist
-mkdir -p ~/.claude/skills
-
-# Copy each skill
-cp -r .claude/skills/extract-prd ~/.claude/skills/
-cp -r .claude/skills/ddd-model ~/.claude/skills/
-cp -r .claude/skills/ddd-implement ~/.claude/skills/
-```
+Skills are available only when you run Claude Code in that directory.
 
 ---
 
@@ -522,9 +530,9 @@ The skeleton provides the structure; you provide the implementation.
 | `/ddd-implement` | Generate walking skeleton | FQBC documents | Running Go application |
 
 For detailed documentation, see the skill files directly:
-- [extract-prd/SKILL.md](.claude/skills/extract-prd/SKILL.md)
-- [ddd-model/SKILL.md](.claude/skills/ddd-model/SKILL.md)
-- [ddd-implement/SKILL.md](.claude/skills/ddd-implement/SKILL.md)
+- [ddd-extract-prd/SKILL.md](skills/ddd-extract-prd/SKILL.md)
+- [ddd-model/SKILL.md](skills/ddd-model/SKILL.md)
+- [ddd-prd/SKILL.md](skills/ddd-prd/SKILL.md)
 
 ### Skill Locations
 
@@ -532,10 +540,10 @@ Skills can be installed at two levels:
 
 | Location | Scope | Path |
 |----------|-------|------|
-| **Project** | This project only | `./.claude/skills/` |
 | **User** | All your projects | `~/.claude/skills/` |
+| **Project** | This project only | `./.claude/skills/` |
 
-Project-level skills take precedence over user-level skills with the same name.
+Project-level skills take precedence over user-level skills with the same name. User-level symlinks (Option 1) are recommended because they stay in sync with the source repository.
 
 ---
 
@@ -551,4 +559,4 @@ This pipeline is opinionated by design. Contributions that align with the core p
 
 ## License
 
-[Your license here]
+This project has been published under the MIT License. You can find it [here](LICENSE).
