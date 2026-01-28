@@ -385,7 +385,10 @@ Read from PRD (path in `manifest.prd.path`):
 1. Analyze for context boundaries using heuristics (see context-mapping-patterns.md)
 2. Propose candidate contexts with rationale
 3. Write `bcr/context-discovery.md`
-4. Update manifest with contexts_identified
+4. **Present summary and request user review** (see User Review Protocol)
+   - List each context with brief rationale
+   - Wait for user confirmation before proceeding to Phase 2
+5. Update manifest with contexts_identified
 
 **Note:** All contexts are deployed in a single service for POC. If contexts need to be split into independent microservices, each microservice should follow the full DDD pipeline independently.
 
@@ -404,7 +407,11 @@ Read from PRD (path in `manifest.prd.path`):
 1. Determine relationships and patterns
 2. Create context map with diagram
 3. Write `bcr/context-map.md`
-4. Update manifest
+4. **Present summary and request user review** (see User Review Protocol)
+   - Show relationship summary and diagram reference
+   - Highlight any potentially problematic dependencies
+   - Wait for user confirmation before proceeding to Phase 3
+5. Update manifest
 
 ---
 
@@ -439,8 +446,17 @@ This is where context window savings are realized. Each FQBC is a separate file 
    - Map Queries to GET endpoints with standard parameter names
    - Specify request/response schemas matching the response envelope
    - Document error codes for each failure scenario (including 403 for authorization)
-6. Write `fqbc/[context-name].md`
-7. Update manifest
+6. **Detect and highlight inconsistencies:**
+   - Compare with previously generated FQBCs for path collisions
+   - Check for queries that traverse the same relationship (consolidation candidates)
+   - Flag any deviations from api-conventions.md
+   - Note overlapping functionality with other contexts
+7. Write `fqbc/[context-name].md`
+8. **Present summary and request user review** (see User Review Protocol)
+   - Show API binding table
+   - List any detected inconsistencies or consolidation opportunities
+   - Wait for user confirmation before proceeding
+9. Update manifest
 
 ### API Binding Guidance
 
@@ -457,6 +473,29 @@ When generating API bindings:
 **Context slug**: Derive from context name using kebab-case (e.g., "Surveillance Items" → `surveillance-items`)
 
 **Base path**: `/api/{context-slug}/v1/` (version is per-context, enabling independent evolution)
+
+### Endpoint Consolidation Opportunities
+
+**Important**: Multiple interfaces may bind to the same underlying endpoint. When you detect this pattern, **highlight it for user review** and suggest consolidation.
+
+**Example**: Consider "listing users assigned to a role" and "listing roles assigned to a user":
+- Naive approach: Two separate endpoints
+  - `GET /api/users/v1/users/{userId}/roles`
+  - `GET /api/roles/v1/roles/{roleId}/users`
+- Consolidated approach: One assignments endpoint with query params
+  - `GET /api/role-assignments/v1/assignments?userId={userId}`
+  - `GET /api/role-assignments/v1/assignments?roleId={roleId}`
+
+**When to suggest consolidation**:
+- Queries that traverse the same relationship in different directions
+- Operations that share 80%+ of their data model
+- CRUD operations on junction/association tables
+
+**Action**: When you detect potential consolidation opportunities:
+1. Flag the overlap in the FQBC summary
+2. Present both the context-specific and consolidated options
+3. **Ask the user to decide** which approach aligns with their service design
+4. Suggest reviewing the service boundaries if many consolidation opportunities arise—this may indicate the contexts need restructuring into a more coherent design
 
 ---
 
@@ -549,9 +588,108 @@ If API binding issues are found, document them:
 | Non-standard param | C | Uses `limit` instead of `pageSize` | Rename to `pageSize` |
 ```
 
+### Endpoint Consolidation Review
+
+In Phase 4, scan all FQBC API bindings for consolidation opportunities across contexts:
+
+```markdown
+### Consolidation Opportunities
+
+| Contexts | Overlapping Queries | Suggested Consolidation |
+|----------|---------------------|------------------------|
+| A, B | A.ListXByY, B.ListYByX | Single `xy-assignments` resource with filters |
+| C, D | C.GetStatus, D.GetStatus | Shared status endpoint or shared service |
+
+**Recommendation**: If 3+ consolidation opportunities are detected, consider whether the bounded context boundaries need revision. Many overlaps suggest the service design should be reviewed for a more coherent structure.
+```
+
+**Action when consolidation opportunities found:**
+1. Document each opportunity with affected contexts
+2. Present to user with clear recommendation
+3. **Explicitly ask**: "Should we restructure these contexts, or accept the duplication?"
+4. If restructuring chosen, mark affected FQBCs for regeneration
+
 ---
 
-## Chat Transition Guidance
+## User Review Protocol
+
+**Important Goal**: The BCR process should help the user develop a deep understanding of what will be built. Each phase produces artifacts that shape the final system—user review ensures alignment before proceeding.
+
+### After Phase 1: Context Discovery
+
+Present a summary and **ask the user to review** before proceeding:
+
+```markdown
+**Phase 1 Complete: Context Discovery**
+
+I've identified [N] candidate bounded contexts:
+- [Context A] — [brief rationale]
+- [Context B] — [brief rationale]
+- ...
+
+Full details written to `bcr/context-discovery.md`.
+
+**Please review the context boundaries before we proceed.**
+
+Questions to consider:
+- Do these boundaries match your mental model of the domain?
+- Are any contexts too broad (doing too much) or too narrow (artificial splits)?
+- Are the rationales for each context clear and convincing?
+
+Ready to proceed to Phase 2: Context Mapping?
+```
+
+### After Phase 2: Context Mapping
+
+Present the context map and **ask the user to review** relationships:
+
+```markdown
+**Phase 2 Complete: Context Mapping**
+
+Context relationships defined:
+- [Context A] → [Pattern] → [Context B]
+- ...
+
+Full details and diagram written to `bcr/context-map.md`.
+
+**Please review the context relationships before we proceed.**
+
+Questions to consider:
+- Do upstream/downstream relationships feel correct?
+- Are integration patterns appropriate (Shared Kernel, ACL, etc.)?
+- Will these relationships scale as the system grows?
+
+Ready to proceed to Phase 3: FQBC Generation?
+```
+
+### After Each FQBC (Phase 3)
+
+**Critical**: FQBC API bindings require careful user review. Present a summary and **explicitly ask the user to validate**:
+
+```markdown
+**[Context] FQBC Complete** ([N]/[Total])
+
+**API Bindings for [Context]:**
+| Operation | Method | Path |
+|-----------|--------|------|
+| [Op1] | POST | `/api/[context]/v1/[resource]` |
+| [Op2] | GET | `/api/[context]/v1/[resource]` |
+| ... | ... | ... |
+
+Full specification written to `fqbc/[context-name].md`.
+
+**Please review before proceeding—especially the API bindings:**
+
+1. **Path Alignment**: Do the paths follow your API standards and conventions?
+2. **Redundancy Check**: Could any endpoints be consolidated with other contexts?
+3. **Functionality Clarity**: Does each endpoint have a clear, single purpose?
+
+[If inconsistencies detected, list them here]
+
+Ready to generate FQBC for **[next context]**? Or would you like to adjust this specification first?
+```
+
+### Chat Transition Guidance
 
 ### After Each Phase
 
@@ -622,3 +760,7 @@ If PRD lacks required sections (Glossary, Business Rules, Functional Areas):
 6. **Write files immediately** — don't accumulate in conversation
 7. **One FQBC at a time** — Phase 3 is naturally chunked
 8. **Clear transition guidance** — tell user how to resume with `/ddd-model`
+9. **User review after each phase** — pause and ask user to validate before proceeding; the goal is user understanding of what will be built
+10. **API binding review is critical** — explicitly ask user to verify paths align with standards and functionality is not redundant
+11. **Highlight inconsistencies** — proactively flag any detected issues (path collisions, naming inconsistencies, consolidation opportunities)
+12. **Suggest service review for consolidation** — if multiple interfaces bind to the same data, suggest restructuring into a more coherent design
