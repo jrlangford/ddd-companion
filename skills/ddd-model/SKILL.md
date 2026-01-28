@@ -159,19 +159,14 @@ The manifest tracks workflow state and PRD location:
     "notes": "Service middleware builds Permissions object from JWT claims"
   },
   "deployment": {
-    "topology": "single-service | microservices",
-    "services": {
-      "order-service": ["ordering", "fulfillment"],
-      "inventory-service": ["inventory"]
-    },
-    "notes": "For single-service, services field is omitted"
+    "topology": "single-service",
+    "notes": "All contexts deployed in a single service for POC"
   },
   "current_phase": "fqbc_generation",
   "phases": {
     "context_discovery": {
       "status": "complete",
-      "contexts_identified": ["ordering", "inventory", "fulfillment"],
-      "deployment_topology": "single-service"
+      "contexts_identified": ["ordering", "inventory", "fulfillment"]
     },
     "context_mapping": { "status": "complete" },
     "fqbc_generation": {
@@ -359,13 +354,12 @@ Before Phase 1, set up the workspace:
     "notes": "[How/where permissions are resolved]"
   },
   "deployment": {
-    "topology": "[single-service|microservices]",
-    "services": {},
-    "notes": "[Deployment model rationale — services field populated if microservices]"
+    "topology": "single-service",
+    "notes": "All contexts deployed in a single service for POC"
   },
   "current_phase": "context_discovery",
   "phases": {
-    "context_discovery": { "status": "pending", "contexts_identified": [], "deployment_topology": null },
+    "context_discovery": { "status": "pending", "contexts_identified": [] },
     "context_mapping": { "status": "pending" },
     "fqbc_generation": { "status": "pending", "contexts": {} },
     "coherence_review": { "status": "pending" }
@@ -390,84 +384,10 @@ Read from PRD (path in `manifest.prd.path`):
 
 1. Analyze for context boundaries using heuristics (see context-mapping-patterns.md)
 2. Propose candidate contexts with rationale
-3. **Ask about deployment topology** — will these contexts be deployed as a single service or multiple microservices? (see Response Template: Deployment Topology)
-4. Write `bcr/context-discovery.md`
-5. Update manifest with contexts_identified and deployment topology
+3. Write `bcr/context-discovery.md`
+4. Update manifest with contexts_identified
 
-### Response Template: Deployment Topology
-
-After presenting discovered contexts, ask:
-
-```markdown
-## Deployment Topology
-
-I've identified [N] bounded contexts. How will these be deployed?
-
-1. **Single Service** (Recommended for most projects)
-   - All contexts run in one deployable unit
-   - Contexts communicate via in-process calls
-   - Shared middleware builds Permissions object once per request
-   - Simpler ops, lower latency, easier debugging
-
-2. **Multiple Microservices**
-   - Contexts grouped into separate deployables
-   - Contexts communicate via HTTP/messaging
-   - Each service has its own middleware layer
-   - Independent scaling and deployment
-
-Most projects start with a single service. Choose microservices only if you have specific scaling, team autonomy, or deployment requirements.
-
-Which deployment model? (Default: Single Service)
-```
-
-### Response Template: Microservices Grouping
-
-If user chooses "Multiple Microservices", ask for the grouping:
-
-```markdown
-## Microservices Grouping
-
-How should the [N] bounded contexts be grouped into microservices?
-
-**Discovered contexts:**
-- Context A
-- Context B
-- Context C
-- Context D
-
-Please specify the grouping. Example format:
-
-```
-service-name-1: Context A, Context B
-service-name-2: Context C
-service-name-3: Context D
-```
-
-Each service will:
-- Have its own middleware layer
-- Build its own Permissions object from JWT claims
-- Own the role definitions for its contexts
-- Communicate with other services via HTTP/messaging
-```
-
-**Store in manifest:**
-```json
-"deployment": {
-  "topology": "microservices",
-  "services": {
-    "service-name-1": ["context-a", "context-b"],
-    "service-name-2": ["context-c"],
-    "service-name-3": ["context-d"]
-  },
-  "notes": "User-defined grouping"
-}
-```
-
-**Why this matters:**
-- Single service: Contexts share middleware, Permissions object built once
-- Multiple services: Each service builds its own Permissions object from JWT
-- Affects how context relationships are implemented (method calls vs network calls)
-- Contexts within same service use in-process calls; across services use HTTP
+**Note:** All contexts are deployed in a single service for POC. If contexts need to be split into independent microservices, each microservice should follow the full DDD pipeline independently.
 
 ---
 
@@ -696,7 +616,7 @@ If PRD lacks required sections (Glossary, Business Rules, Functional Areas):
 
 1. **PRD is prerequisite** — must exist before starting
 2. **Authorization pattern required** — if not in PRD, ask user (suggest Permissions Object Pattern)
-3. **Deployment topology required** — ask after context discovery (suggest Single Service)
+3. **Single service deployment** — all contexts deploy in one service for POC (microservices follow full pipeline independently)
 4. **Read manifest first** — always check current state
 5. **Minimal context loading** — only read what current phase needs
 6. **Write files immediately** — don't accumulate in conversation
