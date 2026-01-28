@@ -22,7 +22,7 @@ For PRD structure reference, validation, editing, or templates, use `/ddd-prd`.
 ## Output
 
 - **Format**: Markdown optimized for Obsidian (see [../ddd-prd/output-formats.md](../ddd-prd/output-formats.md))
-- **Location**: `ddd-workspace/prd-[project-name]-[scope].md` in the current project
+- **Location**: `ddd-workspace/prd/prd-[project-name]-[scope].md` in the current project
 - **Schema**: Follows [../ddd-prd/schema.md](../ddd-prd/schema.md)
 
 ## Core Principles
@@ -254,15 +254,16 @@ Wait for user confirmation before Phase 4.
    - Mermaid diagrams for entity relationships and lifecycles
    - Tables for structured data (glossary, rules, touchpoints)
    - Checkbox lists for acceptance criteria
-4. Create `ddd-workspace/` directory if it doesn't exist
-5. Write the document to `ddd-workspace/prd-[project-name]-[scope].md`
+4. Create `ddd-workspace/prd/` directory if it doesn't exist
+5. Write the document to `ddd-workspace/prd/prd-[project-name]-[scope].md`
 
 ### Output Location
 
 ```
 [project-root]/
 └── ddd-workspace/
-    └── prd-[project-name]-[scope].md
+    └── prd/
+        └── prd-[project-name]-[scope].md
 ```
 
 ---
