@@ -6,7 +6,7 @@ A walking skeleton is a minimal implementation that connects all architectural l
 
 ```mermaid
 flowchart LR
-    PRD["/extract-prd"]
+    PRD["/ddd-extract-prd"]
     MODEL["/ddd-model"]
     IMPL["/ddd-implement"]
 
@@ -24,7 +24,7 @@ flowchart LR
 
 ```claude
 # 1. Extract PRD from your product documentation
-/extract-prd ./requirements.md
+/ddd-extract-prd ./requirements.md
 /clear
 
 # 2. Model bounded contexts (DDD)
@@ -140,7 +140,7 @@ flowchart TB
 
 ## Pipeline Stages
 
-### Stage 1: Extract PRD (`/extract-prd`)
+### Stage 1: Extract PRD (`/ddd-extract-prd`)
 
 Extracts a lean, DDD-ready Product Requirements Document from source documentation.
 
@@ -152,7 +152,7 @@ flowchart LR
         NOTION["Notion"]
     end
 
-    EXTRACT["/extract-prd"]
+    EXTRACT["/ddd-extract-prd"]
     PRD["PRD Document"]
 
     Sources --> EXTRACT
@@ -165,10 +165,10 @@ flowchart LR
 
 | Format | Example |
 |--------|---------|
-| Markdown | `/extract-prd ./docs/requirements.md` |
-| HTML (local) | `/extract-prd ./exports/spec.html` |
-| HTML (URL) | `/extract-prd https://docs.example.com/spec.html` |
-| Notion | `/extract-prd https://notion.so/your-page` |
+| Markdown | `/ddd-extract-prd ./docs/requirements.md` |
+| HTML (local) | `/ddd-extract-prd ./exports/spec.html` |
+| HTML (URL) | `/ddd-extract-prd https://docs.example.com/spec.html` |
+| Notion | `/ddd-extract-prd https://notion.so/your-page` |
 
 Markdown is recommended as the most portable format. Notion requires the Notion MCP integration.
 
@@ -344,6 +344,7 @@ mkdir -p ~/.claude/skills
 # Create symbolic links for each skill
 ln -s "$(pwd)/skills/ddd-extract-prd" ~/.claude/skills/ddd-extract-prd
 ln -s "$(pwd)/skills/ddd-model" ~/.claude/skills/ddd-model
+ln -s "$(pwd)/skills/ddd-implement" ~/.claude/skills/ddd-implement
 ln -s "$(pwd)/skills/ddd-prd" ~/.claude/skills/ddd-prd
 ```
 
@@ -369,7 +370,7 @@ Let's walk through the pipeline with a hypothetical "Task Management" applicatio
 ### Step 1: Extract PRD
 
 ```claude
-> /extract-prd ./docs/task-management-requirements.md
+> /ddd-extract-prd ./docs/task-management-requirements.md
 
 ## Project Discovery Summary
 
@@ -525,13 +526,14 @@ The skeleton provides the structure; you provide the implementation.
 
 | Skill | Purpose | Input | Output |
 |-------|---------|-------|--------|
-| `/extract-prd` | Extract DDD-ready PRD from product docs | Markdown, HTML (local/URL), or Notion | Markdown PRD |
+| `/ddd-extract-prd` | Extract DDD-ready PRD from product docs | Markdown, HTML (local/URL), or Notion | Markdown PRD |
 | `/ddd-model` | Decompose into bounded contexts | Markdown PRD (from extract-prd) | FQBC documents |
 | `/ddd-implement` | Generate walking skeleton | FQBC documents | Running Go application |
 
 For detailed documentation, see the skill files directly:
 - [ddd-extract-prd/SKILL.md](skills/ddd-extract-prd/SKILL.md)
 - [ddd-model/SKILL.md](skills/ddd-model/SKILL.md)
+- [ddd-implement/SKILL.md](skills/ddd-implement/SKILL.md)
 - [ddd-prd/SKILL.md](skills/ddd-prd/SKILL.md)
 
 ### Skill Locations
