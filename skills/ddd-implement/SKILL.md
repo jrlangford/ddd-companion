@@ -1,12 +1,38 @@
 ---
 name: ddd-implement
-description: Transform BCR bounded context definitions into a walking skeleton - a runnable Go hexagonal architecture application with validated DDD boundaries. Use after completing BCR workflow to generate implementation code.
+description: Transform BCR bounded context definitions into a walking skeleton - a runnable Go hexagonal architecture application with validated DDD boundaries. Use after completing BCR workflow to generate implementation code. Also validates existing projects against DDD standards.
 disable-model-invocation: true
 ---
 
 # ddd-implement Skill
 
 Transform bounded context definitions into a **walking skeleton**: a minimal, runnable application that connects all architectural layers end-to-end with validated boundaries.
+
+## Modes
+
+This skill operates in two modes:
+
+### Generate Mode (default)
+
+Takes BCR workspace definitions and generates a walking skeleton. This is the primary workflow described in this document.
+
+### Validate Mode
+
+Audits an existing project against the DDD standards defined by this skill's generator patterns. Use this to check structural conformance, naming conventions, dependency direction, cross-context isolation, and pattern compliance.
+
+**Trigger**: The user asks to validate, audit, review, or check an existing project against DDD standards.
+
+**Reference**: See `validate.md` for the complete validation workflow, phase-by-phase checklist, and report format.
+
+**Quick summary**:
+1. Discovers contexts from the project structure (or manifest if available)
+2. Validates each layer (domain, ports, application, adapters, mock) against the rules in `generators/{generator}/patterns/*.md`
+3. Checks cross-cutting concerns (dependency direction, cross-context isolation, API contract alignment)
+4. Writes a `ddd-validation-report.md` to the project root with findings at error/warning/info severity
+
+Supports partial validation by context name or layer.
+
+---
 
 ## Overview
 
@@ -742,7 +768,9 @@ Generated files are placed in the project root directory.
 
 ## Usage
 
-When invoked:
+### Generate Mode
+
+When invoked for generation:
 
 1. Check for existing `ddd-workspace/ddd-implement.manifest.json`
 2. If exists: analyze state, report current progress, identify next action
@@ -755,6 +783,17 @@ When invoked:
 9. Report progress clearly for session handoff
 
 **Key principle**: Always leave the manifest in a state where the next session can pick up cleanly.
+
+### Validate Mode
+
+When invoked for validation:
+
+1. Run Phase 0 (discovery) to identify contexts and project structure
+2. Execute validation phases 1–8 as defined in `validate.md`
+3. Write findings to `ddd-validation-report.md` in the project root
+4. Present a summary with finding counts and critical issues
+
+Supports partial validation — the user can request validation of a specific context or layer only. See `validate.md` for details.
 
 ---
 
