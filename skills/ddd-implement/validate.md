@@ -226,6 +226,13 @@ For each context, read all `.go` files in `{context}domain/` and validate:
 
 For each context, read files in `ports/{context}primary/` and `ports/{context}secondary/`.
 
+#### Port Package Purity
+
+| Check | Severity | Rule |
+|-------|----------|------|
+| Port files contain only interface definitions (no `struct`, `type` alias, `const`, or `var` declarations) | error | Constraints — interfaces only |
+| All domain types (entities, value objects, IDs, enums) are imported from `{context}domain`, not defined locally | error | Constraints — interfaces only |
+
 #### Primary Port Interface
 
 | Check | Severity | Rule |

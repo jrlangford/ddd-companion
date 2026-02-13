@@ -32,7 +32,7 @@ import (
 type {Context}Service interface {
 	{{range .Operations}}
 	// {OperationName} {operation_description}
-	{OperationName}(ctx context.Context{{range .InputParams}}, {param_name} {param_type}{{end}}) ({{if .ReturnType}}{return_type}, {{end}}error)
+	{OperationName}(ctx context.Context{{range .InputParams}}, {param_name} {context}domain.{ParamType}{{end}}) ({{if .ReturnType}}{context}domain.{ReturnType}, {{end}}error)
 	{{end}}
 }
 
@@ -95,7 +95,7 @@ import (
 type {ExternalContext}Service interface {
 	{{range .ExternalOperations}}
 	// {OperationName} {operation_description}
-	{OperationName}(ctx context.Context{{range .InputParams}}, {param_name} {param_type}{{end}}) ({{.ReturnType}}, error)
+	{OperationName}(ctx context.Context{{range .InputParams}}, {param_name} {context}domain.{ParamType}{{end}}) ({context}domain.{ReturnType}, error)
 	{{end}}
 }
 ```
@@ -189,6 +189,10 @@ type EventPublisher interface {
 	Publish(event basedomain.DomainEvent) error
 }
 ```
+
+## Constraints
+
+- **Port packages MUST contain only Go interface definitions.** No structs, type aliases, enums, or other concrete types may be defined in port files. All domain types (entities, value objects, IDs, enums, events) referenced by port interfaces MUST be imported from `{context}domain`. If a type does not yet exist in the domain package, create it there first.
 
 ## Guidelines
 

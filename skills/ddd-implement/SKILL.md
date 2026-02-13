@@ -386,8 +386,8 @@ The subagent should:
 
 **Reference**: `generators/golang/patterns/domain.md`
 
-#### 3b: Ports
-- Primary port interfaces (from Commands/Queries)
+#### 3b: Ports (interfaces only — no domain type definitions)
+- Primary port interfaces (derived from Commands/Queries in the BCR; all parameter/return types must be domain types imported from `{context}domain`)
 - Secondary port interfaces (repositories)
 - External service interfaces (for integrations)
 
