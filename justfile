@@ -1,6 +1,6 @@
 skills_dir := env("HOME") / ".claude" / "skills"
 
-skills := "ddd-extract-prd ddd-model ddd-implement ddd-prd ddd-list"
+skills := "ddd-extract-prd ddd-model ddd-implement ddd-prd ddd-list ddd-eval"
 
 # Install all skills as user-level symlinks
 install:
