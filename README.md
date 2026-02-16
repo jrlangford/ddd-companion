@@ -294,9 +294,11 @@ project/
 │   │   ├── context-discovery.md
 │   │   ├── context-map.md
 │   │   └── coherence-review.md
-│   └── fqbc/
-│       ├── context-a.md            # One per bounded context
-│       └── context-b.md
+│   ├── fqbc/
+│   │   ├── context-a.md            # One per bounded context
+│   │   └── context-b.md
+│   └── adr/
+│       └── 0001-decision-title.md  # Architecture Decision Records
 ├── api/
 │   ├── main.tsp                    # TypeSpec API contracts
 │   ├── package.json                # TypeSpec dependencies
@@ -346,6 +348,7 @@ ln -s "$(pwd)/skills/ddd-extract-prd" ~/.claude/skills/ddd-extract-prd
 ln -s "$(pwd)/skills/ddd-model" ~/.claude/skills/ddd-model
 ln -s "$(pwd)/skills/ddd-implement" ~/.claude/skills/ddd-implement
 ln -s "$(pwd)/skills/ddd-prd" ~/.claude/skills/ddd-prd
+ln -s "$(pwd)/skills/ddd-adr" ~/.claude/skills/ddd-adr
 ```
 
 Skills are now available in all your projects. Updates to the source repository are reflected immediately.
@@ -529,12 +532,14 @@ The skeleton provides the structure; you provide the implementation.
 | `/ddd-extract-prd` | Extract DDD-ready PRD from product docs | Markdown, HTML (local/URL), or Notion | Markdown PRD |
 | `/ddd-model` | Decompose into bounded contexts | Markdown PRD (from extract-prd) | FQBC documents |
 | `/ddd-implement` | Generate walking skeleton | FQBC documents | Running Go application |
+| `/ddd-adr` | Record and manage architecture decision records | DDD workspace or project root | ADR documents |
 
 For detailed documentation, see the skill files directly:
 - [ddd-extract-prd/SKILL.md](skills/ddd-extract-prd/SKILL.md)
 - [ddd-model/SKILL.md](skills/ddd-model/SKILL.md)
 - [ddd-implement/SKILL.md](skills/ddd-implement/SKILL.md)
 - [ddd-prd/SKILL.md](skills/ddd-prd/SKILL.md)
+- [ddd-adr/SKILL.md](skills/ddd-adr/SKILL.md)
 
 ### Skill Locations
 
