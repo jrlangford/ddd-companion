@@ -31,8 +31,9 @@ All reads are non-destructive. This skill never writes or modifies project files
 | `ddd-workspace/fqbc/*.md` | Model scoring | — |
 | `ddd-workspace/bcr/coherence-review.md` | Coherence findings | — |
 | `ddd-workspace/ddd-implement.manifest.json` | Impl status | — |
-| `internal/`, `cmd/`, `api/` source code | Impl scoring | All scoring |
-| `go.mod` | Module detection | Module detection |
+| Project source code (structure per generator or generic scan) | Impl scoring | All scoring |
+| Language module file (per generator metadata) | Module detection | Module detection |
+| `skills/ddd-implement/generators/` | Generator discovery | Generator discovery |
 
 ## Commands
 
@@ -71,13 +72,20 @@ Each dimension is scored 0–100 with a letter grade, per lens:
    - Look for `ddd-workspace/` in the project root
    - If found → **workspace mode**
    - If not found → **codebase mode**
-3. Detect Go project:
-   - Look for `go.mod` in the project root
-   - If not found → show [No Go Project](#error-no-go-project) error
-4. If codebase mode, scan for DDD signals:
-   - Directory patterns: `domain/`, `application/`, `ports/`, `adapters/`, `internal/{context}/`
-   - File patterns: `*_entity.go`, `*_repository.go`, `*_service.go`, `*_event.go`
-   - Code patterns: aggregate roots, value objects, domain events, port interfaces
+3. Detect project language and resolve generator:
+   - Scan `skills/ddd-implement/generators/` (relative to the companion repo) for available generators
+   - Read each `generator.md` Metadata section to build a map of language → generator
+   - For each generator, read its `generator.md` to identify the expected module file (e.g., `go.mod` for Go generators)
+   - Check the project root for any of those module files
+   - If a matching generator exists → use its patterns, naming conventions, and validation rules for scoring
+   - If no matching generator exists but a recognizable project structure is found → use [generic analysis](#generic-analysis-fallback) (language-agnostic DDD heuristics)
+   - If no project detected → show [No Project Found](#error-no-project-found) error
+4. If codebase mode, scan for DDD signals using the resolved generator's conventions (or generic patterns):
+   - **With generator**: Use directory structure, file patterns, and naming conventions from `generator.md`
+   - **Generic fallback**: Scan for common DDD patterns across languages:
+     - Directory patterns: `domain/`, `application/`, `ports/`, `adapters/`, `internal/{context}/`, `src/{context}/`
+     - File patterns: `*entity*`, `*repository*`, `*service*`, `*event*`, `*aggregate*`, `*value_object*`
+     - Code patterns: aggregate roots, value objects, domain events, port interfaces
    - If no DDD patterns found → show [No DDD Patterns](#error-no-ddd-patterns) error
 5. Route to the selected lens/dimension combination
 
@@ -135,7 +143,9 @@ When invoked without arguments, run both lenses across all dimensions and synthe
 ```markdown
 ## DDD Evaluation Report
 
-**Project**: [project name from go.mod or manifest]
+**Project**: [project name from module file or manifest]
+**Language**: [detected language]
+**Generator**: [generator name or "Generic (no generator)"]
 **Data Source**: [Workspace | Codebase]
 **Date**: [current date]
 
@@ -351,15 +361,16 @@ Score domain modeling quality through both lenses. Works in both data source mod
 
 ### Codebase Mode Actions
 
-1. Scan `internal/` for bounded context directories
-   - A context is identified by a directory under `internal/` that contains subdirectories matching DDD layer patterns (`domain/`, `*domain/`, `ports/`, `application/`, `*application/`)
+1. Scan for bounded context directories using the resolved generator's directory structure (or generic patterns):
+   - **With generator**: Use the generator's defined structure (e.g., `internal/{context}/` for Go-hex)
+   - **Generic fallback**: Look for directories containing DDD layer subdirectories (`domain/`, `*domain/`, `ports/`, `application/`, `*application/`)
 2. For each context, scan domain layer files for:
-   - Entity definitions (structs with ID fields, constructors)
-   - Value object definitions (structs without ID, validated constructors)
-   - Aggregate roots (structs embedding base entity types)
-   - Domain events (structs with `EventName()` methods)
+   - Entity definitions (types/classes with ID fields, constructors/factory methods)
+   - Value object definitions (immutable types with validated constructors)
+   - Aggregate roots (types composing or extending base entity types)
+   - Domain events (types representing past-tense business occurrences)
    - Domain services
-3. Scan for port interfaces in `ports/` directories
+3. Scan for port interfaces in `ports/` directories or equivalent boundary definitions
 4. Look for bounded context separation signals
 5. Score against both rubrics
 
@@ -454,10 +465,11 @@ Score implementation architecture conformance through both lenses. Works in both
 
 ### Actions
 
-1. Scan the project for implementation artifacts:
-   - `internal/` directory structure
-   - Go source files in domain, application, ports, adapter packages
-   - `cmd/server/main.go` or equivalent entry point
+1. Scan the project for implementation artifacts using the resolved generator's directory structure (or generic patterns):
+   - **With generator**: Use directory structure defined in `generator.md`
+   - **Generic fallback**: Look for common DDD directory structures across the project
+   - Source files in domain, application, ports, adapter packages
+   - Entry point files as defined by the generator or by convention
    - `api/` directory for TypeSpec/OpenAPI contracts
 2. If workspace mode, read `ddd-workspace/ddd-implement.manifest.json` for expected structure
 3. Score against both rubrics using rules from [validate.md](../ddd-implement/validate.md)
@@ -479,26 +491,30 @@ Uses the rules from [validate.md](../ddd-implement/validate.md).
 | Criterion | Weight | What to Check |
 |-----------|--------|---------------|
 | Hexagonal layer separation | 20% | Each context has domain, ports, application packages. Adapters are separate from contexts. Deduct per context missing layers. (ref: validate.md Phase 1) |
-| Dependency direction | 25% | Domain does not import application or adapters. Application does not import adapters. No forbidden import patterns. (ref: validate.md Phase 8a) |
-| Domain isolation | 20% | Domain packages import only from support packages and standard library. No infrastructure types in domain layer. (ref: validate.md Phase 2) |
+| Dependency direction | 25% | Domain does not depend on application or adapters. Application does not depend on adapters. No forbidden dependency patterns. (ref: validate.md Phase 8a, checked per generator or generic rules) |
+| Domain isolation | 20% | Domain packages/modules depend only on support packages and standard library. No infrastructure types in domain layer. (ref: validate.md Phase 2) |
 | Port/adapter pattern | 20% | Interfaces in port packages. Implementations in adapter or mock packages. Compile-time interface compliance assertions (`var _ Interface = (*Impl)(nil)`). (ref: validate.md Phases 3, 4, 5) |
 | Cross-context isolation | 15% | No direct domain imports across context boundaries. Cross-context communication through events or integration adapters. (ref: validate.md Phase 8b) |
 
 ### Checking Dependency Direction (Purity)
 
-For each `.go` file, extract the `import` block and check for forbidden patterns:
+**With generator**: Use the dependency direction rules and import patterns defined in the generator's `patterns/` files and `validate.md`. Each generator specifies how imports/dependencies are declared in its language and what constitutes a forbidden dependency.
 
-**In domain packages** (`*domain/`):
-- Must NOT import `*application` packages → **error**
-- Must NOT import `internal/adapters/` → **error**
-- Must NOT import other context's domain → **error**
+**Generic fallback**: Apply language-agnostic hexagonal dependency rules by inspecting whatever import/require/include mechanism the language uses:
 
-**In application packages** (`*application/`):
-- Must NOT import `internal/adapters/` → **error**
-- Must NOT import other context's domain → **error**
+**In domain packages/modules**:
+- Must NOT depend on application layer → **error**
+- Must NOT depend on adapter/infrastructure layer → **error**
+- Must NOT depend on other context's domain → **error**
 
-**In any context package**:
-- Must NOT import `internal/{other_context}/{other_context}domain` → **error**
+**In application packages/modules**:
+- Must NOT depend on adapter/infrastructure layer → **error**
+- Must NOT depend on other context's domain → **error**
+
+**In any context package/module**:
+- Must NOT depend on another context's domain internals → **error**
+
+The specific mechanism for checking these rules varies by language (Go imports, TypeScript imports, Python imports, Java package imports, etc.). When using a generator, follow its validation rules exactly. When in generic mode, scan for import/require/include statements and check against the directory-based layer boundaries detected in the project.
 
 ### Output
 
@@ -580,21 +596,41 @@ In codebase mode, traceability is skipped with the note: "Traceability requires 
 
 ## Error Handling
 
-### Error: No Go Project
+### Error: No Project Found
 
-When `go.mod` is not found:
+When no recognized language module file is found:
 
 ```markdown
-## No Go Project Found
+## No Project Found
 
-No `go.mod` file found in the current project root.
+No recognized language module file found in the current project root.
 
-DDD evaluation currently supports Go projects only.
+No recognized language module file found. Checked against module files defined in available generators at `skills/ddd-implement/generators/*/generator.md`.
 
-**If this is a Go project**: Make sure you're running from the project root (where `go.mod` lives).
-
-**If this is another language**: Language support beyond Go is not yet available.
+**Make sure** you're running from the project root (where your module/package file lives).
 ```
+
+---
+
+## Generic Analysis Fallback
+
+When a project language is detected but no matching generator exists in `skills/ddd-implement/generators/`, the eval skill falls back to language-agnostic DDD heuristics.
+
+### What changes in generic mode
+
+| Aspect | With Generator | Generic Fallback |
+|--------|---------------|-----------------|
+| Directory scanning | Uses generator's defined structure | Scans for common DDD directories (`domain/`, `application/`, `ports/`, `adapters/`, or equivalents) |
+| File patterns | Uses generator's naming conventions | Looks for files containing `entity`, `repository`, `service`, `event`, `aggregate`, `value_object` in their names |
+| Dependency direction | Uses generator's import rules | Inspects language-native import/require/include statements against detected layer boundaries |
+| Naming conventions (Purity) | Checks against generator's convention table | Skipped — reports "N/A (no generator)" for naming convention checks |
+| Pattern compliance (Purity) | Validates code against generator's pattern files | Checks structural presence only (layers exist, interfaces defined) without language-specific pattern validation |
+
+### Generic mode scoring adjustments
+
+- **Purity lens**: Criteria that require generator-specific rules (naming conventions, exact pattern compliance) are scored as "N/A" and excluded from the weighted average. The purity score reflects only what can be validated generically (layer separation, dependency direction, bounded context isolation).
+- **Pragmatic lens**: Fully applicable — pragmatic criteria are inherently language-agnostic (is the domain logic well-placed? are abstractions earning their keep?).
+- A note is included in the report: "Partial purity scoring — no generator available for [language]. Install a generator for full purity analysis."
 
 ### Error: No DDD Patterns
 
