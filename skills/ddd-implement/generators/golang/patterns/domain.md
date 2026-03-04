@@ -20,6 +20,8 @@ For each context:
 
 ### Entity ID Pattern
 
+**Naming**: Use `{Entity}Id` by default (e.g., `OrderId`, `CargoId`). Use a descriptive name only when the FQBC ubiquitous language defines a specific term — e.g., `TrackingId` because "tracking ID" is an explicit domain concept, or `VoyageNumber` because the domain calls it a "voyage number", not a "voyage ID".
+
 ```go
 package {context}domain
 
