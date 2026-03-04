@@ -43,7 +43,7 @@ This skill takes BCR (Bounded Context Registry) workspace definitions and genera
 4. Application layer with use case orchestration
 5. Driven adapters (repositories, event bus)
 6. Mock implementations with test data factories
-7. **Driving adapters** (HTTP handlers generated from FQBC definitions)
+7. **Driving adapters** (HTTP handlers generated from FQBC (Fully Qualified Bounded Context) definitions)
 8. **TypeSpec API documentation** (OpenAPI specs and client generation)
 9. Main wiring and validated boundaries
 

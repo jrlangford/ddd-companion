@@ -101,7 +101,7 @@ The conventions cover: URL structure, HTTP methods, query parameters, response e
 │        ▼                                                                    │
 │  ┌──────────────┐     Produces (one per context):                           │
 │  │   Phase 3    │ ──► • fqbc/[context-name].md                              │
-│  │   FQBC Gen   │     • One sub-phase per context                           │
+│  │   FQBC Gen   │     • One sub-phase per context (FQBC = Fully Qualified Bounded Context)                           │
 │  └──────────────┘                                                           │
 │        │                                                                    │
 │        ▼                                                                    │
