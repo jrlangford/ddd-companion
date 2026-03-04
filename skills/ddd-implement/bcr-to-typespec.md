@@ -1,6 +1,6 @@
 # BCR to TypeSpec API Documentation Rules
 
-This document defines the mapping rules from BCR (Bounded Context Registry) workspace definitions to TypeSpec API documentation. TypeSpec is generated as a **documentation artifact** — it produces OpenAPI specs (for Swagger UI) and can generate client libraries for service consumers. It is **not** a dependency for HTTP handler generation; handlers are generated directly from FQBC definitions in Phase 4.
+This document defines the mapping rules from BCR (Bounded Context Review) workspace definitions to TypeSpec API documentation. TypeSpec is generated as a **documentation artifact** — it produces OpenAPI specs (for Swagger UI) and can generate client libraries for service consumers. It is **not** a dependency for HTTP handler generation; handlers are generated directly from FQBC definitions in Phase 4.
 
 ## BCR Workspace Structure
 

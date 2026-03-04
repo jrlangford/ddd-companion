@@ -36,7 +36,7 @@ Supports partial validation by context name or layer.
 
 ## Overview
 
-This skill takes BCR (Bounded Context Registry) workspace definitions and generates:
+This skill takes BCR (Bounded Context Review) workspace definitions and generates:
 1. Support infrastructure (base types, auth, validation)
 2. Domain layer with entities, value objects, and events
 3. Port interfaces (primary and secondary)
