@@ -63,6 +63,7 @@ If the source type cannot be determined, ask the user to clarify.
    - Key stakeholders/roles
    - Linked resources (databases, pages, sections)
    - Initial domain terminology (significant nouns and verbs)
+   - Source document identifiers (Jira IDs, Notion item IDs, user story IDs)
 
 ### Present to User
 
@@ -86,6 +87,11 @@ If the source type cannot be determined, ask the user to clarify.
 
 ### Initial Domain Terms
 [List significant nouns/concepts that appear frequently]
+
+### Source Document IDs
+| Source ID | Type | Description |
+|-----------|------|-------------|
+| [US-123] | [Jira/Notion/etc.] | [Brief description] |
 
 **Shall I proceed to identify PoC scope?**
 ```
@@ -189,7 +195,9 @@ See [../ddd-prd/ddd-alignment.md](../ddd-prd/ddd-alignment.md) for extraction gu
 
 ### [Functional Area 1]
 
-#### FR-01: [Feature Name]
+#### FR-[area]-01: [Feature Name]
+
+**Source Ref**: [ID(s) from source documents, e.g., US-123, PROJ-456 — or —]
 
 **User Story**: As a [role], I want to [action], so that [benefit].
 

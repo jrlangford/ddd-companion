@@ -115,6 +115,8 @@ that represent potential Bounded Context boundaries for technical design.
 
 #### FR-[area]-01: [Feature Name]
 
+**Source Ref**: [ID(s) from source documents, e.g., US-123, PROJ-456 — or —]
+
 **User Story**: As a [role], I want to [action], so that [benefit].
 
 **Acceptance Criteria**:
@@ -270,9 +272,9 @@ appropriate technical design during Bounded Context Review.
 Reference IDs for citation in Bounded Context Review and FQBC documents.
 
 ### Functional Requirements
-| ID | Name | Area |
-|----|------|------|
-| FR-[area]-01 | [Feature] | [Area] |
+| ID | Name | Area | Source Ref |
+|----|------|------|------------|
+| FR-[area]-01 | [Feature] | [Area] | [ID(s) or —] |
 
 ### Business Rules
 | ID | Summary |

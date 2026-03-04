@@ -475,11 +475,11 @@ Links to source PRD and design decisions.
 
 ### PRD References
 
-| FQBC Element | PRD Reference | Notes |
-|--------------|---------------|-------|
-| BH-01 | FR-area-01 | Direct mapping |
-| BR-01 | BR-01 | Rule unchanged |
-| [Term] | Glossary | Definition refined |
+| FQBC Element | PRD Reference | Source Ref | Notes |
+|--------------|---------------|------------|-------|
+| BH-01 | FR-area-01 | [ID(s) or —] | Direct mapping |
+| BR-01 | BR-01 | — | Rule unchanged |
+| [Term] | Glossary | — | Definition refined |
 
 ### Design Decisions
 

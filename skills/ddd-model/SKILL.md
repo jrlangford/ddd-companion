@@ -435,28 +435,29 @@ This is where context window savings are realized. Each FQBC is a separate file 
 1. Check manifest for next pending context
 2. Read minimal required sections
 3. Generate FQBC following fqbc-template.md
-4. **Apply authorization pattern from manifest:**
+4. **Propagate Source Refs**: When populating FQBC Section 9 (Traceability), carry forward Source Ref IDs from the PRD Traceability Index into the PRD References table. This preserves the chain from original source documents (Jira, Notion, etc.) through FR IDs to FQBC behaviors.
+5. **Apply authorization pattern from manifest:**
    - For each Command, specify required permissions
    - Document how the Permissions object is used (if Permissions Object Pattern)
    - Specify authorization failure responses (403 Forbidden)
-5. **If context exposes HTTP API:**
+6. **If context exposes HTTP API:**
    - Read api-conventions.md for project-wide HTTP standards
-   - Generate "API Binding" section (Section 6) with concrete paths
+   - Generate "API Binding" section (Section 7) with concrete paths
    - Map Commands to appropriate HTTP methods per conventions
    - Map Queries to GET endpoints with standard parameter names
    - Specify request/response schemas matching the response envelope
    - Document error codes for each failure scenario (including 403 for authorization)
-6. **Detect and highlight inconsistencies:**
+7. **Detect and highlight inconsistencies:**
    - Compare with previously generated FQBCs for path collisions
    - Check for queries that traverse the same relationship (consolidation candidates)
    - Flag any deviations from api-conventions.md
    - Note overlapping functionality with other contexts
-7. Write `fqbc/[context-name].md`
-8. **Present summary and request user review** (see User Review Protocol)
+8. Write `fqbc/[context-name].md`
+9. **Present summary and request user review** (see User Review Protocol)
    - Show API binding table
    - List any detected inconsistencies or consolidation opportunities
    - Wait for user confirmation before proceeding
-9. Update manifest
+10. Update manifest
 
 ### API Binding Guidance
 
