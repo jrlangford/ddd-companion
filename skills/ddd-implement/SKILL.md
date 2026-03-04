@@ -884,6 +884,18 @@ Supports partial validation — the user can request validation of a specific co
 
 ---
 
+## Future Patterns (Not Yet Implemented)
+
+The following patterns are recognized as important for production systems but are outside the scope of the walking skeleton:
+
+- **Outbox Pattern**: Ensures atomicity between data persistence and event publishing. Currently, events are published synchronously after persistence — if the process crashes after saving but before publishing, events are lost. The outbox pattern writes events to a persistent outbox table within the same transaction, with a separate process reading and publishing them.
+
+- **Unit of Work**: Manages transaction boundaries across multiple aggregate updates within a single use case. Currently, each repository operation is independent. A Unit of Work would batch changes and commit them atomically.
+
+These patterns should be added as developers move from walking skeleton to production readiness.
+
+---
+
 ## Generator Selection
 
 The skill uses the generator specified in `project.generator`:
