@@ -399,13 +399,15 @@ Read from PRD (path in `manifest.prd.path`):
 ### Actions
 
 1. Determine relationships and patterns
-2. Create context map with diagram
-3. Write `bcr/context-map.md`
-4. **Present summary and request user review** (see User Review Protocol)
+2. **Shared Kernel decision gate**: For any proposed Shared Kernel relationship, explicitly justify why ACL is insufficient. Document the justification in `bcr/context-map.md`. If the shared concepts are still evolving, teams deploy independently, or the model is trivially duplicated — use ACL instead (see `context-mapping-patterns.md` for criteria).
+3. Create context map with diagram
+4. Write `bcr/context-map.md`
+5. **Present summary and request user review** (see User Review Protocol)
    - Show relationship summary and diagram reference
    - Highlight any potentially problematic dependencies
+   - **Flag any Shared Kernel relationships with their justification** for explicit user approval
    - Wait for user confirmation before proceeding to Phase 3
-5. Update manifest
+6. Update manifest
 
 ---
 
@@ -728,7 +730,56 @@ These are ready to feed into Claude Code for implementation.
 
 ---
 
+## Resuming a Session
+
+When re-invoking `/ddd-model` in a new chat:
+
+1. Read `ddd-workspace/ddd-model.manifest.json`
+2. Report current progress (see "Response Template: Resuming Work")
+3. Identify the next incomplete item and offer to continue
+
+**Example**: FQBC generation interrupted after 2 of 3 contexts:
+
+```
+User: /ddd-model
+
+Claude:
+## BCR Workflow Status
+
+**Project**: E-Commerce Platform
+**Current Phase**: FQBC Generation (2/3 complete)
+
+### Progress
+- [x] Phase 1: Context Discovery (3 contexts)
+- [x] Phase 2: Context Mapping
+- [ ] Phase 3: FQBC Generation
+  - [x] Ordering
+  - [x] Inventory
+  - [ ] Fulfillment ← **Next**
+- [ ] Phase 4: Coherence Review
+
+Ready to generate FQBC for **Fulfillment**?
+```
+
+The manifest preserves all state — no need to re-read previously processed contexts.
+
+---
+
 ## Error Recovery
+
+### Mid-Phase Failure
+
+If a phase fails partway through (e.g., context window exhaustion during FQBC generation):
+
+1. The manifest reflects the last completed unit of work
+2. Partially written files may exist — check the workspace
+3. If the FQBC file is incomplete, delete it and regenerate from scratch
+4. The manifest's per-context status tracks which FQBCs are `complete` vs `pending`
+
+**Recovery steps**:
+1. Re-invoke `/ddd-model`
+2. The skill reads the manifest and identifies the incomplete context
+3. Regenerate only the incomplete FQBC
 
 ### Manifest Missing or Corrupted
 
