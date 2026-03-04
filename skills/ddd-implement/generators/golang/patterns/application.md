@@ -65,6 +65,7 @@ func New{Context}ApplicationService(
 
 {{range .Operations}}
 // {OperationName} {operation_description}
+// Implements: {BehaviorId} | FR: {FrId} | Source: {SourceRef}
 func (s *{Context}ApplicationService) {OperationName}(ctx context.Context{{range .InputParams}}, {param_name} {param_type}{{end}}) ({{if .ReturnType}}{return_type}, {{end}}error) {
 	// Check permissions
 	claims, err := auth.ExtractClaims(ctx)
@@ -252,3 +253,4 @@ func (s *BookingApplicationService) publishCargoEvents(cargo bookingdomain.Cargo
 4. **Event publishing**: Publish events after successful persistence
 5. **No direct infrastructure**: Use injected ports only
 6. **Stateless**: No mutable state in service
+7. **Traceability comments**: Each method includes an `// Implements:` comment linking to the FQBC behavior ID, PRD functional requirement, and source document reference (from FQBC Section 9). Use `—` when no source ref exists. Example: `// Implements: BH-01 | FR: FR-ordering-01 | Source: US-789`
