@@ -20,7 +20,7 @@ Complete template for FQBC documents. Each Bounded Context gets its own document
 
 ## 1. Context Identity
 
-```markdown
+````markdown
 # FQBC: [Context Name]
 
 ## Context Identity
@@ -39,13 +39,13 @@ The boundaries of this context are defined by:
 - **Ownership boundary**: [Who owns/maintains this context]
 - **Consistency boundary**: [What must be immediately consistent]
 - **Change boundary**: [What changes together]
-```
+````
 
 ---
 
 ## 2. Ubiquitous Language
 
-```markdown
+````markdown
 ## Ubiquitous Language
 
 These terms have specific, unambiguous meaning within this Bounded Context.
@@ -61,13 +61,13 @@ Terms that evolved from PRD definitions:
 | Term | PRD Definition | FQBC Definition | Reason for Change |
 |------|----------------|-----------------|-------------------|
 | [Term] | [Original] | [Refined] | [Why changed] |
-```
+````
 
 ---
 
 ## 3. Required Behaviors
 
-```markdown
+````markdown
 ## Required Behaviors
 
 Functional requirements this context must fulfill. Each behavior maps to PRD requirements.
@@ -95,13 +95,13 @@ Functional requirements this context must fulfill. Each behavior maps to PRD req
 
 **Acceptance Criteria**:
 - [ ] [Testable criterion]
-```
+````
 
 ---
 
 ## 4. Domain Model
 
-```markdown
+````markdown
 ## Domain Model
 
 Conceptual model for this Bounded Context. Describes business concepts and rules, not technical implementation.
@@ -169,13 +169,13 @@ Operations that don't naturally fit in an Entity or Value Object.
 | Service | Operation | Inputs | Output | Rules Applied |
 |---------|-----------|--------|--------|---------------|
 | [Service] | [What it does] | [Parameters] | [Result] | [BR-IDs] |
-```
+````
 
 ---
 
 ## 5. Authorization
 
-```markdown
+````markdown
 ## Authorization
 
 How this context handles authorization decisions.
@@ -226,13 +226,13 @@ When authorization fails:
 - **Response**: 403 Forbidden
 - **Error Code**: `FORBIDDEN`
 - **Message**: "Caller lacks required permissions for [operation]"
-```
+````
 
 ---
 
 ## 6. Context Contract
 
-```markdown
+````markdown
 ## Context Contract
 
 The contract this context exposes for communication with other contexts.
@@ -321,7 +321,7 @@ Messages announcing facts that occurred. Broadcast to interested consumers.
 ```
 
 **Guarantees**: [Delivery semantics, ordering]
-```
+````
 
 ---
 
@@ -329,7 +329,7 @@ Messages announcing facts that occurred. Broadcast to interested consumers.
 
 When this context exposes an HTTP API, specify concrete bindings that map domain operations to HTTP endpoints.
 
-```markdown
+````markdown
 ## API Binding
 
 This section maps domain Commands and Queries to concrete HTTP endpoints.
@@ -431,12 +431,13 @@ Endpoints for context-to-context communication (not exposed externally).
 > **Note**: Internal endpoints are generated as Go HTTP handlers directly from this FQBC definition — they are **not** defined via TypeSpec. TypeSpec is reserved for public API contracts only.
 
 **Reference**: See `api-conventions.md` in the skill directory for project-wide HTTP conventions.
+````
 
 ---
 
 ## 8. Context Relationships
 
-```markdown
+````markdown
 ## Context Relationships
 
 How this context relates to others in the system.
@@ -462,13 +463,13 @@ Contexts that depend on this context.
 | System | Direction | Pattern | Interface |
 |--------|-----------|---------|-----------|
 | [System] | Inbound/Outbound | [Pattern] | [How we integrate] |
-```
+````
 
 ---
 
 ## 9. Traceability
 
-```markdown
+````markdown
 ## Traceability
 
 Links to source PRD and design decisions.
@@ -493,7 +494,7 @@ Links to source PRD and design decisions.
 | Question | Impact | Owner |
 |----------|--------|-------|
 | [Unresolved issue] | [What it affects] | [Who decides] |
-```
+````
 
 ---
 
