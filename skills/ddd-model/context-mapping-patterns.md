@@ -7,7 +7,7 @@ Reference for selecting appropriate integration patterns between Bounded Context
 | Situation | Recommended Pattern |
 |-----------|---------------------|
 | Same team, co-evolving contexts | Partnership |
-| Small shared model, coordinated changes | Shared Kernel |
+| Small shared model where ACL duplication cost is unjustifiable | Shared Kernel (last resort — prefer ACL) |
 | Clear producer/consumer, consumer has influence | Customer-Supplier |
 | Consumer must accept producer's model | Conformist |
 | Consumer must protect its model from producer | Anti-Corruption Layer |
@@ -47,27 +47,60 @@ graph LR
 
 ### Shared Kernel
 
-**When**: A small, well-defined part of the model is shared between contexts.
+**When**: A small, well-defined part of the domain model is shared between contexts, and the cost of maintaining separate models with ACL translation cannot be justified due to complexity or performance constraints.
+
+**Default stance: Avoid Shared Kernel.** Each context should own its own model. Use Anti-Corruption Layers to translate between contexts. Only consider Shared Kernel when:
+- Duplicating the model creates a genuine maintenance liability (e.g., complex, regulated tax calculation logic used identically by two contexts)
+- Cross-service calls for frequently accessed shared data introduce unacceptable latency, and caching is insufficient
+- The shared concepts are truly stable and mean the same thing in both contexts (e.g., `Money`, `Currency`, `Address`)
 
 **Characteristics**:
-- Limited shared code/model
+- Limited shared code/model — a deliberately designated subset, not accidental overlap
 - Any change requires agreement from both teams
-- Tight coupling by design (for specific reason)
+- Tight coupling by design (for a specific, documented reason)
 
-**Signals**:
-- Common domain concepts that must stay synchronized
-- Core identity or reference data
-- Very stable, rarely-changing shared elements
+**Signals that Shared Kernel may be appropriate**:
+- Common domain concepts that must stay perfectly synchronized (not just similar)
+- Core identity or reference data that is identical across contexts
+- Very stable, rarely-changing shared elements where duplication cost exceeds coupling risk
+
+**Signals to use ACL instead**:
+- The concept has even slightly different semantics in each context
+- The shared model is still evolving or being discovered
+- Teams deploy on independent schedules
+- Simple value objects that are trivially duplicated (e.g., a `Name` string, a `Status` enum)
 
 **Risks**:
-- Kernel can grow uncontrolled
-- Change coordination becomes bottleneck
-- Temptation to share too much
+- Kernel can grow uncontrolled — resist adding "just one more thing"
+- Change coordination becomes a bottleneck, slowing all consuming contexts
+- Creates a "lowest common denominator" model that may be optimal for no context
+- In distributed systems, all consumers must coordinate deployments for kernel changes
+
+**Implementation approaches**:
+
+| Topology | Approach | Example |
+|----------|----------|---------|
+| Monolith (shared package) | Dedicated internal package imported by multiple contexts | `internal/shared-kernel/money.go` imported by both `ordering` and `billing` |
+| Microservices (shared library) | Versioned Go module with its own `go.mod`, published to internal registry | `go get company.com/shared-kernel@v1.2.0` |
+| Microservices (shared database) | One service owns the schema; the other reads through a well-defined view or API. This is closer to Customer-Supplier than true Shared Kernel. | Service A owns the `products` table; Service B reads via a read-only view |
+
+**What belongs in a shared kernel**:
+- Stable value objects: `Money`, `Currency`, `Address`, `EmailAddress`
+- Typed identifiers shared across contexts: `CustomerId`, `OrderId`
+- Domain event contracts that cross context boundaries
+
+**What does NOT belong**:
+- Core domain entities (creates tight coupling to another context's lifecycle)
+- Domain-specific business logic (should remain context-local)
+- Anything that changes frequently
 
 **Guidelines**:
-- Keep kernel as small as possible
-- Document exactly what's shared and why
+- Keep kernel as small as possible — regularly review and extract anything that has become context-specific
+- Document exactly what's shared and why (use ADRs for kernel additions)
 - Require explicit approval for kernel changes
+- One team should be the primary steward, even in a shared kernel
+- Treat the kernel like an external API: use semantic versioning, maintain backward compatibility
+- Run consumer integration tests as part of the kernel's CI pipeline
 
 **Diagram**:
 ```mermaid

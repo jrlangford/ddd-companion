@@ -634,7 +634,7 @@ Full details and diagram written to `bcr/context-map.md`.
 
 Questions to consider:
 - Do upstream/downstream relationships feel correct?
-- Are integration patterns appropriate (Shared Kernel, ACL, etc.)?
+- Are integration patterns appropriate? (Default to ACL over Shared Kernel — see context-mapping-patterns.md for criteria)
 - Will these relationships scale as the system grows?
 
 Ready to proceed to Phase 3: FQBC Generation?
