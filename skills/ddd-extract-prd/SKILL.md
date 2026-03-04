@@ -257,7 +257,26 @@ Wait for user confirmation before Phase 4.
 ### Actions
 
 1. Compile all approved content from previous phases
-2. Structure according to [../ddd-prd/schema.md](../ddd-prd/schema.md)
+2. Structure according to the canonical **15-section PRD schema** defined in [../ddd-prd/schema.md](../ddd-prd/schema.md):
+
+   | # | Section | Source Phase |
+   |---|---------|-------------|
+   | 1 | Executive Summary | Phase 1 (Discovery) |
+   | 2 | Background & Context | Phase 1 (Discovery) |
+   | 3 | PoC Scope | Phase 2 (Scope Definition) |
+   | 4 | Functional Areas | Phase 2 (Scope Definition) |
+   | 5 | Functional Requirements | Phase 3 (Functional Requirements) |
+   | 6 | Domain Glossary | Phase 2 + Phase 3 |
+   | 7 | Business Rules Catalog | Phase 3 (Functional Requirements) |
+   | 8 | Conceptual Entity Map | Phase 3 (Functional Requirements) |
+   | 9 | Integration Touchpoints | Phase 3 (Functional Requirements) |
+   | 10 | Role-Capability Matrix | Phase 3 (Functional Requirements) |
+   | 11 | Non-Functional Requirements | Phase 3 (Cross-Cutting Requirements) |
+   | 12 | Success Criteria | Phase 2 (Scope Definition) |
+   | 13 | Product Team Expectations | Phase 3 (technical concepts from source) |
+   | 14 | Traceability Index | Generated from FR IDs + Source Refs |
+   | 15 | Appendix | Source document links, references |
+
 3. Generate Markdown document with:
    - Mermaid diagrams for entity relationships and lifecycles
    - Tables for structured data (glossary, rules, touchpoints)
