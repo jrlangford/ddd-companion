@@ -497,6 +497,22 @@ Links to source PRD and design decisions.
 
 ---
 
+## FQBC Completeness Checklist
+
+Before marking an FQBC as complete, verify:
+
+- [ ] **Section 1 — Context Identity**: Name, description, boundary rationale, and boundary principles present
+- [ ] **Section 2 — Ubiquitous Language**: At least one term defined; glossary delta populated if terms evolved from PRD
+- [ ] **Section 3 — Required Behaviors**: Behavior catalog with IDs, PRD refs, and acceptance criteria for each behavior
+- [ ] **Section 4 — Domain Model**: At least one aggregate with root entity, invariants, and entities/value objects listed; business rules cataloged with IDs
+- [ ] **Section 5 — Authorization**: Permissions Object Pattern applied; permission requirements table for all commands/queries; authorization boundary documented
+- [ ] **Section 6 — Context Contract**: All inbound commands and queries have payload/response schemas; outbound events have triggers and payloads
+- [ ] **Section 7 — API Binding** (when HTTP API exposed): Command and query bindings with method, path, authorization, request/response schemas, and error codes; base path follows `api-conventions.md`
+- [ ] **Section 8 — Context Relationships**: Upstream dependencies and downstream consumers listed with integration patterns
+- [ ] **Section 9 — Traceability**: All behaviors and rules linked to PRD references; Source Refs propagated from PRD; design decisions documented
+
+---
+
 ## Output Format Notes
 
 ### Mermaid Diagrams
