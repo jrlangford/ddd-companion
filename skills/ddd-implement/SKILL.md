@@ -307,6 +307,46 @@ If build fails, record error in manifest and stop.
 
 ---
 
+## Session Stop Protocol
+
+When context window is approaching capacity or you need to end a session, follow this protocol for a clean handoff.
+
+### When to Stop
+
+Stop at the nearest natural boundary:
+
+| Current Work | Natural Stopping Point |
+|-------------|----------------------|
+| Phase 3 (Contexts) | After completing any full context (all layers: domain → ports → application → adapters → mock) |
+| Phase 4 (HTTP Handlers) | After completing all handlers for one context |
+| Phase 5 (TypeSpec) | After completing TypeSpec for one context |
+| Phase 6 (Main Wiring) | After `main.go` is written and builds |
+| Phase 7 (Validation) | After build/test results are recorded |
+
+**Do not stop mid-layer** (e.g., domain generated but ports not started). Complete the current context's layer set or roll back to the last checkpoint.
+
+### Before Stopping
+
+1. **Update the manifest** — ensure all completed work is reflected in `generatedFiles`, phase statuses, and context statuses
+2. **Run `go build ./...`** — verify the codebase compiles; record result in manifest
+3. **Set `currentContext` to null** if the current context is fully complete; leave it set if mid-context (the resumption protocol will pick it up)
+
+### What to Report
+
+Provide the user with a handoff summary:
+
+```markdown
+**Session Complete**
+
+**Progress**: [N]/[Total] contexts generated | Phase [current] | [files created] files
+**Build status**: [pass/fail]
+**Next step**: [what the next session should do first]
+
+To resume: re-invoke `/ddd-implement` — the manifest tracks all progress.
+```
+
+---
+
 ## Execution Phases
 
 ### Phase 1: Initialize Manifest
