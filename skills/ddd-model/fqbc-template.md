@@ -182,7 +182,7 @@ How this context handles authorization decisions.
 
 ### Authorization Pattern
 
-**Pattern**: [From manifest — permissions-object | rbac | abac | context-specific]
+**Pattern**: Permissions Object Pattern
 
 **Permissions Source**: [Where/how permissions are resolved — e.g., "Service middleware builds Permissions object from JWT claims using this context's role definitions"]
 
@@ -423,7 +423,6 @@ Endpoints for context-to-context communication (not exposed externally).
 | Operation | Method | Path | Consumer |
 |-----------|--------|------|----------|
 | [OperationName] | GET/POST | `/internal/[path]` | [Context name] |
-```
 
 **When to include this section:**
 - Context has user-facing HTTP endpoints

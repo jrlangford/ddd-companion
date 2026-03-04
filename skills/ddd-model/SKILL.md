@@ -39,9 +39,9 @@ Before starting BCR, you need a PRD with these sections:
 
 **PRD can be in any format** (Markdown, HTML, etc.). The skill reads the content, not the format.
 
-### Authorization Pattern (Built-in Default)
+### Authorization Pattern (Built-in)
 
-If the PRD does not specify an authorization pattern, **ask the user** before proceeding. Suggest the **Permissions Object Pattern** (also called Authorization Context Pattern) as the default.
+This skill uses the **Permissions Object Pattern** (also called Authorization Context Pattern) for all generated contexts.
 
 **Permissions Object Pattern characteristics:**
 - Each microservice owns its role definitions — roles are not centralized
@@ -62,10 +62,7 @@ If the PRD does not specify an authorization pattern, **ask the user** before pr
 - Domain logic stays clean — receives Permissions object, doesn't build it
 - Easy to test — inject a mock Permissions object
 
-**Alternative patterns to offer if user prefers:**
-- **Role-Based Access Control (RBAC)** — Contexts query a central role service
-- **Attribute-Based Access Control (ABAC)** — Policies evaluate user/resource attributes
-- **Context-Specific Authorization** — Each context owns its own authorization rules
+This is the only authorization pattern currently supported by the implementation pipeline (`ddd-implement`). Alternative patterns (RBAC, ABAC) may be added in the future.
 
 ### API Conventions (Built-in)
 
@@ -247,44 +244,24 @@ Do you have a PRD ready?
 Once I have the PRD, I'll check for authorization patterns and initialize the workspace.
 ```
 
-### Response Template: Authorization Pattern Required
+### Response Template: Authorization Pattern Confirmation
 
-If the PRD does not explicitly specify an authorization pattern, ask the user:
+If the PRD does not explicitly mention authorization, inform the user:
 
 ```markdown
 ## Authorization Pattern
 
 The PRD doesn't specify how authorization will be handled across bounded contexts.
 
-**Recommended: Permissions Object Pattern**
+This pipeline uses the **Permissions Object Pattern** for all generated contexts:
 
-This pattern works well with DDD because:
-- Middleware builds a Permissions object at the system boundary
-- Contexts receive the object — they don't query roles themselves
-- Authorization decisions use methods like `hasAnyRole()`, `canAccess()`
+- Each service owns its role definitions — roles are not centralized
+- Service middleware builds a Permissions object from authenticated identity (JWT claims)
+- Handlers receive the object — they don't query roles or external services
+- Authorization checks via `permissions.hasAnyRole('Admin', 'Manager')`
 - Keeps domain logic clean; authorization is a cross-cutting concern
 
-**How should we handle authorization?**
-
-1. **Permissions Object Pattern** (Recommended)
-   - Each microservice owns its role definitions
-   - Service middleware builds Permissions object from authenticated identity (JWT claims)
-   - Handlers receive the object — they don't query roles or external services
-   - Authorization checks via `permissions.hasAnyRole('Admin', 'Manager')`
-
-2. **Role-Based Access Control (RBAC)**
-   - Contexts query a central authorization service
-   - More coupling, but familiar pattern
-
-3. **Attribute-Based Access Control (ABAC)**
-   - Policy engine evaluates user + resource attributes
-   - Most flexible, highest complexity
-
-4. **Context-Specific Authorization**
-   - Each context owns its authorization rules
-   - Most autonomy, risk of inconsistency
-
-Which pattern should we use? (Default: Permissions Object Pattern)
+This pattern will be applied to all bounded contexts. Proceeding with this approach.
 ```
 
 ---
@@ -332,7 +309,7 @@ Before Phase 1, set up the workspace:
 1. Create `ddd-workspace/` directory
 2. Create `prd/`, `bcr/`, and `fqbc/` subdirectories
 3. Copy PRD to `ddd-workspace/prd/` (preserve original format)
-4. **Check PRD for authorization pattern** — if not specified, ask user (see Response Template: Authorization Pattern Required)
+4. **Check PRD for authorization pattern** — if not specified, inform user that Permissions Object Pattern will be used (see Response Template: Authorization Pattern Confirmation)
 5. Create `ddd-model.manifest.json` with PRD path, format, and authorization pattern
 
 ### Initial Manifest
@@ -349,8 +326,8 @@ Before Phase 1, set up the workspace:
     "format": "html"
   },
   "authorization": {
-    "pattern": "[permissions-object|rbac|abac|context-specific]",
-    "source": "[prd-specified|user-selected]",
+    "pattern": "permissions-object",
+    "source": "[prd-specified|default]",
     "notes": "[How/where permissions are resolved]"
   },
   "deployment": {
@@ -754,7 +731,7 @@ If PRD lacks required sections (Glossary, Business Rules, Functional Areas):
 ## Remember
 
 1. **PRD is prerequisite** — must exist before starting
-2. **Authorization pattern required** — if not in PRD, ask user (suggest Permissions Object Pattern)
+2. **Authorization pattern** — Permissions Object Pattern is the only supported pattern; inform user if PRD doesn't specify one
 3. **Single service deployment** — all contexts deploy in one service for POC (microservices follow full pipeline independently)
 4. **Read manifest first** — always check current state
 5. **Minimal context loading** — only read what current phase needs
