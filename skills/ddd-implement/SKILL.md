@@ -55,11 +55,31 @@ This skill takes BCR (Bounded Context Review) workspace definitions and generate
 
 ## Prerequisites
 
-Before running this skill, you must have:
-- A completed BCR workspace (from `/ddd-model` skill) with:
-  - `ddd-model.manifest.json` showing `current_phase: "complete"`
-  - FQBC documents for all contexts in `fqbc/` directory
-  - Context map in `bcr/context-map.md`
+Before running this skill, you must have a completed BCR workspace (from `/ddd-model` skill).
+
+### Input Contract
+
+The following artifacts must exist in `ddd-workspace/`:
+
+| Artifact | Path | Required Fields |
+|----------|------|-----------------|
+| BCR Manifest | `ddd-model.manifest.json` | `current_phase: "complete"` |
+| | | `phases.context_discovery.contexts_identified` — list of context names |
+| | | `phases.fqbc_generation.contexts` — per-context status (all `"complete"`) |
+| | | `authorization.pattern` — must be `"permissions-object"` |
+| | | `prd.path` — PRD location for traceability |
+| Context Map | `bcr/context-map.md` | Upstream/downstream relationships between contexts |
+| FQBCs | `fqbc/{context-name}.md` (one per context) | Sections 1–9 per `fqbc-template.md` |
+
+**FQBC sections consumed by each phase**:
+
+| Phase | FQBC Sections Read |
+|-------|-------------------|
+| Phase 3 (Domain) | §4 Domain Model — entities, value objects, events, business rules |
+| Phase 3 (Ports) | §6 Context Contract — commands, queries; §8 Context Relationships — external service deps |
+| Phase 3 (Application) | §5 Authorization — permission requirements; §3 Required Behaviors — use cases |
+| Phase 4 (HTTP Handlers) | §7 API Binding — routes, methods, request/response schemas; §6 Context Contract — failure scenarios |
+| Phase 5 (TypeSpec) | §4 Domain Model — model/enum definitions; §6 Context Contract — endpoints; §7 API Binding — route patterns |
 
 ---
 
@@ -264,6 +284,34 @@ The manifest tracks granular progress for reliable session resumption.
 | `apiContracts.status` | Status of TypeSpec contract generation |
 | `drivingAdapters.http.status` | Status of HTTP adapter generation |
 | `history` | Audit log of completed operations |
+
+### Status Transitions
+
+**Context status** (`contexts[].status`):
+
+```
+pending → in_progress → complete
+              │
+              ▼
+            error → in_progress → complete
+```
+
+- A context in `error` can be retried by fixing the issue and setting status back to `in_progress`
+- Once `complete`, a context is not regenerated unless the user explicitly requests it
+
+**Phase status** (`contexts[].phases.*`):
+
+```
+pending → in_progress → complete
+```
+
+Phases within a context progress strictly forward. If a phase fails, the context status is set to `error` with details in `contexts[].errors`.
+
+**Overall workflow** (`currentPhase`):
+
+```
+init → support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
+```
 
 ---
 
@@ -474,6 +522,8 @@ The subagent should:
 **Trigger**: All contexts complete, `drivingAdapters.http.status = "pending"`
 
 Handlers are generated directly from FQBC definitions and primary port interfaces — not from TypeSpec.
+
+**Reference**: `api-conventions.md` in the `ddd-model` skill defines project-wide HTTP conventions (URL structure, response envelope, error codes, pagination). FQBC API Bindings already follow these conventions — handlers must match them exactly.
 
 **Actions**:
 
