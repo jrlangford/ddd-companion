@@ -256,6 +256,60 @@ type TestCargoScenario struct {
 var _ bookingprimary.BookingService = (*MockBookingApplication)(nil)
 ```
 
+## APP_MODE Wiring Pattern
+
+The `cmd/server/main.go` entry point uses the `APP_MODE` environment variable to switch between live and mock implementations. Both modes use the same repositories and real application services — mock mode additionally populates test data at startup.
+
+```go
+package main
+
+import (
+	"context"
+	"log/slog"
+	"os"
+
+	// ... context imports
+)
+
+func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	appMode := os.Getenv("APP_MODE") // "mock" or "" (live)
+
+	// Repositories are the same in both modes (in-memory for walking skeleton)
+	{entity}Repo := inmemory.NewInMemory{Entity}Repository()
+	eventBus := eventbus.NewInMemoryEventBus(logger)
+
+	// Application service is always the real one
+	{context}Svc := {context}application.New{Context}ApplicationService(
+		{entity}Repo, eventBus, logger,
+	)
+
+	// In mock mode, populate test data through the application layer
+	if appMode == "mock" {
+		logger.Info("Running in mock mode — populating test data")
+		mockApp := {context}mock.NewMock{Context}Application(
+			{entity}Repo, eventBus, logger, 42,
+		)
+		scenarios := mockApp.Generate{Entity}Scenarios(10)
+		if _, err := mockApp.PopulateTest{Entities}(context.Background(), scenarios); err != nil {
+			logger.Error("Failed to populate test data", "error", err)
+			os.Exit(1)
+		}
+	}
+
+	// Wire handlers — same service reference regardless of mode
+	handler := httpadapter.NewHandler({context}Svc, logger)
+
+	// Start server
+	// ...
+}
+```
+
+**Key points**:
+- Both modes use the same application service and repositories
+- Mock mode only adds test data population at startup — it does not swap implementations
+- The `Mock{Context}Application` embeds the real service, so populated data flows through real business logic
+
 ## Guidelines
 
 1. **Embed real service**: Mock embeds the actual application service
