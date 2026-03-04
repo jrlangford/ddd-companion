@@ -36,7 +36,7 @@
         },
         "outputDir": {
           "type": "string",
-          "description": "Output directory for generated code (defaults to ./output)"
+          "description": "Output directory for generated code (defaults to .)"
         }
       }
     },
@@ -51,10 +51,56 @@
         }
       }
     },
-    "contracts": {
+    "currentPhase": {
+      "type": "string",
+      "description": "Current position in the overall workflow",
+      "enum": ["init", "support", "contexts", "apiContracts", "drivingAdapters", "mainWiring", "validation", "complete"]
+    },
+    "currentContext": {
+      "type": ["string", "null"],
+      "description": "Which context is currently being processed (null if between contexts)"
+    },
+    "infrastructure": {
+      "type": "object",
+      "description": "Shared infrastructure status",
+      "properties": {
+        "support": {
+          "type": "object",
+          "description": "Support packages (auth, config, validation, etc.)",
+          "properties": {
+            "status": { "$ref": "#/$defs/phaseStatus" },
+            "files": { "$ref": "#/$defs/fileList" }
+          }
+        },
+        "eventBus": {
+          "type": "object",
+          "description": "Event bus implementation",
+          "properties": {
+            "status": { "$ref": "#/$defs/phaseStatus" },
+            "files": { "$ref": "#/$defs/fileList" }
+          }
+        },
+        "mainWiring": {
+          "type": "object",
+          "description": "Main.go dependency wiring",
+          "properties": {
+            "status": { "$ref": "#/$defs/phaseStatus" },
+            "files": { "$ref": "#/$defs/fileList" }
+          }
+        }
+      }
+    },
+    "apiContracts": {
       "type": "object",
       "description": "API contract generation configuration",
       "properties": {
+        "status": {
+          "type": "string",
+          "description": "Overall contract generation status",
+          "enum": ["pending", "in_progress", "complete", "error"],
+          "default": "pending"
+        },
+        "files": { "$ref": "#/$defs/fileList" },
         "format": {
           "type": "string",
           "description": "Contract specification format",
@@ -64,12 +110,24 @@
         "outputDir": {
           "type": "string",
           "description": "Output directory for contracts (defaults to ./api)"
-        },
-        "status": {
-          "type": "string",
-          "description": "Overall contract generation status",
-          "enum": ["pending", "in_progress", "generated", "validated"],
-          "default": "pending"
+        }
+      }
+    },
+    "drivingAdapters": {
+      "type": "object",
+      "description": "Driving adapter generation status",
+      "properties": {
+        "http": {
+          "type": "object",
+          "description": "HTTP adapter (handlers, routes, DTOs)",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["pending", "in_progress", "complete", "error"],
+              "default": "pending"
+            },
+            "files": { "$ref": "#/$defs/fileList" }
+          }
         }
       }
     },
@@ -84,92 +142,55 @@
             "type": "string",
             "description": "Bounded context name (lowercase, used for package naming)"
           },
+          "contextId": {
+            "type": "string",
+            "description": "Context identifier (e.g., CTX-001)"
+          },
+          "fqbcFile": {
+            "type": "string",
+            "description": "Path to the FQBC file for this context"
+          },
           "status": {
             "type": "string",
             "description": "Overall implementation status",
-            "enum": ["pending", "in_progress", "implemented", "validated"]
+            "enum": ["pending", "in_progress", "complete", "error"]
           },
           "phases": {
             "type": "object",
             "description": "Per-phase implementation status",
             "properties": {
-              "domain": {
-                "$ref": "#/$defs/phaseStatus"
-              },
-              "ports": {
-                "$ref": "#/$defs/phaseStatus"
-              },
-              "application": {
-                "$ref": "#/$defs/phaseStatus"
-              },
-              "adapters": {
-                "$ref": "#/$defs/phaseStatus"
-              },
-              "mock": {
-                "$ref": "#/$defs/phaseStatus"
-              },
-              "fixtures": {
-                "$ref": "#/$defs/phaseStatus"
-              }
+              "domain": { "$ref": "#/$defs/phaseStatus" },
+              "ports": { "$ref": "#/$defs/phaseStatus" },
+              "application": { "$ref": "#/$defs/phaseStatus" },
+              "drivenAdapters": { "$ref": "#/$defs/phaseStatus" },
+              "mock": { "$ref": "#/$defs/phaseStatus" }
+            }
+          },
+          "generatedFiles": {
+            "type": "object",
+            "description": "File paths created for each phase",
+            "properties": {
+              "domain": { "$ref": "#/$defs/fileList" },
+              "ports": { "$ref": "#/$defs/fileList" },
+              "application": { "$ref": "#/$defs/fileList" },
+              "drivenAdapters": { "$ref": "#/$defs/fileList" },
+              "mock": { "$ref": "#/$defs/fileList" }
             }
           },
           "entities": {
             "type": "array",
-            "description": "Entities within this context",
-            "items": {
-              "type": "object",
-              "required": ["name", "isAggregateRoot"],
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Entity name (PascalCase)"
-                },
-                "isAggregateRoot": {
-                  "type": "boolean",
-                  "description": "Whether this entity is an aggregate root"
-                },
-                "status": {
-                  "type": "string",
-                  "enum": ["pending", "implemented"]
-                }
-              }
-            }
+            "description": "Entity names within this context",
+            "items": { "type": "string" }
           },
           "valueObjects": {
             "type": "array",
-            "description": "Value objects within this context",
-            "items": {
-              "type": "object",
-              "required": ["name"],
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Value object name (PascalCase)"
-                },
-                "status": {
-                  "type": "string",
-                  "enum": ["pending", "implemented"]
-                }
-              }
-            }
+            "description": "Value object names within this context",
+            "items": { "type": "string" }
           },
           "domainEvents": {
             "type": "array",
-            "description": "Domain events published by this context",
-            "items": {
-              "type": "object",
-              "required": ["name"],
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Event name (PascalCase, past tense, e.g., OrderCreated)"
-                },
-                "status": {
-                  "type": "string",
-                  "enum": ["pending", "implemented"]
-                }
-              }
-            }
+            "description": "Domain event names published by this context",
+            "items": { "type": "string" }
           },
           "integrations": {
             "type": "array",
@@ -198,47 +219,40 @@
                 }
               }
             }
+          },
+          "errors": {
+            "type": "array",
+            "description": "Errors encountered during generation",
+            "items": {
+              "type": "object",
+              "properties": {
+                "phase": { "type": "string" },
+                "file": { "type": "string" },
+                "error": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" }
+              }
+            }
           }
-        }
-      }
-    },
-    "infrastructure": {
-      "type": "object",
-      "description": "Shared infrastructure status",
-      "properties": {
-        "support": {
-          "$ref": "#/$defs/phaseStatus",
-          "description": "Support packages (auth, config, validation, etc.)"
-        },
-        "httpAdapter": {
-          "$ref": "#/$defs/phaseStatus",
-          "description": "HTTP adapter with routes and handlers"
-        },
-        "eventBus": {
-          "$ref": "#/$defs/phaseStatus",
-          "description": "Event bus implementation"
-        },
-        "mainWiring": {
-          "$ref": "#/$defs/phaseStatus",
-          "description": "Main.go dependency wiring"
         }
       }
     },
     "validation": {
       "type": "object",
-      "description": "Validation status",
+      "description": "Build and test validation status",
       "properties": {
-        "boundaryTests": {
+        "build": {
           "type": "string",
-          "enum": ["pending", "generated", "passing", "failing"]
+          "enum": ["pending", "passing", "failing"],
+          "default": "pending"
         },
-        "contractCompliance": {
+        "tests": {
           "type": "string",
-          "enum": ["pending", "checked", "passing", "failing"]
+          "enum": ["pending", "passing", "failing"],
+          "default": "pending"
         },
-        "integrationTests": {
-          "type": "string",
-          "enum": ["pending", "generated", "passing", "failing"]
+        "lastBuildOutput": {
+          "type": ["string", "null"],
+          "description": "Output from the last build attempt"
         }
       }
     },
@@ -258,8 +272,8 @@
           "context": {
             "type": "string"
           },
-          "phase": {
-            "type": "string"
+          "filesCreated": {
+            "type": "integer"
           },
           "notes": {
             "type": "string"
@@ -271,7 +285,12 @@
   "$defs": {
     "phaseStatus": {
       "type": "string",
-      "enum": ["pending", "in_progress", "completed", "validated"]
+      "enum": ["pending", "in_progress", "complete", "error"]
+    },
+    "fileList": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
     }
   }
 }
