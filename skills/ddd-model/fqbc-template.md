@@ -425,9 +425,10 @@ Endpoints for context-to-context communication (not exposed externally).
 | [OperationName] | GET/POST | `/internal/[path]` | [Context name] |
 
 **When to include this section:**
-- Context has user-facing HTTP endpoints
 - Context exposes internal APIs consumed by other contexts
 - Skip if context is purely event-driven (no synchronous API)
+
+> **Note**: Internal endpoints are generated as Go HTTP handlers directly from this FQBC definition — they are **not** defined via TypeSpec. TypeSpec is reserved for public API contracts only.
 
 **Reference**: See `api-conventions.md` in the skill directory for project-wide HTTP conventions.
 

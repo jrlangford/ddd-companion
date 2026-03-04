@@ -1,6 +1,6 @@
-# BCR to TypeSpec Contract Generation Rules
+# BCR to TypeSpec API Documentation Rules
 
-This document defines the mapping rules from BCR (Bounded Context Registry) workspace definitions to TypeSpec API contracts.
+This document defines the mapping rules from BCR (Bounded Context Registry) workspace definitions to TypeSpec API documentation. TypeSpec is generated as a **documentation artifact** — it produces OpenAPI specs (for Swagger UI) and can generate client libraries for service consumers. It is **not** a dependency for HTTP handler generation; handlers are generated directly from FQBC definitions in Phase 4.
 
 ## BCR Workspace Structure
 
@@ -391,45 +391,9 @@ model ItemStatusChangedEvent {
 }
 ```
 
-### 7. Cross-Context Integration Contracts
+### 7. Cross-Context Integration
 
-**FQBC Input (Section 8 - Context Relationships):**
-```markdown
-### 5.3 Surveillance Items → Notification Delivery
-
-**Pattern:** `Customer-Supplier`
-
-| Aspect | Detail |
-|--------|--------|
-| **Query Interface** | `GetPendingItemsByRole()` → Map<RoleId, [PendingItemSummary]> |
-```
-
-**TypeSpec Output (internal API):**
-```typespec
-// internal/surveillance-items-internal.tsp
-@doc("Internal API for Surveillance Items context - consumed by other contexts")
-namespace SurveillanceItemsInternal;
-
-model PendingItemSummary {
-  id: ItemInstanceId;
-  itemTypeName: string;
-  createdAt: utcDateTime;
-  metadataSummary: string;
-}
-
-model PendingItemsByRoleResponse {
-  @doc("Pending items grouped by role ID")
-  byRole: Record<PendingItemSummary[]>;
-}
-
-@route("/internal/surveillance-items")
-interface InternalQueries {
-  @get
-  @route("pending-by-role")
-  @doc("Get all pending items grouped by assigned role (for Notification Delivery)")
-  getPendingItemsByRole(): PendingItemsByRoleResponse;
-}
-```
+Internal endpoints (context-to-context communication) are **not** documented in TypeSpec. They are generated as Go handlers directly from FQBC Section 7 (Internal Endpoints) in Phase 4b. TypeSpec documents the public API surface only.
 
 ---
 
@@ -459,21 +423,22 @@ FQBC authorization rules map to OpenAPI security requirements:
 |-------------------|-------------------|
 | `permissions.roles.contains(X)` | `@useAuth(BearerAuth)` + document in `@doc` |
 | `permissions.roles.containsAny(X, Y)` | `@useAuth(BearerAuth)` + document in `@doc` |
-| System-to-system | Separate internal API namespace |
 
 ---
 
 ## Generation Process
 
+TypeSpec is generated in Phase 5, **after** HTTP handlers are already built and verified. It documents the public API surface only.
+
 1. **Read BCR manifest.json** → Identify contexts and phase status
-2. **For each context in `fqbc_generation.contexts`:**
+2. **For each context with API Binding (FQBC Section 7):**
    - Parse FQBC markdown file
    - Extract Section 4 (Domain Model) → Generate models, enums, scalars
-   - Extract Section 6 (Context Contract) → Generate endpoints
-   - Extract Section 8 (Context Relationships) → Generate internal APIs
+   - Extract Section 6 (Context Contract) → Generate public endpoint definitions
+   - Skip internal endpoints — these are not documented in TypeSpec
 3. **Generate shared types** from context-map.md (Published Language)
 4. **Compile TypeSpec** → Generate OpenAPI 3.0 specs
-5. **Validate contracts** → Ensure all contexts' contracts are consistent
+5. **Validate** → Ensure TypeSpec endpoints match the handlers generated in Phase 4
 
 ## File Output Structure
 
@@ -485,8 +450,8 @@ api/
 ├── {context-name}/
 │   ├── models.tsp              # Domain models for this context
 │   ├── endpoints.tsp           # Public API endpoints
-│   ├── events.tsp              # Domain event schemas
-│   └── internal.tsp            # Internal API (if consumer of other contexts)
-└── openapi/                    # Generated OpenAPI specs
-    └── {context-name}.yaml
+│   └── events.tsp              # Domain event schemas
+└── tsp-output/
+    └── openapi/
+        └── openapi.yaml        # Generated OpenAPI spec
 ```

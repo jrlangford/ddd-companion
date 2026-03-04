@@ -43,8 +43,8 @@ This skill takes BCR (Bounded Context Registry) workspace definitions and genera
 4. Application layer with use case orchestration
 5. Driven adapters (repositories, event bus)
 6. Mock implementations with test data factories
-7. **TypeSpec API contracts** (derived from primary ports)
-8. **Driving adapters** (HTTP handlers generated from TypeSpec)
+7. **Driving adapters** (HTTP handlers generated from FQBC definitions)
+8. **TypeSpec API documentation** (OpenAPI specs and client generation)
 9. Main wiring and validated boundaries
 
 ## Goals
@@ -63,45 +63,37 @@ Before running this skill, you must have:
 
 ---
 
-## Spec-First API Design
+## API Design: FQBC-Driven Handlers + TypeSpec Documentation
 
-This skill follows a **spec-first** approach where API contracts drive HTTP adapter generation.
+HTTP handlers are generated directly from FQBC definitions and primary port interfaces. TypeSpec is generated separately as a documentation artifact — it produces OpenAPI specs (for Swagger UI) and can generate client libraries for service consumers.
 
-### Transformation Pipeline
+### Generation Pipeline
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Primary Ports  │ ──► │  TypeSpec Spec  │ ──► │  HTTP Adapters  │
-│  (Go interfaces)│     │  (API contract) │     │  (Go handlers)  │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-     WHAT the              HOW the API           HOW the code
-   system can do          exposes it            implements it
+                    ┌─────────────────┐
+              ┌────►│  HTTP Adapters  │  Phase 4: Runnable handlers
+              │     │  (Go handlers)  │
+┌──────────┐  │     └─────────────────┘
+│   FQBC   │──┤
+│ + Ports  │  │     ┌─────────────────┐
+└──────────┘  └────►│    TypeSpec     │  Phase 5: API documentation
+                    │  (OpenAPI spec) │
+                    └─────────────────┘
 ```
 
-### Layer Responsibilities
+### Why FQBC drives handlers directly
 
-| Layer | Artifact | Language | Purpose |
-|-------|----------|----------|---------|
-| **Domain** | Primary Ports | Go interfaces | What the system CAN do (use cases) |
-| **Contract** | TypeSpec | TypeSpec/OpenAPI | How the API EXPOSES it (HTTP contract) |
-| **Implementation** | HTTP Adapters | Go code | How the code IMPLEMENTS the contract |
+1. **No intermediary dependency**: Handlers don't wait for TypeSpec compilation — the skeleton is runnable sooner
+2. **Single source of truth**: Both handlers and TypeSpec derive from the same FQBC, preventing drift
+3. **TypeSpec is optional**: The skeleton compiles and runs without TypeSpec; OpenAPI/clients are additive
+4. **Simpler pipeline**: No need to ensure TypeSpec output matches handler expectations
 
-### Benefits
+### TypeSpec role
 
-1. **Single Source of Truth**: TypeSpec is authoritative for all API-related artifacts
-2. **Consistency Guarantee**: Handlers, clients, OpenAPI all derived from same spec
-3. **Decoupled Evolution**: Domain can evolve independently of API surface
-4. **Generator-Ready**: When TypeSpec-to-Go generators mature, drop-in replacement
-5. **LLM Guidance**: Spec constrains LLM generation, reducing drift and hallucination
-
-### Generation Flow
-
-When generating HTTP adapters, the LLM receives:
-1. The primary port interface (what operations exist)
-2. The TypeSpec API contract (how they're exposed via HTTP)
-3. Instructions to generate handlers that match the contract exactly
-
-This ensures generated code matches the spec, even without formal code generators.
+TypeSpec is a **documentation and client generation tool**, not a handler generation dependency:
+- Generates OpenAPI specs for Swagger UI visualization
+- Can generate typed client libraries for other services to import
+- Validates that the public API surface is well-documented
 
 ---
 
@@ -375,7 +367,7 @@ The subagent should:
 
 **IMPORTANT**: Complete ONE context fully before starting the next.
 
-**NOTE**: Driving adapters (HTTP handlers) are NOT generated in this phase. They come after TypeSpec contracts.
+**NOTE**: Driving adapters (HTTP handlers) are NOT generated in this phase. They are generated in Phase 4 after all contexts are complete.
 
 #### 3a: Domain Layer
 - Entity ID types (scalars wrapping UUID)
@@ -413,19 +405,89 @@ The subagent should:
 
 **Reference**: `generators/golang/patterns/mock.md`
 
-### Phase 4: Generate API Contracts (TypeSpec)
+### Phase 4: Generate Driving Adapters (HTTP)
 
-**Trigger**: All contexts complete, `apiContracts.status = "pending"`
+**Trigger**: All contexts complete, `drivingAdapters.http.status = "pending"`
+
+Handlers are generated directly from FQBC definitions and primary port interfaces — not from TypeSpec.
 
 **Actions**:
-1. For each context, generate TypeSpec files derived from:
-   - Primary port interfaces (operations)
-   - FQBC Section 6 (Context Contract - commands, queries, events)
-   - FQBC Section 8 (Context Relationships - internal APIs)
-2. Generate shared types from context-map.md (Published Language)
-3. Generate main.tsp entry point
-4. Generate TypeSpec project configuration files
-5. Compile TypeSpec to generate OpenAPI specs
+
+#### 4a: Public HTTP Handlers
+
+For contexts with API Binding (FQBC Section 7) — skip event-driven-only contexts:
+
+1. Read FQBC Section 7 (API Binding) for route definitions, HTTP methods, request/response schemas
+2. Read FQBC Section 6 (Context Contract) for command/query details and failure scenarios
+3. Read primary port interfaces for operation signatures
+4. Generate HTTP handlers that:
+   - Match FQBC API Binding route patterns exactly
+   - Call primary port methods
+   - Transform request DTOs to domain types
+   - Transform domain results to response DTOs
+   - Handle errors according to FQBC failure scenarios
+5. Generate routes file with all endpoint registrations
+6. Generate DTO types matching FQBC request/response schemas
+
+**Generation Prompt Pattern**:
+```
+Generate HTTP handlers for context "{context.name}":
+
+Primary Port Interface:
+[Go interface definition]
+
+FQBC API Binding:
+[API Binding table from FQBC Section 7]
+
+FQBC Context Contract:
+[Command/Query details from FQBC Section 6]
+
+Requirements:
+1. Routes must match FQBC API Binding paths exactly
+2. Request/Response types must match FQBC schemas
+3. Call primary port methods for business logic
+4. Handle errors according to FQBC failure scenarios
+```
+
+#### 4b: Internal HTTP Handlers
+
+For contexts with Internal Endpoints defined in FQBC Section 7:
+
+1. Read FQBC Section 7 (Internal Endpoints table) for route definitions
+2. Read primary port interfaces for operation signatures
+3. Generate internal HTTP handlers that:
+   - Follow the path patterns from FQBC (e.g., `/internal/{context}/...`)
+   - Call primary port methods
+   - Are **not** included in TypeSpec or OpenAPI specs
+4. Register internal routes alongside public routes
+
+**Output**:
+- `internal/adapters/driving/httpadapter/dto.go`
+- `internal/adapters/driving/httpadapter/handlers.go`
+- `internal/adapters/driving/httpadapter/internal_handlers.go` (if internal endpoints exist)
+- `internal/adapters/driving/httpadapter/routes.go`
+
+**Checkpoint**: Update `drivingAdapters.http.status = "complete"` and `files` array
+
+### Phase 5: Generate API Documentation (TypeSpec)
+
+**Trigger**: Driving adapters complete, `apiContracts.status = "pending"`
+
+TypeSpec is generated as a **documentation artifact** — it produces OpenAPI specs for Swagger UI and can generate client libraries for service consumers. It is not a dependency for handler generation.
+
+**Actions**:
+1. For each context **that has an API Binding section (FQBC Section 7)**, generate TypeSpec files derived from:
+   - FQBC Section 4 (Domain Model) for model/enum/scalar definitions
+   - FQBC Section 6 (Context Contract) for endpoint definitions
+   - FQBC Section 7 (API Binding) for route patterns (public endpoints only)
+2. **Skip contexts without API Binding** — event-driven-only contexts produce no TypeSpec output
+3. **Skip internal endpoints** — TypeSpec documents the public API surface only
+4. Generate shared types from context-map.md (Published Language)
+5. Generate main.tsp entry point
+6. Generate TypeSpec project configuration files
+7. Compile TypeSpec to generate OpenAPI specs
+
+**Reference**: `bcr-to-typespec.md`
 
 **Output Structure**:
 ```
@@ -521,52 +583,13 @@ docker restart swagger-ui
 docker logs swagger-ui
 ```
 
-**Reference**: `bcr-to-typespec.md`
-
 **Checkpoint**: Update `apiContracts.status = "complete"` and `files` array
-
-### Phase 5: Generate Driving Adapters (HTTP)
-
-**Trigger**: API contracts complete, `drivingAdapters.http.status = "pending"`
-
-**Actions**:
-1. Read TypeSpec contracts for route definitions
-2. Read primary port interfaces for operation signatures
-3. Generate HTTP handlers that:
-   - Match TypeSpec route patterns exactly
-   - Call primary port methods
-   - Transform request DTOs to domain types
-   - Transform domain results to response DTOs
-4. Generate routes file with all endpoint registrations
-5. Generate DTO types matching TypeSpec models
-
-**Generation Prompt Pattern**:
-```
-Generate HTTP handlers for context "{context.name}":
-
-Primary Port Interface:
-[Go interface definition]
-
-TypeSpec API Contract:
-[TypeSpec endpoint definitions]
-
-Requirements:
-1. Routes must match TypeSpec @route decorators exactly
-2. Request/Response types must match TypeSpec models
-3. Call primary port methods for business logic
-4. Handle errors according to TypeSpec error responses
-```
-
-**Output**:
-- `internal/adapters/driving/httpadapter/dto.go`
-- `internal/adapters/driving/httpadapter/handlers.go`
-- `internal/adapters/driving/httpadapter/routes.go`
-
-**Checkpoint**: Update `drivingAdapters.http.status = "complete"` and `files` array
 
 ### Phase 6: Generate Main Wiring
 
-**Trigger**: Driving adapters complete, `infrastructure.mainWiring.status = "pending"`
+**Trigger**: Driving adapters complete (Phase 4), `infrastructure.mainWiring.status = "pending"`
+
+**Note**: Phase 5 (TypeSpec/OpenAPI) is independent — main wiring depends only on handlers being generated.
 
 **Actions**:
 1. Generate `cmd/server/main.go`
