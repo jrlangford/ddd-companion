@@ -167,29 +167,32 @@ import (
 5. **Constructor validation**: All entities/VOs validate in constructors
 6. **Thread safety**: In-memory repos use sync.RWMutex
 
-## Spec-First API Design
+## FQBC-Driven API Design
 
-This generator follows a **spec-first approach** where API contracts are defined before HTTP adapter implementation:
+HTTP handlers are generated directly from FQBC definitions and primary port interfaces. TypeSpec is generated separately as a documentation artifact — it produces OpenAPI specs and can generate client libraries.
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Primary Ports  │ ──► │  TypeSpec Spec  │ ──► │  HTTP Adapters  │
-│  (Go interfaces)│     │  (API contract) │     │  (Go handlers)  │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-     WHAT the              HOW the API           HOW the code
-   system can do          exposes it            implements it
+                    ┌─────────────────┐
+              ┌────►│  HTTP Adapters  │  Phase 4: Runnable handlers
+              │     │  (Go handlers)  │
+┌──────────┐  │     └─────────────────┘
+│   FQBC   │──┤
+│ + Ports  │  │     ┌─────────────────┐
+└──────────┘  └────►│    TypeSpec     │  Phase 5: API documentation
+                    │  (OpenAPI spec) │
+                    └─────────────────┘
 ```
 
 ### Benefits
 
-1. **Single source of truth**: TypeSpec defines the API contract
-2. **Contract-driven development**: HTTP adapters implement the spec, not the other way around
-3. **Multi-artifact generation**: Same spec generates OpenAPI, DTOs, and eventually HTTP clients
-4. **Clear separation**: Domain logic (ports) vs API design (TypeSpec) vs implementation (adapters)
+1. **No intermediary dependency**: Handlers don't wait for TypeSpec compilation — the skeleton is runnable sooner
+2. **Single source of truth**: Both handlers and TypeSpec derive from the same FQBC, preventing drift
+3. **TypeSpec is optional**: The skeleton compiles and runs without TypeSpec; OpenAPI/clients are additive
+4. **Clear separation**: Domain logic (ports) vs API design (FQBC) vs documentation (TypeSpec)
 
 ### TypeSpec Location
 
-API contracts live at the project root level in the `api/` directory:
+TypeSpec files live at the project root level in the `api/` directory and serve as documentation artifacts (not handler generation dependencies):
 - `api/main.tsp` - Main entry point importing all contexts
 - `api/common/types.tsp` - Shared types (PersonId, pagination, errors)
 - `api/{context-name}/models.tsp` - Domain models for each context
@@ -199,13 +202,13 @@ API contracts live at the project root level in the `api/` directory:
 ## Phase Execution Order
 
 1. `support` - Generate support packages first
-2. `domain` - Generate domain layer for all contexts
+2. `domain` - Generate domain layer for each context
 3. `ports` - Generate port interfaces
 4. `application` - Generate application services
 5. `adapters/driven` - Generate repositories and event bus
 6. `adapters/integration` - Generate ACL adapters
 7. `mock` - Generate mock applications
-8. `api-contracts` - Generate TypeSpec definitions from primary ports
-9. `adapters/driving` - Generate HTTP handlers from TypeSpec spec
+8. `adapters/driving` - Generate HTTP handlers from FQBC + primary ports
+9. `api-contracts` - Generate TypeSpec definitions (documentation only)
 10. `fixtures` - Generate test data factories
 11. `main` - Wire dependencies in main.go

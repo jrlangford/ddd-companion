@@ -293,9 +293,10 @@ func (h *{Source}To{Target}EventHandler) handle{EventName}(ctx context.Context, 
 
 ## Driving Adapter Patterns
 
-> **Spec-First**: HTTP adapters are generated AFTER TypeSpec contracts. The TypeSpec
-> specification serves as the source of truth for API design. DTOs, handlers, and routes
-> should conform to the TypeSpec contract defined in `api/main.tsp`.
+> **FQBC-First**: HTTP adapters are generated directly from FQBC definitions and primary port interfaces.
+> TypeSpec is generated separately as a documentation artifact (OpenAPI specs, client libraries).
+> DTOs, handlers, and routes should conform to the FQBC API Binding (Section 7) and Context Contract (Section 6).
+> See `api-conventions.md` for project-wide HTTP conventions that FQBC bindings follow.
 
 ### HTTP Handler Pattern
 
