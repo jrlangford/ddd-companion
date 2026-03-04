@@ -53,6 +53,7 @@ A lean PRD for PoC development consists of these sections:
 | 12 | Success Criteria | How we know it works |
 | 13 | Product Team Expectations | Technical context (not specs) |
 | 14 | Traceability Index | Requirement IDs for FQBC citation |
+| 15 | Appendix | References, links, supplementary material |
 
 ### Pipeline Context
 
@@ -176,6 +177,7 @@ Generate the following structure (see [output-formats.md](output-formats.md) for
 12. [Success Criteria](#12-success-criteria)
 13. [Product Team Expectations](#13-product-team-expectations)
 14. [Traceability Index](#14-traceability-index)
+15. [Appendix](#15-appendix)
 
 ---
 
@@ -365,9 +367,9 @@ Technical concepts from source docs — context for engineering, not specs.
 ## 14. Traceability Index
 
 ### Functional Requirements
-| ID | Name | Area |
-|----|------|------|
-| FR-[area]-01 | [Name] | [Area] |
+| ID | Name | Area | Source Ref |
+|----|------|------|------------|
+| FR-[area]-01 | [Name] | [Area] | [ID(s) or —] |
 
 ### Business Rules
 | ID | Summary |
@@ -380,6 +382,18 @@ Technical concepts from source docs — context for engineering, not specs.
 | CE-01 | [Name] |
 ```
 
+---
+
+## 15. Appendix
+
+<!--
+References, links, and supplementary material.
+-->
+
+- [Reference 1]: [URL or description]
+- [Reference 2]: [URL or description]
+```
+
 ### Confirmation
 
 ```markdown
@@ -387,7 +401,7 @@ Technical concepts from source docs — context for engineering, not specs.
 
 **File**: `ddd-workspace/prd-[project-name]-poc.md`
 
-The template includes all 14 required sections with placeholder guidance.
+The template includes all 15 required sections with placeholder guidance.
 
 **Next steps**:
 1. Fill in sections manually, or
@@ -419,6 +433,7 @@ Show the template and guidance for a specific PRD section.
 - `success-criteria`
 - `expectations`
 - `traceability`
+- `appendix`
 
 ### Actions
 
