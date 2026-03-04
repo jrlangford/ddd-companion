@@ -13,6 +13,8 @@ This document defines the validation workflow for auditing a project that follow
 - As a periodic health check during active development
 - Before code review, to catch structural drift early
 
+**Relationship to ddd-eval**: This validation workflow provides detailed Go-specific findings with file:line references and severity levels. `/ddd-eval impl` uses the same criteria at a higher level, scoring implementation quality on a 0–100 scale through pragmatic and purity lenses. Use validate.md for actionable fix lists; use ddd-eval for project health assessment.
+
 ## Prerequisites
 
 - A Go project using hexagonal architecture with bounded contexts

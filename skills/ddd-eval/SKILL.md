@@ -486,7 +486,7 @@ Score implementation architecture conformance through both lenses. Works in both
 
 ### Impl Purity Rubric
 
-Uses the rules from the generator's pattern files (`generators/{generator}/patterns/*.md`) and `generator.md`.
+Uses the rules from the generator's pattern files (`generators/{generator}/patterns/*.md`) and `generator.md`. For detailed per-file validation with severity-based findings, see `ddd-implement/validate.md` — it implements these same criteria as a comprehensive structural audit. This rubric scores the same concerns at a higher level for the evaluation report.
 
 | Criterion | Weight | What to Check |
 |-----------|--------|---------------|
@@ -498,23 +498,16 @@ Uses the rules from the generator's pattern files (`generators/{generator}/patte
 
 ### Checking Dependency Direction (Purity)
 
-**With generator**: Use the dependency direction rules and import patterns defined in the generator's `patterns/` files and `generator.md`. Each generator specifies how imports/dependencies are declared in its language and what constitutes a forbidden dependency.
+**With generator**: Apply the dependency direction rules defined in the generator's pattern files directly. Do NOT redefine rules here — the pattern files are the single source of truth:
+- `generator.md` — import path conventions and forbidden dependency patterns
+- `patterns/domain.md` — domain layer constraints
+- `patterns/ports.md` — port interface rules
+- `patterns/application.md` — application layer dependency rules
+- `patterns/adapters.md` — adapter layer and cross-context isolation rules
 
-**Generic fallback**: Apply language-agnostic hexagonal dependency rules by inspecting whatever import/require/include mechanism the language uses:
+For comprehensive phase-by-phase validation, see `validate.md` which implements these same checks with severity-based findings.
 
-**In domain packages/modules**:
-- Must NOT depend on application layer → **error**
-- Must NOT depend on adapter/infrastructure layer → **error**
-- Must NOT depend on other context's domain → **error**
-
-**In application packages/modules**:
-- Must NOT depend on adapter/infrastructure layer → **error**
-- Must NOT depend on other context's domain → **error**
-
-**In any context package/module**:
-- Must NOT depend on another context's domain internals → **error**
-
-The specific mechanism for checking these rules varies by language (Go imports, TypeScript imports, Python imports, Java package imports, etc.). When using a generator, follow its validation rules exactly. When in generic mode, scan for import/require/include statements and check against the directory-based layer boundaries detected in the project.
+**Generic fallback** (no generator available): Apply language-agnostic hexagonal dependency rules — domain must not depend on application or adapters, application must not depend on adapters, no cross-context domain imports. Inspect whatever import/require/include mechanism the language uses.
 
 ### Output
 
