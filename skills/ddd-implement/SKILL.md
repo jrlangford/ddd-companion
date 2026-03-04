@@ -351,7 +351,26 @@ If build fails, record error in manifest and stop.
 
 ### Phase 3: Generate Contexts (One at a Time)
 
-**For each context where `status != "complete"`:**
+#### Prerequisite: Determine Context Order
+
+Before starting Phase 3, determine the order in which contexts should be generated:
+
+1. Read `bcr/context-map.md` and identify all upstream/downstream relationships
+2. Build a dependency graph: contexts that consume from other contexts are downstream
+3. **Generate upstream contexts before their downstream consumers** so that domain types and port interfaces exist when downstream ACL adapters need to reference them
+4. Contexts with no dependencies (or only external dependencies) can be generated in any order
+5. For Partnership or Shared Kernel relationships: generate both contexts in the same session when possible, starting with the one that defines the shared types
+
+**Example ordering**:
+| Context | Dependencies | Order |
+|---------|-------------|-------|
+| Identity (upstream) | None | 1 |
+| Ordering (downstream of Identity) | Identity | 2 |
+| Fulfillment (downstream of Ordering) | Ordering | 3 |
+
+If the manifest already has some contexts complete, skip them and continue with the next incomplete context in dependency order.
+
+**For each context where `status != "complete"`** (in dependency order):
 
 Use a **subagent** to process the entire context:
 
