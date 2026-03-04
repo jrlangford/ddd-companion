@@ -261,7 +261,7 @@ Run the purity lens across all dimensions.
 
 ### Detailed Findings
 
-[Findings grouped by dimension, then by severity, following the format from validate.md]:
+[Findings grouped by dimension, then by severity]:
 
 [severity] `file:line` — Description (ref: pattern-file#section)
 ```
@@ -472,7 +472,7 @@ Score implementation architecture conformance through both lenses. Works in both
    - Entry point files as defined by the generator or by convention
    - `api/` directory for TypeSpec/OpenAPI contracts
 2. If workspace mode, read `ddd-workspace/ddd-implement.manifest.json` for expected structure
-3. Score against both rubrics using rules from [validate.md](../ddd-implement/validate.md)
+3. Score against both rubrics using rules from the generator's pattern files (`generators/{generator}/patterns/*.md`) and `generator.md`
 
 ### Impl Pragmatic Rubric
 
@@ -486,19 +486,19 @@ Score implementation architecture conformance through both lenses. Works in both
 
 ### Impl Purity Rubric
 
-Uses the rules from [validate.md](../ddd-implement/validate.md).
+Uses the rules from the generator's pattern files (`generators/{generator}/patterns/*.md`) and `generator.md`.
 
 | Criterion | Weight | What to Check |
 |-----------|--------|---------------|
-| Hexagonal layer separation | 20% | Each context has domain, ports, application packages. Adapters are separate from contexts. Deduct per context missing layers. (ref: validate.md Phase 1) |
-| Dependency direction | 25% | Domain does not depend on application or adapters. Application does not depend on adapters. No forbidden dependency patterns. (ref: validate.md Phase 8a, checked per generator or generic rules) |
-| Domain isolation | 20% | Domain packages/modules depend only on support packages and standard library. No infrastructure types in domain layer. (ref: validate.md Phase 2) |
-| Port/adapter pattern | 20% | Interfaces in port packages. Implementations in adapter or mock packages. Compile-time interface compliance assertions (`var _ Interface = (*Impl)(nil)`). (ref: validate.md Phases 3, 4, 5) |
-| Cross-context isolation | 15% | No direct domain imports across context boundaries. Cross-context communication through events or integration adapters. (ref: validate.md Phase 8b) |
+| Hexagonal layer separation | 20% | Each context has domain, ports, application packages. Adapters are separate from contexts. Deduct per context missing layers. (ref: `generator.md` directory structure) |
+| Dependency direction | 25% | Domain does not depend on application or adapters. Application does not depend on adapters. No forbidden dependency patterns. (ref: `generator.md` import conventions) |
+| Domain isolation | 20% | Domain packages/modules depend only on support packages and standard library. No infrastructure types in domain layer. (ref: `patterns/domain.md`) |
+| Port/adapter pattern | 20% | Interfaces in port packages. Implementations in adapter or mock packages. Compile-time interface compliance assertions (`var _ Interface = (*Impl)(nil)`). (ref: `patterns/ports.md`, `patterns/application.md`, `patterns/adapters.md`) |
+| Cross-context isolation | 15% | No direct domain imports across context boundaries. Cross-context communication through events or integration adapters. (ref: `patterns/adapters.md` integration section) |
 
 ### Checking Dependency Direction (Purity)
 
-**With generator**: Use the dependency direction rules and import patterns defined in the generator's `patterns/` files and `validate.md`. Each generator specifies how imports/dependencies are declared in its language and what constitutes a forbidden dependency.
+**With generator**: Use the dependency direction rules and import patterns defined in the generator's `patterns/` files and `generator.md`. Each generator specifies how imports/dependencies are declared in its language and what constitutes a forbidden dependency.
 
 **Generic fallback**: Apply language-agnostic hexagonal dependency rules by inspecting whatever import/require/include mechanism the language uses:
 
