@@ -15,6 +15,18 @@ For each context:
 - `internal/{context}/ports/{context}secondary/repositories.go` - Repository interfaces
 - `internal/{context}/ports/{context}secondary/services.go` - External service interfaces (if needed)
 
+## Naming Rationale
+
+The term "Service" appears in several port-related names with distinct meanings:
+
+| Name | Role | Why "Service" |
+|------|------|---------------|
+| `{Context}Service` | Primary port interface | Facade over all use cases in this context — named after the context it serves |
+| `{Context}ApplicationService` | Concrete implementation of the primary port | Standard DDD application service — orchestrates domain objects |
+| `{ExternalContext}Service` | Secondary port for cross-context integration | Represents a dependency on another context's capabilities |
+
+Primary ports use **context-level** naming (`BookingService`) because one facade groups all inbound operations. Secondary ports use **entity-level** naming (`CargoRepository`) because each aggregate root has its own persistence boundary. This granularity difference is intentional: a context exposes a unified API surface, but persists aggregates independently.
+
 ## Patterns
 
 ### Primary Port Interface Pattern
