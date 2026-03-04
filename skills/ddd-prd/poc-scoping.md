@@ -104,7 +104,7 @@ Example:
 
 ## Functional Cohesion Criteria
 
-When grouping features into functional areas, evaluate cohesion to identify potential Bounded Context boundaries.
+When grouping features into functional areas, evaluate cohesion to identify potential Bounded Context boundaries. These same heuristics are used later in `/ddd-model` Phase 1 (Context Discovery) to refine functional areas into bounded contexts — see `ddd-model/SKILL.md` for the full accept/split/merge criteria.
 
 ### High Cohesion Indicators (Group Together)
 
@@ -120,34 +120,6 @@ When grouping features into functional areas, evaluate cohesion to identify pote
 - **Independent Lifecycles**: One set of features changes frequently, another is stable
 - **Different Stakeholders**: Features are owned by different business roles
 - **Loose Interaction**: Features interact through well-defined data handoffs, not shared state
-
-### Grouping Decision Framework
-
-```
-1. Do these features share key domain terms with consistent meaning?
-   YES → Strong cohesion signal
-   NO  → Consider separation
-
-2. Do these features operate on the same conceptual entities?
-   YES → Strong cohesion signal
-   NO  → Consider separation
-
-3. Would a business change likely affect both features together?
-   YES → Strong cohesion signal
-   NO  → Consider separation
-
-4. Are these features owned by the same business stakeholder?
-   YES → Supports grouping
-   NO  → Consider separation (unless technically inseparable)
-```
-
-### Documentation
-
-For each functional area, document:
-- **Area Name**: Clear, domain-aligned name
-- **Cohesion Rationale**: Why these features belong together
-- **Key Terms**: Domain terminology specific to this area
-- **Boundary Signals**: What distinguishes this area from others
 
 ## Minimum Viable Scope Checklist
 
