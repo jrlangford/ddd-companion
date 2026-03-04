@@ -420,7 +420,7 @@ The subagent should:
 **Actions**:
 1. For each context, generate TypeSpec files derived from:
    - Primary port interfaces (operations)
-   - FQBC Section 5 (Published Interface - commands, queries, events)
+   - FQBC Section 5 (Context Contract - commands, queries, events)
    - FQBC Section 6 (Context Relationships - internal APIs)
 2. Generate shared types from context-map.md (Published Language)
 3. Generate main.tsp entry point

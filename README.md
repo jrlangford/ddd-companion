@@ -223,7 +223,7 @@ flowchart TB
 - Ubiquitous language glossary
 - Domain model (entities, value objects, aggregates)
 - Commands, queries, and domain events
-- Published interface and API bindings
+- Context contract and API bindings
 - Integration patterns with other contexts
 
 **Built-in defaults:** When the PRD doesn't specify API design principles, the skill applies standard HTTP conventions (URL structure, response envelopes, error handling, pagination) automatically.

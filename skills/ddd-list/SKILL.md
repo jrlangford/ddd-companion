@@ -56,7 +56,7 @@ When invoked without arguments, display a high-level workspace overview.
 2. For each context with status `complete` in fqbc_generation, read the corresponding FQBC file at `ddd-workspace/fqbc/{context-name}.md`
 3. From each FQBC, extract:
    - **Section 4 (Domain Model)**: count of aggregates, entities, value objects
-   - **Section 6 (Published Interface) — Outbound Events**: event names and consumer contexts
+   - **Section 6 (Context Contract) — Outbound Events**: event names and consumer contexts
 4. If `ddd-workspace/ddd-implement.manifest.json` exists, read it for:
    - `currentPhase`
    - Per-context `status` from the `contexts` array
@@ -213,7 +213,7 @@ List all domain events across the workspace with their publishers, consumers, an
 
 1. Read `ddd-workspace/ddd-model.manifest.json` for the context list
 2. For each context with a completed FQBC file, read `ddd-workspace/fqbc/{context-name}.md`
-3. From each FQBC, extract **Section 6 (Published Interface) — Outbound Events**:
+3. From each FQBC, extract **Section 6 (Context Contract) — Outbound Events**:
    - Event name
    - Trigger (what causes the event)
    - Payload fields

@@ -65,7 +65,7 @@ Each Fully Qualified Bounded Context (FQBC) document contains:
 2. **Ubiquitous Language** - Domain terms with definitions
 3. **Required Behaviors** - Use cases (commands/queries)
 4. **Domain Model** - Business rules, aggregates, entities, value objects
-5. **Published Interface** - Commands, queries, events
+5. **Context Contract** - Commands, queries, events
 6. **Context Relationships** - Upstream/downstream dependencies
 7. **Traceability** - PRD references
 
@@ -467,7 +467,7 @@ FQBC authorization rules map to OpenAPI security requirements:
 2. **For each context in `fqbc_generation.contexts`:**
    - Parse FQBC markdown file
    - Extract Section 4 (Domain Model) → Generate models, enums, scalars
-   - Extract Section 5 (Published Interface) → Generate endpoints
+   - Extract Section 5 (Context Contract) → Generate endpoints
    - Extract Section 6 (Context Relationships) → Generate internal APIs
 3. **Generate shared types** from context-map.md (Published Language)
 4. **Compile TypeSpec** → Generate OpenAPI 3.0 specs

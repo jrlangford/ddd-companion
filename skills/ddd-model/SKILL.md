@@ -505,7 +505,7 @@ When generating API bindings:
 
 ### Input (Summaries Only)
 - `bcr/context-map.md` (full file)
-- Each `fqbc/*.md` → "Published Interface" and "API Binding" sections
+- Each `fqbc/*.md` → "Context Contract" and "API Binding" sections
 - `api-conventions.md` → for validation against standards
 
 ### Checks

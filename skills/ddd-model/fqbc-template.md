@@ -10,7 +10,7 @@ Complete template for FQBC documents. Each Bounded Context gets its own document
 3. Required Behaviors
 4. Domain Model
 5. Authorization
-6. Published Interface
+6. Context Contract
 7. API Binding (when HTTP API exposed)
 8. Context Relationships
 9. Traceability
@@ -230,10 +230,10 @@ When authorization fails:
 
 ---
 
-## 6. Published Interface
+## 6. Context Contract
 
 ```markdown
-## Published Interface
+## Context Contract
 
 The contract this context exposes for communication with other contexts.
 
