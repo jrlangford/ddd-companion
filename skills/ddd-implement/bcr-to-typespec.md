@@ -65,9 +65,11 @@ Each Fully Qualified Bounded Context (FQBC) document contains:
 2. **Ubiquitous Language** - Domain terms with definitions
 3. **Required Behaviors** - Use cases (commands/queries)
 4. **Domain Model** - Business rules, aggregates, entities, value objects
-5. **Context Contract** - Commands, queries, events
-6. **Context Relationships** - Upstream/downstream dependencies
-7. **Traceability** - PRD references
+5. **Authorization** - Permission requirements and patterns
+6. **Context Contract** - Commands, queries, events
+7. **API Binding** - HTTP endpoint mappings (when applicable)
+8. **Context Relationships** - Upstream/downstream dependencies
+9. **Traceability** - PRD references
 
 ---
 
@@ -185,7 +187,7 @@ model ItemInstance {
 
 ### 4. Commands to POST Endpoints
 
-**FQBC Input (Section 5 - Inbound Commands):**
+**FQBC Input (Section 6 - Inbound Commands):**
 ```markdown
 #### UpdateItemStatus
 
@@ -261,7 +263,7 @@ interface ItemStatusOperations {
 
 ### 5. Queries to GET Endpoints
 
-**FQBC Input (Section 5 - Inbound Queries):**
+**FQBC Input (Section 6 - Inbound Queries):**
 ```markdown
 #### GetItemsList
 
@@ -337,7 +339,7 @@ interface ItemsQueries {
 
 ### 6. Domain Events to Event Schemas
 
-**FQBC Input (Section 5 - Outbound Events):**
+**FQBC Input (Section 6 - Outbound Events):**
 ```markdown
 #### ItemStatusChanged
 
@@ -391,7 +393,7 @@ model ItemStatusChangedEvent {
 
 ### 7. Cross-Context Integration Contracts
 
-**FQBC Input (Section 6 - Context Relationships):**
+**FQBC Input (Section 8 - Context Relationships):**
 ```markdown
 ### 5.3 Surveillance Items → Notification Delivery
 
@@ -467,8 +469,8 @@ FQBC authorization rules map to OpenAPI security requirements:
 2. **For each context in `fqbc_generation.contexts`:**
    - Parse FQBC markdown file
    - Extract Section 4 (Domain Model) → Generate models, enums, scalars
-   - Extract Section 5 (Context Contract) → Generate endpoints
-   - Extract Section 6 (Context Relationships) → Generate internal APIs
+   - Extract Section 6 (Context Contract) → Generate endpoints
+   - Extract Section 8 (Context Relationships) → Generate internal APIs
 3. **Generate shared types** from context-map.md (Published Language)
 4. **Compile TypeSpec** → Generate OpenAPI 3.0 specs
 5. **Validate contracts** → Ensure all contexts' contracts are consistent
