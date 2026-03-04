@@ -271,6 +271,8 @@ appropriate technical design during Bounded Context Review.
 
 Reference IDs for citation in Bounded Context Review and FQBC documents.
 
+**Source Ref** is the original identifier from the source document (Jira ticket, Notion page, user story ID, etc.) that this requirement was extracted from. Use the source system's native ID format (e.g., `US-123`, `PROJ-456`, `JIRA-789`). Use `—` when no source ID exists. Source Refs propagate through the pipeline: PRD → FQBC traceability → implementation, enabling end-to-end traceability from source documents to code.
+
 ### Functional Requirements
 | ID | Name | Area | Source Ref |
 |----|------|------|------------|

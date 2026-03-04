@@ -314,8 +314,13 @@ If build fails, record error in manifest and stop.
 **Trigger**: No `ddd-workspace/ddd-implement.manifest.json` exists
 
 **Actions**:
-1. Read BCR workspace manifest (`ddd-workspace/ddd-model.manifest.json`)
-2. Parse each FQBC document
+1. Read BCR workspace manifest (`ddd-workspace/ddd-model.manifest.json`). Required fields:
+   - `current_phase` — must be `"complete"`
+   - `phases.context_discovery.contexts_identified` — list of context names
+   - `phases.fqbc_generation.contexts` — per-context status and file paths
+   - `authorization.pattern` — authorization pattern (currently only `"permissions-object"`)
+   - `prd.path` — PRD location for traceability
+2. Parse each FQBC document (paths from `phases.fqbc_generation.contexts`)
 3. **Prompt user for Go module path** (do NOT default to directory name)
    - Use `AskUserQuestion` tool to ask: "What Go module path should be used for this project?"
    - Example options: `github.com/org/project-name`, `company.com/team/service`
