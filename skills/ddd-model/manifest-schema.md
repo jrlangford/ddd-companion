@@ -182,6 +182,46 @@ For FQBC contexts:
 }
 ```
 
+## Status Transitions
+
+### Phase Status
+
+```
+pending → in_progress → complete
+```
+
+- `pending`: Not yet started
+- `in_progress`: Currently active (only one phase at a time)
+- `complete`: Finished and artifacts written
+
+Phases progress strictly forward. A completed phase does not revert to `in_progress` unless the coherence review flags issues (see FQBC context status below).
+
+### FQBC Context Status
+
+```
+pending → in_progress → complete
+                           │
+                           ▼
+                     needs_revision → in_progress → complete
+```
+
+- `pending`: FQBC not yet generated
+- `in_progress`: Currently generating this FQBC
+- `complete`: FQBC written and confirmed by user
+- `needs_revision`: Coherence review (Phase 4) found issues requiring FQBC updates
+
+When a context enters `needs_revision`, its FQBC must be updated and the status reset to `in_progress` → `complete` before the coherence review can pass.
+
+### Overall Workflow Status (`current_phase`)
+
+```
+context_discovery → context_mapping → fqbc_generation → coherence_review → complete
+```
+
+Set to `"complete"` when Phase 4 passes with no blocking issues.
+
+---
+
 ## Operations
 
 ### Finding Next FQBC
