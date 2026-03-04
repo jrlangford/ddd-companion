@@ -367,7 +367,9 @@ func (h *Handler) writeErrorResponse(w http.ResponseWriter, errorCode, message s
 }
 ```
 
-### DTO Pattern
+### Request/Response Types (DTO) Pattern
+
+These types live in the HTTP adapter layer and translate between HTTP payloads and domain types. The FQBC uses "Payload" and "Response" in domain terms; the adapter layer names them `{Operation}Request` and `{Entity}Response`. The file is named `dto.go` by convention.
 
 ```go
 package httpadapter
