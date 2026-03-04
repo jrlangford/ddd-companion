@@ -336,12 +336,14 @@ GET /items?dateFrom=2026-01-01&dateTo=2026-01-31
 
 ## Versioning Strategy
 
-### URL Path Versioning
+### URL Path Versioning (Per-Context)
 
 ```
-/api/v1/...
-/api/v2/...
+/api/{context-slug}/v1/...
+/api/{context-slug}/v2/...
 ```
+
+Version is scoped per context, enabling independent evolution of each bounded context's API.
 
 ### Version Increment Guidelines
 
@@ -381,7 +383,7 @@ For APIs that benefit from discoverability:
 
 When defining API bindings, verify:
 
-- [ ] Base path follows `/api/v1/{context-slug}/` pattern
+- [ ] Base path follows `/api/{context-slug}/v1/` pattern
 - [ ] HTTP methods match operation semantics
 - [ ] Query parameters use standard names (page, pageSize, dateFrom, etc.)
 - [ ] Request/response bodies use camelCase

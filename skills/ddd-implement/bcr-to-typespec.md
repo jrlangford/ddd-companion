@@ -8,7 +8,7 @@ The BCR workspace follows this structure:
 
 ```
 ddd-workspace/
-├── manifest.json               # Project state and phase tracking
+├── ddd-model.manifest.json               # Project state and phase tracking
 ├── prd/
 │   └── {project}-PRD.md        # Source Product Requirements Document
 ├── bcr/
@@ -19,7 +19,7 @@ ddd-workspace/
     └── {context-name}.md       # Phase 3: Fully Qualified Bounded Context
 ```
 
-### manifest.json Structure
+### ddd-model.manifest.json Structure
 
 ```json
 {
@@ -430,7 +430,7 @@ FQBC authorization rules map to OpenAPI security requirements:
 
 TypeSpec is generated in Phase 5, **after** HTTP handlers are already built and verified. It documents the public API surface only.
 
-1. **Read BCR manifest.json** → Identify contexts and phase status
+1. **Read BCR ddd-model.manifest.json** → Identify contexts and phase status
 2. **For each context with API Binding (FQBC Section 7):**
    - Parse FQBC markdown file
    - Extract Section 4 (Domain Model) → Generate models, enums, scalars
