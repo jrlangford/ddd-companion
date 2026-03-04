@@ -359,7 +359,24 @@ Read from PRD (path in `manifest.prd.path`):
 
 ### Actions
 
-1. Analyze for context boundaries using heuristics (see context-mapping-patterns.md)
+1. Analyze each functional area from the PRD for context boundaries using these heuristics:
+
+   **Accept as its own context when:**
+   - The area has its own ubiquitous language — terms mean something specific here that differs from other areas
+   - It has a clear aggregate root with an independent lifecycle
+   - It could be owned by a single team without heavy cross-team coordination
+   - Its data has its own consistency boundary (changes don't require immediate consistency with other areas)
+
+   **Split a functional area into multiple contexts when:**
+   - It contains terms that mean different things depending on sub-area (e.g., "Account" in billing vs. identity)
+   - Parts of the area change at very different rates (e.g., user registration vs. user analytics)
+   - It has distinct subdomain types — a core domain concern mixed with a generic/supporting concern
+
+   **Merge functional areas into one context when:**
+   - They share the same aggregate root and lifecycle
+   - Splitting them would require constant synchronous communication between the two
+   - The combined area is still small enough to reason about as a unit
+
 2. Propose candidate contexts with rationale
 3. Write `bcr/context-discovery.md`
 4. **Present summary and request user review** (see User Review Protocol)
