@@ -704,7 +704,7 @@ docker logs swagger-ui
 
 **Trigger**: Driving adapters complete (Phase 4), `infrastructure.mainWiring.status = "pending"`
 
-**Note**: Phase 5 (TypeSpec/OpenAPI) is independent — main wiring depends only on handlers being generated.
+**Note**: TypeSpec/OpenAPI (Phase 5) does not affect handler code, but the workflow proceeds sequentially through the manifest phases for simplicity.
 
 **Actions**:
 1. Generate `cmd/server/main.go`
