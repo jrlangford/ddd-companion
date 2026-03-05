@@ -56,7 +56,7 @@ These terms have specific, unambiguous meaning within this Bounded Context.
 
 ### Glossary Delta
 
-Terms that evolved from PRD definitions:
+Terms that evolved from PRD definitions. Omit this subsection entirely if all terms match the PRD glossary unchanged.
 
 | Term | PRD Definition | FQBC Definition | Reason for Change |
 |------|----------------|-----------------|-------------------|
@@ -510,7 +510,7 @@ Links to source PRD and design decisions.
 Before marking an FQBC as complete, verify:
 
 - [ ] **Section 1 — Context Identity**: Name, description, boundary rationale, and boundary principles present
-- [ ] **Section 2 — Ubiquitous Language**: At least one term defined; glossary delta populated if terms evolved from PRD
+- [ ] **Section 2 — Ubiquitous Language**: At least one term defined; glossary delta included only if terms evolved from PRD (omit subsection if unchanged)
 - [ ] **Section 3 — Required Behaviors**: Behavior catalog with IDs, PRD refs, and acceptance criteria for each behavior
 - [ ] **Section 4 — Domain Model**: At least one aggregate with root entity, invariants, and entities/value objects listed; business rules cataloged with IDs
 - [ ] **Section 5 — Authorization**: Permissions Object Pattern applied; permission requirements table for all commands/queries; authorization boundary documented
