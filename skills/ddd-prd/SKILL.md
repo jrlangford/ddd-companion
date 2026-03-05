@@ -277,11 +277,14 @@ See ddd-alignment.md for grouping guidance.
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
 
-**Business Rules**: BR-01, BR-02
+**Business Rules**:
+- BR-XX: [Rule reference from catalog]
 
-**Conceptual Entities**: [Entity references]
+**Conceptual Entities**:
+- [Entity]: [What it represents, key attributes]
 
-**Role-Capability**: [Role] can [capability]
+**Role-Capability**:
+- [Role] can: [capability]
 
 ---
 
