@@ -56,12 +56,13 @@ generators/
 └── {generator-name}/
     ├── generator.md      # Generator specification
     ├── patterns/         # Code patterns for each phase
+    │   ├── support.md
     │   ├── domain.md
     │   ├── ports.md
     │   ├── application.md
     │   ├── adapters.md
     │   ├── mock.md
-    │   └── fixtures.md
+    │   └── authorization.md
     └── templates/        # Optional: reusable code snippets
 ```
 
