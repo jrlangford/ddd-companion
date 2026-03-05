@@ -510,9 +510,18 @@ When generating API bindings:
    - Response envelope: All contexts use consistent envelope structure
    - Error codes: Consistent error code usage across contexts
 
-### Output: API Path Inventory
+### Output: `bcr/coherence-review.md`
 
-In `bcr/coherence-review.md`, include an API Surface Inventory section:
+The coherence review document uses this structure:
+
+1. **Cross-Context Consistency** — Interface compatibility, terminology, coverage checks
+2. **API Surface Inventory** — All endpoints table + validation checklist
+3. **Authorization Consistency** — Pattern, permission inventory, validation checklist
+4. **API Binding Issues** — Table of issues found (if any)
+5. **Consolidation Opportunities** — Overlapping queries across contexts (if any)
+6. **Recommendations** — Summary of actions needed
+
+Include an API Surface Inventory section:
 
 ```markdown
 ## API Surface Inventory
