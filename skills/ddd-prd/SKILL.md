@@ -266,6 +266,8 @@ See ddd-alignment.md for grouping guidance.
 
 #### FR-[area]-01: [Feature Name]
 
+**Source Ref**: [ID(s) from source documents, e.g., US-123, PROJ-456 — or —]
+
 **User Story**: As a [role], I want to [action], so that [benefit].
 
 **Acceptance Criteria**:

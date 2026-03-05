@@ -221,9 +221,9 @@ See [../ddd-prd/ddd-alignment.md](../ddd-prd/ddd-alignment.md) for extraction gu
 
 ### Business Rules Catalog
 
-| ID | Rule | Area | Entities Involved |
-|----|------|------|-------------------|
-| BR-01 | [Rule statement] | [Area] | [Entities] |
+| ID | Rule | Type | Entities | Area |
+|----|------|------|----------|------|
+| BR-01 | [Rule statement] | Invariant/Pre/Post/Derivation | [Entities] | [Area] |
 
 ### Conceptual Entity Map
 
@@ -233,9 +233,9 @@ See [../ddd-prd/ddd-alignment.md](../ddd-prd/ddd-alignment.md) for extraction gu
 
 ### Integration Touchpoints
 
-| Touchpoint | Direction | Description |
-|------------|-----------|-------------|
-| [System/Area] | Inbound/Outbound | [What interaction occurs] |
+| From | To | Trigger | Data Flow | Timing | Notes |
+|------|-----|---------|-----------|--------|-------|
+| [Area/System] | [Area/System] | [Initiating event] | [What passes] | Sync/Async | [Constraints] |
 
 ### Cross-Cutting Requirements
 - **Authorization**: [Rules by role]
