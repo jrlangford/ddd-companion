@@ -196,6 +196,15 @@ Operations in this context require these permissions:
 | [CommandName] | [Role or capability] | `permissions.hasRole('Supervisor')` |
 | [QueryName] | [Role or capability — often "any authenticated role"] | `permissions.hasAnyRole('Admin', 'User', 'ReadOnly')` |
 
+**Query Permissions:**
+
+| Query | Required Permission |
+|-------|---------------------|
+| List{Resource} | `{context}.{resource}.read` |
+| Get{Resource} | `{context}.{resource}.read` |
+
+> All queries require authentication. Document required permissions explicitly — do not assume "any authenticated role" without stating it.
+
 ### Permission Definitions
 
 Permissions used by this context:
