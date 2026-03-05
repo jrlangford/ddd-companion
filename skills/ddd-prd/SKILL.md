@@ -472,6 +472,8 @@ Show the template and guidance for a specific PRD section.
 - `success-criteria`
 - `expectations`
 - `traceability`
+- `authorization` *(optional)*
+- `api` *(optional)*
 - `appendix`
 
 ### Actions

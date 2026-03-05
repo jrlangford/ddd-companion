@@ -31,7 +31,7 @@ skills/
 ├── ddd-model/             # SKILL.md + fqbc-template.md, context-mapping-patterns.md,
 │                          #   api-conventions.md, manifest-schema.md
 ├── ddd-implement/         # SKILL.md + generator-architecture.md, bcr-to-typespec.md, validate.md
-│   ├── generators/golang/ #   generator.md + patterns/{domain,ports,application,adapters,mock,authorization}.md
+│   ├── generators/golang/ #   generator.md + patterns/{domain,ports,application,adapters,mock,authorization,support}.md
 │   └── manifest.schema.json
 ├── ddd-list/              # SKILL.md only
 └── ddd-eval/              # SKILL.md only
