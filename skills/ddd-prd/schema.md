@@ -40,11 +40,13 @@ PRD                           →  Bounded Context Review     →  FQBC Document
 | 8 | Conceptual Entity Map | Things & relationships | Domain model seeds |
 | 9 | Integration Touchpoints | External interactions | Context mapping |
 | 10 | Role-Capability Matrix | Who can do what | Access policies |
-| 11 | Non-Functional Requirements | Quality attributes | — |
-| 12 | Success Criteria | How we know it works | — |
-| 13 | Product Team Expectations | Tech context (not specs) | — |
-| 14 | Traceability Index | Requirement IDs | FQBC citations |
-| 15 | Appendix | References, links | — |
+| 11 | Authorization Pattern *(optional)* | How authz decisions are made | Permissions model |
+| 12 | API Design Principles *(optional)* | HTTP API conventions | Context contracts |
+| 13 | Non-Functional Requirements | Quality attributes | — |
+| 14 | Success Criteria | How we know it works | — |
+| 15 | Product Team Expectations | Tech context (not specs) | — |
+| 16 | Traceability Index | Requirement IDs | FQBC citations |
+| 17 | Appendix | References, links | — |
 
 ---
 
@@ -221,10 +223,48 @@ Who can do what within the system. Informs authorization design.
 | [Role] | [Area] | [What they can do] | [What they cannot do] |
 ```
 
-### 11. Non-Functional Requirements
+### 11. Authorization Pattern *(optional)*
+
+Include when the PRD defines roles (Section 10) and downstream modeling needs to understand how authorization decisions are made across contexts. If omitted, `/ddd-model` applies its built-in Permissions Object Pattern.
 
 ```markdown
-## 11. Non-Functional Requirements
+## 11. Authorization Pattern
+
+How authorization decisions are made across the system.
+
+**Pattern**: [e.g., Permissions Object — each service resolves its own roles from authenticated identity]
+
+**Identity Source**: [e.g., JWT claims from API gateway]
+
+**Role Resolution**: [Where and how roles are resolved — centralized vs. per-service]
+
+**Cross-Context Authorization**: [How authorization works when one context calls another]
+```
+
+### 12. API Design Principles *(optional)*
+
+Include when the system exposes HTTP APIs and the product team has preferences about API conventions. If omitted, `/ddd-model` applies standard HTTP conventions (URL structure, response envelopes, error handling, pagination).
+
+```markdown
+## 12. API Design Principles
+
+Conventions for HTTP APIs exposed by this system.
+
+**URL Structure**: [e.g., /api/{context}/{resource}, kebab-case]
+
+**Versioning Strategy**: [e.g., URL path /v1/, header-based, none for PoC]
+
+**Response Format**: [e.g., envelope with data/meta/errors, or flat JSON]
+
+**Authentication Approach**: [e.g., Bearer token, API key, session cookie]
+
+**Pagination**: [e.g., offset/limit with next/previous links]
+```
+
+### 13. Non-Functional Requirements
+
+```markdown
+## 13. Non-Functional Requirements
 
 | Category | Requirement | Priority |
 |----------|-------------|----------|
@@ -233,10 +273,10 @@ Who can do what within the system. Informs authorization design.
 | Availability | [Requirement] | [P1/P2/P3] |
 ```
 
-### 12. Success Criteria
+### 14. Success Criteria
 
 ```markdown
-## 12. Success Criteria
+## 14. Success Criteria
 
 The [PoC/MVP] is successful when:
 
@@ -245,10 +285,10 @@ The [PoC/MVP] is successful when:
 3. [Measurable outcome 3]
 ```
 
-### 13. Product Team Expectations
+### 15. Product Team Expectations
 
 ```markdown
-## 13. Product Team Expectations
+## 15. Product Team Expectations
 
 The source documentation included technical concepts that provide context
 for engineering. These are NOT specifications—engineering will determine
@@ -264,10 +304,10 @@ appropriate technical design during Bounded Context Review.
 - [Assumption product team made]
 ```
 
-### 14. Traceability Index
+### 16. Traceability Index
 
 ```markdown
-## 14. Traceability Index
+## 16. Traceability Index
 
 Reference IDs for citation in Bounded Context Review and FQBC documents.
 

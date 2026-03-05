@@ -334,7 +334,37 @@ These inform Context Mapping in technical design.
 
 ---
 
-## 11. Non-Functional Requirements
+## 11. Authorization Pattern
+
+<!-- Optional: include if roles are defined and downstream modeling needs authorization guidance -->
+
+**Pattern**: [e.g., Permissions Object — each service resolves its own roles]
+
+**Identity Source**: [e.g., JWT claims from API gateway]
+
+**Role Resolution**: [Where and how roles are resolved]
+
+**Cross-Context Authorization**: [How authz works across contexts]
+
+---
+
+## 12. API Design Principles
+
+<!-- Optional: include if the system exposes HTTP APIs and the team has conventions -->
+
+**URL Structure**: [e.g., /api/{context}/{resource}]
+
+**Versioning Strategy**: [e.g., URL path /v1/]
+
+**Response Format**: [e.g., envelope with data/meta/errors]
+
+**Authentication Approach**: [e.g., Bearer token]
+
+**Pagination**: [e.g., offset/limit with next/previous links]
+
+---
+
+## 13. Non-Functional Requirements
 
 | Category | Requirement | Priority |
 |----------|-------------|----------|
@@ -343,7 +373,7 @@ These inform Context Mapping in technical design.
 
 ---
 
-## 12. Success Criteria
+## 14. Success Criteria
 
 The PoC is successful when:
 
@@ -352,7 +382,7 @@ The PoC is successful when:
 
 ---
 
-## 13. Product Team Expectations
+## 15. Product Team Expectations
 
 <!--
 Technical concepts from source docs — context for engineering, not specs.
@@ -364,7 +394,7 @@ Technical concepts from source docs — context for engineering, not specs.
 
 ---
 
-## 14. Traceability Index
+## 16. Traceability Index
 
 ### Functional Requirements
 | ID | Name | Area | Source Ref |
@@ -384,7 +414,7 @@ Technical concepts from source docs — context for engineering, not specs.
 
 ---
 
-## 15. Appendix
+## 17. Appendix
 
 <!--
 References, links, and supplementary material.

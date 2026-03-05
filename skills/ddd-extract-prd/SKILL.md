@@ -257,7 +257,7 @@ Wait for user confirmation before Phase 4.
 ### Actions
 
 1. Compile all approved content from previous phases
-2. Structure according to the canonical **15-section PRD schema** defined in [../ddd-prd/schema.md](../ddd-prd/schema.md):
+2. Structure according to the canonical PRD schema defined in [../ddd-prd/schema.md](../ddd-prd/schema.md) (15 required + 2 optional sections):
 
    | # | Section | Source Phase |
    |---|---------|-------------|
@@ -271,11 +271,13 @@ Wait for user confirmation before Phase 4.
    | 8 | Conceptual Entity Map | Phase 3 (Functional Requirements) |
    | 9 | Integration Touchpoints | Phase 3 (Functional Requirements) |
    | 10 | Role-Capability Matrix | Phase 3 (Functional Requirements) |
-   | 11 | Non-Functional Requirements | Phase 3 (Cross-Cutting Requirements) |
-   | 12 | Success Criteria | Phase 2 (Scope Definition) |
-   | 13 | Product Team Expectations | Phase 3 (technical concepts from source) |
-   | 14 | Traceability Index | Generated from FR IDs + Source Refs |
-   | 15 | Appendix | Source document links, references |
+   | 11 | Authorization Pattern *(optional)* | Phase 3 (if roles warrant it) |
+   | 12 | API Design Principles *(optional)* | Phase 3 (if source specifies API conventions) |
+   | 13 | Non-Functional Requirements | Phase 3 (Cross-Cutting Requirements) |
+   | 14 | Success Criteria | Phase 2 (Scope Definition) |
+   | 15 | Product Team Expectations | Phase 3 (technical concepts from source) |
+   | 16 | Traceability Index | Generated from FR IDs + Source Refs |
+   | 17 | Appendix | Source document links, references |
 
 3. Generate Markdown document with:
    - Mermaid diagrams for entity relationships and lifecycles

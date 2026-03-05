@@ -299,11 +299,11 @@ Score PRD quality through both lenses. Workspace mode only.
 
 | Criterion | Weight | What to Check |
 |-----------|--------|---------------|
-| Section completeness | 25% | All 15 sections from [schema.md](../ddd-prd/schema.md) present. Deduct proportionally per missing section. |
+| Section completeness | 25% | All 15 required sections from [schema.md](../ddd-prd/schema.md) present (sections 11 and 12 are optional). Deduct proportionally per missing required section. |
 | Business rule explicitness | 20% | Rules in catalog (Section 7), not embedded in acceptance criteria. Score 100 if all rules are in catalog; deduct per embedded rule found in Section 5. |
 | Glossary coverage | 15% | Domain terms in glossary (Section 6) match terms used throughout. Score based on ratio of defined vs. referenced terms. |
 | Functional area cohesion | 15% | Each area (Section 4) has cohesion rationale, key terms, key entities. Deduct per area missing rationale. |
-| Traceability IDs | 15% | FR-\*, BR-\*, CE-\*, IT-\* IDs assigned and referenced in index (Section 14). Score based on ratio of ID'd items vs. total. |
+| Traceability IDs | 15% | FR-\*, BR-\*, CE-\*, IT-\* IDs assigned and referenced in index (Section 16). Score based on ratio of ID'd items vs. total. |
 | Entity clarity | 10% | Entities (Section 8) have descriptions, attributes, relationships. Deduct per entity missing key fields. |
 
 ### Output
