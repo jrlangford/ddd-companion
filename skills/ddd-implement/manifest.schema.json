@@ -54,7 +54,7 @@
     "currentPhase": {
       "type": "string",
       "description": "Current position in the overall workflow",
-      "enum": ["init", "support", "contexts", "drivingAdapters", "apiContracts", "mainWiring", "validation", "complete"]
+      "enum": ["support", "contexts", "drivingAdapters", "apiContracts", "mainWiring", "validation", "complete"]
     },
     "currentContext": {
       "type": ["string", "null"],
