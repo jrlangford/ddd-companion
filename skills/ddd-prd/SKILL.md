@@ -49,11 +49,13 @@ A lean PRD for PoC development consists of these sections:
 | 8 | Conceptual Entity Map | Things and relationships |
 | 9 | Integration Touchpoints | External interactions |
 | 10 | Role-Capability Matrix | Who can do what |
-| 11 | Non-Functional Requirements | Quality attributes |
-| 12 | Success Criteria | How we know it works |
-| 13 | Product Team Expectations | Technical context (not specs) |
-| 14 | Traceability Index | Requirement IDs for FQBC citation |
-| 15 | Appendix | References, links, supplementary material |
+| 11 | Authorization Pattern *(optional)* | How authz decisions are made |
+| 12 | API Design Principles *(optional)* | HTTP API conventions |
+| 13 | Non-Functional Requirements | Quality attributes |
+| 14 | Success Criteria | How we know it works |
+| 15 | Product Team Expectations | Technical context (not specs) |
+| 16 | Traceability Index | Requirement IDs for FQBC citation |
+| 17 | Appendix | References, links, supplementary material |
 
 ### Pipeline Context
 
@@ -104,20 +106,23 @@ Validate an existing PRD document against the schema.
 
 | Section | Status | Notes |
 |---------|--------|-------|
-| Executive Summary | ✓ | — |
-| Background & Context | ✓ | — |
-| PoC Scope | ✓ | — |
-| Functional Areas | ⚠ | Missing cohesion rationale for Area 2 |
-| Functional Requirements | ✓ | — |
-| Domain Glossary | ⚠ | 3 terms used but not defined |
-| Business Rules Catalog | ✗ | Missing — rules embedded in acceptance criteria |
-| Conceptual Entity Map | ✓ | — |
-| Integration Touchpoints | ✓ | — |
-| Role-Capability Matrix | ✗ | Missing |
-| Non-Functional Requirements | ✓ | — |
-| Success Criteria | ✓ | — |
-| Product Team Expectations | ✓ | — |
-| Traceability Index | ⚠ | Incomplete — missing BR-* entries |
+| 1. Executive Summary | ✓ | — |
+| 2. Background & Context | ✓ | — |
+| 3. PoC Scope | ✓ | — |
+| 4. Functional Areas | ⚠ | Missing cohesion rationale for Area 2 |
+| 5. Functional Requirements | ✓ | — |
+| 6. Domain Glossary | ⚠ | 3 terms used but not defined |
+| 7. Business Rules Catalog | ✗ | Missing — rules embedded in acceptance criteria |
+| 8. Conceptual Entity Map | ✓ | — |
+| 9. Integration Touchpoints | ✓ | — |
+| 10. Role-Capability Matrix | ✗ | Missing |
+| 11. Authorization Pattern | — | Optional, not included |
+| 12. API Design Principles | — | Optional, not included |
+| 13. Non-Functional Requirements | ✓ | — |
+| 14. Success Criteria | ✓ | — |
+| 15. Product Team Expectations | ✓ | — |
+| 16. Traceability Index | ⚠ | Incomplete — missing BR-* entries |
+| 17. Appendix | ✓ | — |
 
 ### Issues
 
@@ -173,11 +178,13 @@ Generate the following structure (see [output-formats.md](output-formats.md) for
 8. [Conceptual Entity Map](#8-conceptual-entity-map)
 9. [Integration Touchpoints](#9-integration-touchpoints)
 10. [Role-Capability Matrix](#10-role-capability-matrix)
-11. [Non-Functional Requirements](#11-non-functional-requirements)
-12. [Success Criteria](#12-success-criteria)
-13. [Product Team Expectations](#13-product-team-expectations)
-14. [Traceability Index](#14-traceability-index)
-15. [Appendix](#15-appendix)
+11. [Authorization Pattern](#11-authorization-pattern) *(optional)*
+12. [API Design Principles](#12-api-design-principles) *(optional)*
+13. [Non-Functional Requirements](#13-non-functional-requirements)
+14. [Success Criteria](#14-success-criteria)
+15. [Product Team Expectations](#15-product-team-expectations)
+16. [Traceability Index](#16-traceability-index)
+17. [Appendix](#17-appendix)
 
 ---
 
