@@ -419,6 +419,11 @@ Technical concepts from source docs — context for engineering, not specs.
 | ID | Entity |
 |----|--------|
 | CE-01 | [Name] |
+
+### Integration Touchpoints
+| ID | From → To |
+|----|-----------|
+| IT-01 | [Area] → [Area/System] |
 ```
 
 ---
