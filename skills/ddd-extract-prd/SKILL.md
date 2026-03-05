@@ -304,6 +304,7 @@ Wait for user confirmation before Phase 4.
 ### Source Access Issues
 
 **Notion**:
+- If `Notion:notion-fetch` MCP is unavailable, inform the user and suggest exporting the Notion page as HTML or Markdown, then providing the exported file path
 - Inform user of the specific access issue
 - Ask if they can share the content directly or adjust permissions
 - Offer to proceed with an HTML export or Markdown copy if available
