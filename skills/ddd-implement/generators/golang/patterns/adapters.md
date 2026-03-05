@@ -460,3 +460,17 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, authMiddleware *httpmiddlew
 	mux.HandleFunc("DELETE /api/v1/{entities}/{id}", authMiddleware.RequireAuth(h.Delete{Entity}Handler))
 }
 ```
+
+### Internal Endpoint Handlers
+
+Internal endpoints follow the same handler pattern as public endpoints but:
+1. Registered under `/internal/{context-name}/` path prefix
+2. Not included in TypeSpec/OpenAPI generation
+3. Used for context-to-context synchronous communication
+
+Route registration in `routes.go`:
+
+```go
+	// Internal routes (not documented in OpenAPI)
+	mux.HandleFunc("{METHOD} /internal/{context-name}/{path}", authMiddleware.RequireAuth(h.{OperationName}Handler))
+```
