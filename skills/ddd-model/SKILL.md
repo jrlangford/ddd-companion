@@ -1,7 +1,6 @@
 ---
 name: ddd-model
 description: Decompose a system into well-defined Bounded Contexts using Domain-Driven Design principles. This command manages workflow state through a manifest file, enabling complex BCR work across multiple chat sessions.
-disable-model-invocation: true
 ---
 
 # Bounded Context Review (Multi-Session)

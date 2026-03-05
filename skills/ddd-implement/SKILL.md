@@ -1,7 +1,6 @@
 ---
 name: ddd-implement
 description: Transform BCR bounded context definitions into a walking skeleton - a runnable Go hexagonal architecture application with validated DDD boundaries. Use after completing BCR workflow to generate implementation code. Also validates existing projects against DDD standards.
-disable-model-invocation: true
 ---
 
 # ddd-implement Skill

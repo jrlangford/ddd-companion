@@ -17,7 +17,7 @@ just uninstall  # Remove skill symlinks
 
 Each skill lives in `skills/{skill-name}/` and consists of:
 
-- **`SKILL.md`** — Entry point. YAML frontmatter (`name`, `description`, `disable-model-invocation: true`, optional `argument-hint`) followed by the skill's behavioral specification.
+- **`SKILL.md`** — Entry point. YAML frontmatter (`name`, `description`, optional `argument-hint`) followed by the skill's behavioral specification.
 - **Supporting docs** — Referenced by SKILL.md and read at runtime (e.g., `fqbc-template.md`, `api-conventions.md`, `patterns/*.md`). Changes to these files directly affect skill behavior.
 
 Skills are not code — they are structured prompts that Claude follows. There is no build step, linting, or test suite for the skills themselves.
@@ -48,7 +48,6 @@ local/                     # Local development workspace (not tracked)
 
 ## Conventions for Editing Skills
 
-- All skills set `disable-model-invocation: true` — they are user-invoked only
 - Supporting docs are the **single source of truth** for their concern (e.g., `api-conventions.md` for HTTP conventions, `patterns/domain.md` for domain layer code generation rules). Avoid restating rules across files.
 - Generator pattern files (`patterns/*.md`) define exact code generation rules per architectural layer — when changing generated output structure, update the relevant pattern file
 - Output artifacts (PRDs, BCR docs, FQBCs) use Markdown with Mermaid diagrams, optimized for Obsidian rendering
