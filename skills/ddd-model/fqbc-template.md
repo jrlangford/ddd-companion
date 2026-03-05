@@ -428,6 +428,8 @@ Queries map to GET requests.
 
 Endpoints for context-to-context communication (not exposed externally).
 
+> **When to use Internal Endpoints**: Use synchronous internal endpoints when the caller needs an immediate response (e.g., querying another context's data). Use domain events (Section 6, Outbound Events) when the interaction is fire-and-forget or eventual consistency is acceptable.
+
 | Operation | Method | Path | Consumer |
 |-----------|--------|------|----------|
 | [OperationName] | GET/POST | `/internal/[path]` | [Context name] |
