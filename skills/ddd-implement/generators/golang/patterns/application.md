@@ -108,6 +108,12 @@ func (s *{Context}ApplicationService) publish{Entity}Events({entity} *{context}d
 }
 ```
 
+### Placeholder Resolution
+
+- `{zero_value}`: Go zero value for `{return_type}`. Structs: `{context}domain.{Entity}{}`. Pointers: `nil`. Primitives: `0`, `false`, `""`.
+- `{result}`: The return value from the domain operation (e.g., newly created entity, updated aggregate)
+- Permission constants: `Permission{OperationName}` matching the FQBC operation name in PascalCase
+
 ### Permissions Pattern
 
 ```go
