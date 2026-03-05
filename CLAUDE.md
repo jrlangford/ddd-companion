@@ -49,6 +49,7 @@ local/                     # Local development workspace (not tracked)
 ## Conventions for Editing Skills
 
 - Supporting docs are the **single source of truth** for their concern (e.g., `api-conventions.md` for HTTP conventions, `patterns/domain.md` for domain layer code generation rules). Avoid restating rules across files.
+- Some supporting docs are **cross-skill dependencies** — editing them affects multiple skills. Known cross-skill files: `ddd-model/api-conventions.md` (consumed by both `ddd-model` FQBC generation and `ddd-implement` HTTP handler generation)
 - Generator pattern files (`patterns/*.md`) define exact code generation rules per architectural layer — when changing generated output structure, update the relevant pattern file
 - Output artifacts (PRDs, BCR docs, FQBCs) use Markdown with Mermaid diagrams, optimized for Obsidian rendering
 - The `justfile` `skills` variable must be updated when adding or removing skills
