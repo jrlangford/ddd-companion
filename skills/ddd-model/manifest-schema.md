@@ -19,6 +19,15 @@ The manifest file (`ddd-model.manifest.json`) tracks workflow state and enables 
     "path": "prd/filename.ext",
     "format": "md|html"
   },
+  "authorization": {
+    "pattern": "permissions-object",
+    "source": "prd-specified|default",
+    "notes": "string"
+  },
+  "deployment": {
+    "topology": "single-service",
+    "notes": "string"
+  },
   "current_phase": "phase_name | complete",
   "phases": {
     "context_discovery": { 
@@ -52,6 +61,25 @@ The `prd` field tracks the prerequisite PRD document:
 | path | string | Relative path to PRD file |
 | format | string | File format: `md` or `html` |
 
+## Authorization Object
+
+The `authorization` field records the authorization pattern used across all bounded contexts:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| pattern | string | Authorization pattern: `permissions-object` (only supported value) |
+| source | string | How the pattern was determined: `prd-specified` or `default` |
+| notes | string | How/where permissions are resolved |
+
+## Deployment Object
+
+The `deployment` field records the deployment topology for the PoC:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| topology | string | Deployment model: `single-service` for PoC |
+| notes | string | Additional deployment context |
+
 ## Phases
 
 | Phase | Name in Manifest | Description |
@@ -83,6 +111,15 @@ For FQBC contexts:
     "path": "prd/prd.html",
     "format": "html"
   },
+  "authorization": {
+    "pattern": "permissions-object",
+    "source": "default",
+    "notes": "Permissions resolved from JWT claims"
+  },
+  "deployment": {
+    "topology": "single-service",
+    "notes": "All contexts deployed as one service for PoC"
+  },
   "current_phase": "context_discovery",
   "phases": {
     "context_discovery": { "status": "pending", "contexts_identified": [] },
@@ -106,6 +143,15 @@ For FQBC contexts:
     "ready": true,
     "path": "prd/prd.html",
     "format": "html"
+  },
+  "authorization": {
+    "pattern": "permissions-object",
+    "source": "prd-specified",
+    "notes": "Role-based permissions from Role-Capability Matrix (PRD §10)"
+  },
+  "deployment": {
+    "topology": "single-service",
+    "notes": "All contexts deployed as one service for PoC"
   },
   "current_phase": "fqbc_generation",
   "phases": {
@@ -147,6 +193,15 @@ For FQBC contexts:
     "ready": true,
     "path": "prd/prd.html",
     "format": "html"
+  },
+  "authorization": {
+    "pattern": "permissions-object",
+    "source": "prd-specified",
+    "notes": "Role-based permissions from Role-Capability Matrix (PRD §10)"
+  },
+  "deployment": {
+    "topology": "single-service",
+    "notes": "All contexts deployed as one service for PoC"
   },
   "current_phase": "complete",
   "phases": {
