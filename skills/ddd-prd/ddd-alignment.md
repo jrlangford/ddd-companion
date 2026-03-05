@@ -199,4 +199,10 @@ Use consistent, traceable IDs:
 - `CE-[number]` for conceptual entities
 - `IT-[number]` for integration touchpoints
 
+**ID Uniqueness Rules**:
+- All IDs are globally unique within the PRD (not just per-area)
+- Area codes must be consistent abbreviations (e.g., always `USER` not sometimes `USR`)
+- Number sequences are per-prefix: FR-USER-01, FR-USER-02; BR-01, BR-02
+- If areas are merged or split, re-number affected IDs and update all cross-references
+
 FQBC documents will reference these IDs when citing source requirements.
