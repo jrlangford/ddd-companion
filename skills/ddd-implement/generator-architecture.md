@@ -20,8 +20,7 @@ Generator
 ├── ports()          → Generate port interfaces
 ├── application()    → Generate application services
 ├── adapters()       → Generate infrastructure adapters
-├── mock()           → Generate mock implementations
-├── fixtures()       → Generate test data factories
+├── mock()           → Generate mock implementations (includes test data population)
 ├── integration()    → Generate cross-context adapters
 └── validate()       → Validate generated code
 ```
