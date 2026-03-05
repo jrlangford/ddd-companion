@@ -350,4 +350,4 @@ Examples:
 
 ## Output Location
 
-PRD documents should be written to the `ddd-workspace/` directory in the current project.
+PRD documents should be written to `ddd-workspace/prd/` in the current project.

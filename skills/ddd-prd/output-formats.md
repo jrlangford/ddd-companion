@@ -138,10 +138,11 @@ Examples:
 
 ## Output Location
 
-All PRD documents should be written to the `ddd-workspace/` directory in the current project root. Create this directory if it does not exist.
+All PRD documents should be written to `ddd-workspace/prd/` in the current project root. Create this directory if it does not exist.
 
 ```
 project-root/
 └── ddd-workspace/
-    └── prd-[project-name]-[scope].md
+    └── prd/
+        └── prd-[project-name]-[scope].md
 ```

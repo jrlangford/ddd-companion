@@ -144,7 +144,7 @@ Generate an empty PRD template with all required sections.
 
 1. Generate a complete PRD template following [schema.md](schema.md)
 2. Include placeholder text and guidance comments
-3. Write to `ddd-workspace/prd-[project-name]-poc.md`
+3. Write to `ddd-workspace/prd/prd-[project-name]-poc.md`
 4. If no project name provided, ask for one
 
 ### Output Template
@@ -399,7 +399,7 @@ References, links, and supplementary material.
 ```markdown
 ## Template Generated
 
-**File**: `ddd-workspace/prd-[project-name]-poc.md`
+**File**: `ddd-workspace/prd/prd-[project-name]-poc.md`
 
 The template includes all 15 required sections with placeholder guidance.
 
@@ -505,7 +505,7 @@ Use this command when you have an existing PRD that needs:
 
 Provide the path to an existing PRD file:
 - Absolute path: `/path/to/prd-project-poc.md`
-- Relative path: `ddd-workspace/prd-project-poc.md`
+- Relative path: `ddd-workspace/prd/prd-project-poc.md`
 
 ---
 
@@ -739,7 +739,7 @@ Evaluate the PRD for downstream Bounded Context work:
 - Traceability Index: Added BR-06, BR-07, BR-08
 
 ### Files
-- **Updated**: ddd-workspace/prd-project-poc.md
+- **Updated**: ddd-workspace/prd/prd-project-poc.md
 
 **Apply these changes?**
 ```
@@ -749,7 +749,7 @@ After approval, write the file and confirm:
 ```markdown
 ## Changes Applied
 
-Updated: `ddd-workspace/prd-project-poc.md`
+Updated: `ddd-workspace/prd/prd-project-poc.md`
 
 ### Summary
 - Added Business Rules Catalog with 3 rules
@@ -777,7 +777,7 @@ Step-by-step review with approval at each change. Best for:
 User can specify multiple changes upfront:
 
 ```
-/ddd-prd edit ddd-workspace/prd-project-poc.md --batch "extract embedded rules, define missing terms, add role-capability matrix"
+/ddd-prd edit ddd-workspace/prd/prd-project-poc.md --batch "extract embedded rules, define missing terms, add role-capability matrix"
 ```
 
 Process all requested changes, then present unified review before applying.
