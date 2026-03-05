@@ -912,7 +912,7 @@ Generated files are placed in the project root directory.
 When invoked for generation:
 
 1. Check for existing `ddd-workspace/ddd-implement.manifest.json`
-2. If exists: analyze state, report current progress, identify next action
+2. If exists: validate against `manifest.schema.json` (report any missing required fields or invalid values), analyze state, report current progress, identify next action
 3. If not exists: look for BCR workspace, create initial manifest
 4. Execute ONE bounded context at a time using subagents
 5. After all contexts: generate HTTP adapters from FQBC definitions

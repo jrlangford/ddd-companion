@@ -180,7 +180,8 @@ Look for `ddd-model.manifest.json` in the workspace:
 ### Step 2: Resume or Start
 
 **If manifest found:**
-- Read it, report status, offer to continue
+- Read it and validate against `manifest.schema.json` — report any missing required fields or invalid values before continuing
+- Report status, offer to continue
 
 **If no manifest:**
 - Check if PRD exists
