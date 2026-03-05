@@ -82,6 +82,9 @@ type {Entity}Repository interface {
 	// Update updates an existing {entity}
 	Update(ctx context.Context, entity {context}domain.{Entity}) error
 
+	// Delete removes a {entity} by its ID
+	Delete(ctx context.Context, id {context}domain.{EntityId}) error
+
 	{{range .CustomQueries}}
 	// {QueryName} {query_description}
 	{QueryName}(ctx context.Context{{range .QueryParams}}, {param_name} {param_type}{{end}}) ({{.ReturnType}}, error)
@@ -183,11 +186,12 @@ import (
 
 // CargoRepository defines the secondary port for cargo persistence
 type CargoRepository interface {
-	Store(cargo bookingdomain.Cargo) error
-	FindByTrackingId(trackingId bookingdomain.TrackingId) (bookingdomain.Cargo, error)
-	FindUnrouted() ([]bookingdomain.Cargo, error)
-	FindAll() ([]bookingdomain.Cargo, error)
-	Update(cargo bookingdomain.Cargo) error
+	Store(ctx context.Context, cargo bookingdomain.Cargo) error
+	FindByTrackingId(ctx context.Context, trackingId bookingdomain.TrackingId) (bookingdomain.Cargo, error)
+	FindUnrouted(ctx context.Context) ([]bookingdomain.Cargo, error)
+	FindAll(ctx context.Context) ([]bookingdomain.Cargo, error)
+	Update(ctx context.Context, cargo bookingdomain.Cargo) error
+	Delete(ctx context.Context, id bookingdomain.TrackingId) error
 }
 
 // RoutingService defines the secondary port for route calculation
