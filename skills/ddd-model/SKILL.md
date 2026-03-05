@@ -128,7 +128,7 @@ The manifest tracks workflow state and PRD location:
 ```json
 {
   "version": "1.0",
-  "project_name": "Project Name",
+  "projectName": "Project Name",
   "created": "2025-01-18T10:00:00Z",
   "updated": "2025-01-18T14:30:00Z",
   "prd": {
@@ -145,14 +145,14 @@ The manifest tracks workflow state and PRD location:
     "topology": "single-service",
     "notes": "All contexts deployed in a single service for POC"
   },
-  "current_phase": "fqbc_generation",
+  "currentPhase": "fqbcGeneration",
   "phases": {
-    "context_discovery": {
+    "contextDiscovery": {
       "status": "complete",
-      "contexts_identified": ["ordering", "inventory", "fulfillment"]
+      "contextsIdentified": ["ordering", "inventory", "fulfillment"]
     },
-    "context_mapping": { "status": "complete" },
-    "fqbc_generation": {
+    "contextMapping": { "status": "complete" },
+    "fqbcGeneration": {
       "status": "in_progress",
       "contexts": {
         "ordering": { "status": "complete" },
@@ -160,7 +160,7 @@ The manifest tracks workflow state and PRD location:
         "fulfillment": { "status": "pending" }
       }
     },
-    "coherence_review": { "status": "pending" }
+    "coherenceReview": { "status": "pending" }
   },
   "decisions": []
 }
@@ -305,7 +305,7 @@ Before Phase 1, set up the workspace:
 ```json
 {
   "version": "1.0",
-  "project_name": "[from PRD]",
+  "projectName": "[from PRD]",
   "created": "[timestamp]",
   "updated": "[timestamp]",
   "prd": {
@@ -322,12 +322,12 @@ Before Phase 1, set up the workspace:
     "topology": "single-service",
     "notes": "All contexts deployed in a single service for POC"
   },
-  "current_phase": "context_discovery",
+  "currentPhase": "contextDiscovery",
   "phases": {
-    "context_discovery": { "status": "pending", "contexts_identified": [] },
-    "context_mapping": { "status": "pending" },
-    "fqbc_generation": { "status": "pending", "contexts": {} },
-    "coherence_review": { "status": "pending" }
+    "contextDiscovery": { "status": "pending", "contextsIdentified": [] },
+    "contextMapping": { "status": "pending" },
+    "fqbcGeneration": { "status": "pending", "contexts": {} },
+    "coherenceReview": { "status": "pending" }
   },
   "decisions": []
 }
@@ -370,7 +370,7 @@ Read from PRD (path in `manifest.prd.path`):
 4. **Present summary and request user review** (see User Review Protocol)
    - List each context with brief rationale
    - Wait for user confirmation before proceeding to Phase 2
-5. Update manifest with contexts_identified
+5. Update manifest with contextsIdentified
 
 **Note:** All contexts are deployed in a single service for POC. If contexts need to be split into independent microservices, each microservice should follow the full DDD pipeline independently.
 

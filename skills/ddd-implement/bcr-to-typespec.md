@@ -24,27 +24,27 @@ ddd-workspace/
 ```json
 {
   "version": "1.0",
-  "project_name": "Project Name",
+  "projectName": "Project Name",
   "created": "2026-01-17T10:00:00Z",
   "updated": "2026-01-19T10:00:00Z",
   "prd": {
     "ready": true,
     "path": "prd/Project-PRD.md"
   },
-  "current_phase": "complete",
+  "currentPhase": "complete",
   "phases": {
-    "context_discovery": {
+    "contextDiscovery": {
       "status": "complete",
-      "contexts_identified": ["context-a", "context-b"]
+      "contextsIdentified": ["context-a", "context-b"]
     },
-    "context_mapping": { "status": "complete" },
-    "fqbc_generation": {
+    "contextMapping": { "status": "complete" },
+    "fqbcGeneration": {
       "status": "complete",
       "contexts": {
         "context-a": { "status": "complete", "file": "fqbc/context-a.md" }
       }
     },
-    "coherence_review": { "status": "complete" }
+    "coherenceReview": { "status": "complete" }
   },
   "decisions": [
     {

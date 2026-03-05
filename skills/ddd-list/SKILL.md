@@ -50,10 +50,10 @@ When invoked without arguments, display a high-level workspace overview.
 ### Actions
 
 1. Read `ddd-workspace/ddd-model.manifest.json` for:
-   - `project_name`
-   - `current_phase` and phase statuses
-   - Context names from `phases.fqbc_generation.contexts`
-2. For each context with status `complete` in fqbc_generation, read the corresponding FQBC file at `ddd-workspace/fqbc/{context-name}.md`
+   - `projectName`
+   - `currentPhase` and phase statuses
+   - Context names from `phases.fqbcGeneration.contexts`
+2. For each context with status `complete` in fqbcGeneration, read the corresponding FQBC file at `ddd-workspace/fqbc/{context-name}.md`
 3. From each FQBC, extract:
    - **Section 4 (Domain Model)**: count of aggregates, entities, value objects
    - **Section 6 (Context Contract) — Outbound Events**: event names and consumer contexts
@@ -67,8 +67,8 @@ When invoked without arguments, display a high-level workspace overview.
 ```markdown
 ## DDD Workspace Dashboard
 
-**Project**: [project_name]
-**Modeling Phase**: [current_phase]
+**Project**: [projectName]
+**Modeling Phase**: [currentPhase]
 **Implementation**: [currentPhase from implement manifest, or "Not started"]
 
 ### Bounded Contexts
@@ -130,7 +130,7 @@ List all bounded contexts with their full domain model details.
 ```markdown
 ## Bounded Contexts — Domain Models
 
-**Project**: [project_name]
+**Project**: [projectName]
 **Contexts**: [N] identified, [M] fully modeled
 
 ---
@@ -190,7 +190,7 @@ List all bounded contexts with their full domain model details.
 
 #### When FQBC is not yet generated for a context
 
-If a context appears in the manifest but has no FQBC file or its fqbc_generation status is not `complete`:
+If a context appears in the manifest but has no FQBC file or its fqbcGeneration status is not `complete`:
 
 ```markdown
 ### [Context Name]
@@ -227,7 +227,7 @@ List all domain events across the workspace with their publishers, consumers, an
 ```markdown
 ## Domain Events Catalog
 
-**Project**: [project_name]
+**Project**: [projectName]
 **Total Events**: [count]
 **Publishing Contexts**: [count]
 **Subscribing Contexts**: [count]
@@ -267,7 +267,7 @@ _Note: Contexts without outbound events may still consume events from other cont
 ```markdown
 ## Domain Events Catalog
 
-**Project**: [project_name]
+**Project**: [projectName]
 
 No domain events found in the workspace.
 
@@ -321,8 +321,8 @@ When the manifest exists but no FQBC files are found in `ddd-workspace/fqbc/`:
 The model manifest exists but no FQBC files have been generated yet.
 
 **Modeling Progress**:
-- Current Phase: [current_phase from manifest]
-- Contexts Identified: [list from context_discovery]
+- Current Phase: [currentPhase from manifest]
+- Contexts Identified: [list from contextDiscovery]
 
 **Next step**: Run `/ddd-model` to continue — it will resume from the current phase.
 ```

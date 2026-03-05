@@ -11,7 +11,7 @@ The manifest file (`ddd-model.manifest.json`) tracks workflow state and enables 
 ```json
 {
   "version": "1.0",
-  "project_name": "string",
+  "projectName": "string",
   "created": "ISO-8601 datetime",
   "updated": "ISO-8601 datetime",
   "prd": {
@@ -28,22 +28,22 @@ The manifest file (`ddd-model.manifest.json`) tracks workflow state and enables 
     "topology": "single-service",
     "notes": "string"
   },
-  "current_phase": "phase_name | complete",
+  "currentPhase": "phase_name | complete",
   "phases": {
-    "context_discovery": { 
+    "contextDiscovery": { 
       "status": "pending|in_progress|complete",
-      "contexts_identified": ["ctx1", "ctx2"]
+      "contextsIdentified": ["ctx1", "ctx2"]
     },
-    "context_mapping": { 
+    "contextMapping": { 
       "status": "pending|in_progress|complete" 
     },
-    "fqbc_generation": {
+    "fqbcGeneration": {
       "status": "pending|in_progress|complete",
       "contexts": {
-        "context_name": { "status": "pending|in_progress|complete|needs_revision" }
+        "context_name": { "status": "pending|in_progress|complete|needsRevision" }
       }
     },
-    "coherence_review": { 
+    "coherenceReview": { 
       "status": "pending|in_progress|complete" 
     }
   },
@@ -84,10 +84,10 @@ The `deployment` field records the deployment topology for the PoC:
 
 | Phase | Name in Manifest | Description |
 |-------|------------------|-------------|
-| 1 | context_discovery | Identify bounded contexts from PRD |
-| 2 | context_mapping | Define relationships between contexts |
-| 3 | fqbc_generation | Generate FQBCs (one per context) |
-| 4 | coherence_review | Verify boundary alignment |
+| 1 | contextDiscovery | Identify bounded contexts from PRD |
+| 2 | contextMapping | Define relationships between contexts |
+| 3 | fqbcGeneration | Generate FQBCs (one per context) |
+| 4 | coherenceReview | Verify boundary alignment |
 
 ## Status Values
 
@@ -96,14 +96,14 @@ The `deployment` field records the deployment topology for the PoC:
 - `complete` — Finished
 
 For FQBC contexts:
-- `needs_revision` — Coherence review found issues
+- `needsRevision` — Coherence review found issues
 
 ## Example: Fresh Manifest
 
 ```json
 {
   "version": "1.0",
-  "project_name": "E-Commerce Platform",
+  "projectName": "E-Commerce Platform",
   "created": "2025-01-18T10:00:00Z",
   "updated": "2025-01-18T10:00:00Z",
   "prd": {
@@ -120,12 +120,12 @@ For FQBC contexts:
     "topology": "single-service",
     "notes": "All contexts deployed as one service for PoC"
   },
-  "current_phase": "context_discovery",
+  "currentPhase": "contextDiscovery",
   "phases": {
-    "context_discovery": { "status": "pending", "contexts_identified": [] },
-    "context_mapping": { "status": "pending" },
-    "fqbc_generation": { "status": "pending", "contexts": {} },
-    "coherence_review": { "status": "pending" }
+    "contextDiscovery": { "status": "pending", "contextsIdentified": [] },
+    "contextMapping": { "status": "pending" },
+    "fqbcGeneration": { "status": "pending", "contexts": {} },
+    "coherenceReview": { "status": "pending" }
   },
   "decisions": []
 }
@@ -136,7 +136,7 @@ For FQBC contexts:
 ```json
 {
   "version": "1.0",
-  "project_name": "E-Commerce Platform",
+  "projectName": "E-Commerce Platform",
   "created": "2025-01-18T10:00:00Z",
   "updated": "2025-01-18T14:30:00Z",
   "prd": {
@@ -153,14 +153,14 @@ For FQBC contexts:
     "topology": "single-service",
     "notes": "All contexts deployed as one service for PoC"
   },
-  "current_phase": "fqbc_generation",
+  "currentPhase": "fqbcGeneration",
   "phases": {
-    "context_discovery": { 
+    "contextDiscovery": { 
       "status": "complete",
-      "contexts_identified": ["ordering", "inventory", "fulfillment"]
+      "contextsIdentified": ["ordering", "inventory", "fulfillment"]
     },
-    "context_mapping": { "status": "complete" },
-    "fqbc_generation": {
+    "contextMapping": { "status": "complete" },
+    "fqbcGeneration": {
       "status": "in_progress",
       "contexts": {
         "ordering": { "status": "complete" },
@@ -168,11 +168,11 @@ For FQBC contexts:
         "fulfillment": { "status": "pending" }
       }
     },
-    "coherence_review": { "status": "pending" }
+    "coherenceReview": { "status": "pending" }
   },
   "decisions": [
     {
-      "phase": "context_discovery",
+      "phase": "contextDiscovery",
       "decision": "Split Stock into Inventory and Fulfillment",
       "rationale": "Different consistency requirements",
       "timestamp": "2025-01-18T11:15:00Z"
@@ -186,7 +186,7 @@ For FQBC contexts:
 ```json
 {
   "version": "1.0",
-  "project_name": "E-Commerce Platform",
+  "projectName": "E-Commerce Platform",
   "created": "2025-01-18T10:00:00Z",
   "updated": "2025-01-18T16:00:00Z",
   "prd": {
@@ -203,14 +203,14 @@ For FQBC contexts:
     "topology": "single-service",
     "notes": "All contexts deployed as one service for PoC"
   },
-  "current_phase": "complete",
+  "currentPhase": "complete",
   "phases": {
-    "context_discovery": { 
+    "contextDiscovery": { 
       "status": "complete",
-      "contexts_identified": ["ordering", "inventory", "fulfillment"]
+      "contextsIdentified": ["ordering", "inventory", "fulfillment"]
     },
-    "context_mapping": { "status": "complete" },
-    "fqbc_generation": {
+    "contextMapping": { "status": "complete" },
+    "fqbcGeneration": {
       "status": "complete",
       "contexts": {
         "ordering": { "status": "complete" },
@@ -218,17 +218,17 @@ For FQBC contexts:
         "fulfillment": { "status": "complete" }
       }
     },
-    "coherence_review": { "status": "complete" }
+    "coherenceReview": { "status": "complete" }
   },
   "decisions": [
     {
-      "phase": "context_discovery",
+      "phase": "contextDiscovery",
       "decision": "Split Stock into Inventory and Fulfillment",
       "rationale": "Different consistency requirements",
       "timestamp": "2025-01-18T11:15:00Z"
     },
     {
-      "phase": "coherence_review",
+      "phase": "coherenceReview",
       "decision": "Added currency to OrderPlaced event",
       "rationale": "Fulfillment needs currency for international shipping",
       "timestamp": "2025-01-18T15:50:00Z"
@@ -257,20 +257,20 @@ Phases progress strictly forward. A completed phase does not revert to `in_progr
 pending → in_progress → complete
                            │
                            ▼
-                     needs_revision → in_progress → complete
+                     needsRevision → in_progress → complete
 ```
 
 - `pending`: FQBC not yet generated
 - `in_progress`: Currently generating this FQBC
 - `complete`: FQBC written and confirmed by user
-- `needs_revision`: Coherence review (Phase 4) found issues requiring FQBC updates
+- `needsRevision`: Coherence review (Phase 4) found issues requiring FQBC updates
 
-When a context enters `needs_revision`, its FQBC must be updated and the status reset to `in_progress` → `complete` before the coherence review can pass.
+When a context enters `needsRevision`, its FQBC must be updated and the status reset to `in_progress` → `complete` before the coherence review can pass.
 
-### Overall Workflow Status (`current_phase`)
+### Overall Workflow Status (`currentPhase`)
 
 ```
-context_discovery → context_mapping → fqbc_generation → coherence_review → complete
+contextDiscovery → contextMapping → fqbcGeneration → coherenceReview → complete
 ```
 
 Set to `"complete"` when Phase 4 passes with no blocking issues.
@@ -282,7 +282,7 @@ Set to `"complete"` when Phase 4 passes with no blocking issues.
 ### Finding Next FQBC
 
 ```javascript
-const fqbcPhase = manifest.phases.fqbc_generation;
+const fqbcPhase = manifest.phases.fqbcGeneration;
 const nextContext = Object.entries(fqbcPhase.contexts)
   .find(([name, ctx]) => ctx.status === 'pending');
 
@@ -296,9 +296,9 @@ if (nextContext) {
 ### Updating After Phase Completion
 
 ```javascript
-manifest.phases.context_discovery.status = 'complete';
-manifest.phases.context_discovery.contexts_identified = ['ordering', 'inventory'];
-manifest.current_phase = 'context_mapping';
+manifest.phases.contextDiscovery.status = 'complete';
+manifest.phases.contextDiscovery.contextsIdentified = ['ordering', 'inventory'];
+manifest.currentPhase = 'contextMapping';
 manifest.updated = new Date().toISOString();
 ```
 
@@ -306,7 +306,7 @@ manifest.updated = new Date().toISOString();
 
 ```javascript
 manifest.decisions.push({
-  phase: 'context_discovery',
+  phase: 'contextDiscovery',
   decision: 'Split Stock into Inventory and Fulfillment',
   rationale: 'Different consistency requirements',
   timestamp: new Date().toISOString()
