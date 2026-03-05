@@ -167,6 +167,8 @@ Wait for user confirmation before Phase 3.
 
 ## Phase 3: Functional Requirements
 
+> **Glossary continuity**: The Candidate Domain Glossary from Phase 2 is the starting point for the full Domain Glossary (PRD Section 6). Refine definitions, add terms discovered during functional requirements extraction, and remove any terms that proved irrelevant.
+
 **Goal**: Define detailed requirements with DDD-ready artifacts for each in-scope feature.
 
 ### Actions
