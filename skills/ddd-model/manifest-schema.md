@@ -80,6 +80,17 @@ The `deployment` field records the deployment topology for the PoC:
 | topology | string | Deployment model: `single-service` for PoC |
 | notes | string | Additional deployment context |
 
+## Decisions Array
+
+The `decisions` array records significant modeling choices made during the workflow:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| phase | string | Phase where decision was made (e.g., `contextDiscovery`) |
+| decision | string | What was decided |
+| rationale | string | Why this choice was made |
+| timestamp | string | ISO-8601 datetime |
+
 ## Phases
 
 | Phase | Name in Manifest | Description |
