@@ -4,7 +4,7 @@
   "title": "DDD Implementation Manifest",
   "description": "Tracks progress of DDD implementation from bounded context definitions",
   "type": "object",
-  "required": ["version", "project", "source"],
+  "required": ["version", "project", "source", "currentPhase", "contexts"],
   "properties": {
     "version": {
       "type": "string",
