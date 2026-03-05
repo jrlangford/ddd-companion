@@ -656,7 +656,7 @@ options:
 
 #### Compiling TypeSpec
 
-After generating TypeSpec files, compile to OpenAPI:
+After generating TypeSpec files, attempt to compile to OpenAPI. This step is **best-effort** — if Node.js/npm is not available, skip compilation and note it in the manifest. The walking skeleton is fully functional without it.
 
 ```bash
 cd api
@@ -664,7 +664,9 @@ npm install        # Install TypeSpec compiler and dependencies
 npm run build      # Compile TypeSpec to OpenAPI
 ```
 
-The generated OpenAPI spec will be at `api/tsp-output/openapi/openapi.yaml`.
+If `npm` is not found or compilation fails, log a warning and continue to Phase 6. Set `apiContracts.status = "complete"` regardless — the TypeSpec source files are the primary artifact, not the compiled output.
+
+The generated OpenAPI spec (when compiled) will be at `api/tsp-output/openapi/openapi.yaml`.
 
 #### Visualizing the API with Swagger UI
 
