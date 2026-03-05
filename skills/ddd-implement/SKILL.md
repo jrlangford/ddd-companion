@@ -710,7 +710,7 @@ docker logs swagger-ui
 **Actions**:
 1. Generate `cmd/server/main.go`
 2. Wire all repositories, services, handlers
-3. Subscribe event handlers to event bus
+3. Subscribe event handlers to event bus — for each cross-context event relationship in the FQBC context map, create the integration event handler (see `adapters.md` Event Handler Pattern) and subscribe it: `eventBus.Subscribe("{EventName}", handler)`
 4. Support APP_MODE env var (default: live, set to "mock" for test data). In mock mode, create the mock application (which embeds the real service), populate test data through it, and wire handlers to it. Only one service instance should exist per context in either mode. See `generators/golang/patterns/mock.md` for the wiring pattern.
 5. **Generate `README.md`** with usage instructions (see below)
 

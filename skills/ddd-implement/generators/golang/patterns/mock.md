@@ -303,6 +303,10 @@ func main() {
 		)
 	}
 
+	// Wire cross-context event subscriptions (from FQBC context map)
+	// {source}To{target}Handler := integration.New{Source}To{Target}EventHandler({target}Svc, logger)
+	// eventBus.Subscribe("{EventName}", {source}To{target}Handler)
+
 	// Wire handlers to whichever service was created
 	handler := httpadapter.NewHandler({context}Svc, logger)
 
