@@ -4,7 +4,7 @@
   "title": "DDD Model Manifest",
   "description": "Tracks progress of bounded context modeling from PRD to FQBCs",
   "type": "object",
-  "required": ["version", "projectName", "created", "updated", "prd", "currentPhase", "phases", "decisions"],
+  "required": ["version", "projectName", "created", "updated", "prd", "authorization", "deployment", "currentPhase", "phases", "decisions"],
   "properties": {
     "version": {
       "type": "string",

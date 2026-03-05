@@ -61,24 +61,24 @@ The `prd` field tracks the prerequisite PRD document:
 | path | string | Relative path to PRD file |
 | format | string | File format: `md` or `html` |
 
-## Authorization Object
+## Authorization Object (required)
 
 The `authorization` field records the authorization pattern used across all bounded contexts:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| pattern | string | Authorization pattern: `permissions-object` (only supported value) |
-| source | string | How the pattern was determined: `prd-specified` or `default` |
-| notes | string | How/where permissions are resolved |
+| pattern | string | **Required.** Authorization pattern: `permissions-object` (only supported value) |
+| source | string | **Required.** How the pattern was determined: `prd-specified` or `default` |
+| notes | string | Optional. How/where permissions are resolved |
 
-## Deployment Object
+## Deployment Object (required)
 
 The `deployment` field records the deployment topology for the PoC:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| topology | string | Deployment model: `single-service` for PoC |
-| notes | string | Additional deployment context |
+| topology | string | **Required.** Deployment model: `single-service` for PoC |
+| notes | string | Optional. Additional deployment context |
 
 ## Decisions Array
 
