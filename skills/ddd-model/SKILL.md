@@ -277,7 +277,7 @@ Don't accumulate output in conversation:
 1. Present summary to user in chat
 2. Write full detail to file
 3. User confirms
-4. Update manifest
+4. Update manifest **immediately after confirmation** — never defer manifest writes, as a session may end at any point
 
 ### Principle: One FQBC at a Time
 
