@@ -41,28 +41,14 @@ Before starting BCR, you need a PRD with these sections:
 
 ### Authorization Pattern (Built-in)
 
-This skill uses the **Permissions Object Pattern** (also called Authorization Context Pattern) for all generated contexts.
+This skill uses the **Permissions Object Pattern** for all generated contexts. The full pattern specification lives in `fqbc-template.md` Section 5 (Authorization) — that is the single source of truth.
 
-**Permissions Object Pattern characteristics:**
+Key points:
 - Each microservice owns its role definitions — roles are not centralized
-- Middleware within the service builds a Permissions object from authenticated identity (e.g., JWT claims)
-- The Permissions object encapsulates identity + resolved permissions for this service's domain
-- Handlers/domain logic receive the object — they don't resolve roles themselves
-- Authorization decisions use the object's methods (e.g., `hasAnyRole()`, `canAccess()`)
+- Service middleware builds a Permissions object from authenticated identity (e.g., JWT claims)
+- Handlers receive the object; they don't resolve roles themselves
 
-**Where permissions are built:**
-- NOT at API Gateway (that's authentication, not authorization)
-- AT the service's middleware layer, before request reaches handlers
-- Each service resolves its own roles from the authenticated identity
-
-**Why this pattern?**
-- Separates authentication (who you are) from authorization (what you can do)
-- Each service owns its authorization rules — no central authorization service
-- Permissions resolved once at service middleware, not scattered through handlers
-- Domain logic stays clean — receives Permissions object, doesn't build it
-- Easy to test — inject a mock Permissions object
-
-This is the only authorization pattern currently supported by the implementation pipeline (`ddd-implement`). Alternative patterns (RBAC, ABAC) may be added in the future.
+This is the only authorization pattern currently supported by the implementation pipeline (`ddd-implement`).
 
 ### API Conventions (Built-in)
 
