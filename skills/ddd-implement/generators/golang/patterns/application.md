@@ -95,7 +95,7 @@ func (s *{Context}ApplicationService) {OperationName}(ctx context.Context{{range
 {{end}}
 
 // publish{Entity}Events publishes all pending events from the {entity} aggregate
-func (s *{Context}ApplicationService) publish{Entity}Events({entity} {context}domain.{Entity}) {
+func (s *{Context}ApplicationService) publish{Entity}Events({entity} *{context}domain.{Entity}) {
 	events := {entity}.GetEvents()
 	for _, event := range events {
 		if err := s.eventPublisher.Publish(event); err != nil {
