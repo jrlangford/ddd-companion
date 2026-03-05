@@ -8,7 +8,7 @@
   "properties": {
     "version": {
       "type": "string",
-      "description": "Manifest schema version",
+      "description": "Manifest schema version. Increment on breaking schema changes; when loading a manifest with a different version, warn the user and attempt best-effort field mapping.",
       "const": "1.0"
     },
     "project": {
