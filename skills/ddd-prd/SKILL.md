@@ -774,10 +774,10 @@ Step-by-step review with approval at each change. Best for:
 
 #### Batch Mode
 
-User can specify multiple changes upfront:
+User can specify multiple changes upfront as natural language:
 
 ```
-/ddd-prd edit ddd-workspace/prd/prd-project-poc.md --batch "extract embedded rules, define missing terms, add role-capability matrix"
+/ddd-prd edit ddd-workspace/prd/prd-project-poc.md extract embedded rules, define missing terms, add role-capability matrix
 ```
 
 Process all requested changes, then present unified review before applying.
