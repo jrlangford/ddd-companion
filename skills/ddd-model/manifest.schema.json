@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ddd-model-manifest.schema.json",
+  "title": "DDD Model Manifest",
+  "description": "Tracks progress of bounded context modeling from PRD to FQBCs",
+  "type": "object",
+  "required": ["version", "projectName", "created", "updated", "prd", "currentPhase", "phases", "decisions"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Manifest schema version",
+      "const": "1.0"
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Project name for display"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 datetime when manifest was created"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 datetime of last update"
+    },
+    "prd": {
+      "type": "object",
+      "description": "Prerequisite PRD document",
+      "required": ["ready", "path", "format"],
+      "properties": {
+        "ready": {
+          "type": "boolean",
+          "description": "Whether PRD is available"
+        },
+        "path": {
+          "type": "string",
+          "description": "Relative path to PRD file"
+        },
+        "format": {
+          "type": "string",
+          "description": "File format",
+          "enum": ["md", "html"]
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "description": "Authorization pattern used across all bounded contexts",
+      "required": ["pattern", "source"],
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Authorization pattern",
+          "enum": ["permissions-object"]
+        },
+        "source": {
+          "type": "string",
+          "description": "How the pattern was determined",
+          "enum": ["prd-specified", "default"]
+        },
+        "notes": {
+          "type": "string",
+          "description": "How/where permissions are resolved"
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "description": "Deployment topology for the PoC",
+      "required": ["topology"],
+      "properties": {
+        "topology": {
+          "type": "string",
+          "description": "Deployment model",
+          "enum": ["single-service"]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional deployment context"
+        }
+      }
+    },
+    "currentPhase": {
+      "type": "string",
+      "description": "Current position in the modeling workflow",
+      "enum": ["contextDiscovery", "contextMapping", "fqbcGeneration", "coherenceReview", "complete"]
+    },
+    "phases": {
+      "type": "object",
+      "description": "Per-phase status tracking",
+      "required": ["contextDiscovery", "contextMapping", "fqbcGeneration", "coherenceReview"],
+      "properties": {
+        "contextDiscovery": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/$defs/phaseStatus" },
+            "contextsIdentified": {
+              "type": "array",
+              "description": "Context names discovered from the PRD",
+              "items": { "type": "string" },
+              "default": []
+            }
+          }
+        },
+        "contextMapping": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/$defs/phaseStatus" }
+          }
+        },
+        "fqbcGeneration": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/$defs/phaseStatus" },
+            "contexts": {
+              "type": "object",
+              "description": "Per-context FQBC generation status",
+              "additionalProperties": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": { "$ref": "#/$defs/fqbcContextStatus" }
+                }
+              }
+            }
+          }
+        },
+        "coherenceReview": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "$ref": "#/$defs/phaseStatus" }
+          }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "description": "Significant modeling choices made during the workflow",
+      "items": {
+        "type": "object",
+        "required": ["phase", "decision", "rationale", "timestamp"],
+        "properties": {
+          "phase": {
+            "type": "string",
+            "description": "Phase where decision was made",
+            "enum": ["contextDiscovery", "contextMapping", "fqbcGeneration", "coherenceReview"]
+          },
+          "decision": {
+            "type": "string",
+            "description": "What was decided"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Why this choice was made"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO-8601 datetime"
+          }
+        }
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "phaseStatus": {
+      "type": "string",
+      "enum": ["pending", "in_progress", "complete"]
+    },
+    "fqbcContextStatus": {
+      "type": "string",
+      "enum": ["pending", "in_progress", "complete", "needsRevision"]
+    }
+  }
+}

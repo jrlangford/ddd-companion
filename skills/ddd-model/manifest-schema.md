@@ -1,6 +1,6 @@
 # Manifest Schema Reference
 
-The manifest file (`ddd-model.manifest.json`) tracks workflow state and enables resumption across chat sessions.
+The manifest file (`ddd-model.manifest.json`) tracks workflow state and enables resumption across chat sessions. The formal JSON Schema is in `manifest.schema.json`.
 
 ## Location
 

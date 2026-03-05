@@ -29,7 +29,7 @@ skills/
 ├── ddd-extract-prd/       # SKILL.md + no supporting docs
 ├── ddd-prd/               # SKILL.md + schema.md, ddd-alignment.md, output-formats.md, scoping-criteria.md
 ├── ddd-model/             # SKILL.md + fqbc-template.md, context-mapping-patterns.md,
-│                          #   api-conventions.md, manifest-schema.md
+│                          #   api-conventions.md, manifest-schema.md, manifest.schema.json
 ├── ddd-implement/         # SKILL.md + generator-architecture.md, bcr-to-typespec.md, validate.md
 │   ├── generators/golang/ #   generator.md + patterns/{domain,ports,application,adapters,mock,authorization,support}.md
 │   └── manifest.schema.json
