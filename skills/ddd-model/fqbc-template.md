@@ -434,7 +434,7 @@ Endpoints for context-to-context communication (not exposed externally).
 
 | Operation | Method | Path | Consumer |
 |-----------|--------|------|----------|
-| [OperationName] | GET/POST | `/internal/[path]` | [Context name] |
+| [OperationName] | GET/POST | `/api/{context-slug}/v1/internal/[path]` | [Context name] |
 
 **When to include this section:**
 - Context exposes internal APIs consumed by other contexts
