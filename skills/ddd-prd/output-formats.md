@@ -132,7 +132,7 @@ prd-[project-name]-[scope].md
 ```
 
 Examples:
-- `prd-inventory-system-poc.md`
+- `prd-inventory-system-mvp.md`
 - `prd-user-auth-mvp.md`
 - `prd-reporting-dashboard-phase1.md`
 

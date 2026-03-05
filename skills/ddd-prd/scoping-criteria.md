@@ -1,10 +1,10 @@
-# PoC Scoping Criteria
+# Scoping Criteria
 
-Guidelines for identifying the minimum viable feature set for a Proof of Concept.
+Guidelines for identifying the minimum viable feature set that validates the core hypothesis.
 
 ## Inclusion Criteria
 
-Features should be included in PoC scope when they meet ANY of these criteria:
+Features should be included in scope when they meet ANY of these criteria:
 
 ### 1. Core Value Validation
 - Demonstrates the primary value proposition to stakeholders
@@ -30,7 +30,7 @@ Look for these signals in the source documentation:
 
 ## Exclusion Criteria
 
-Features should be excluded from PoC when they meet ANY of these criteria:
+Features should be excluded when they meet ANY of these criteria:
 
 ### 1. Enhancement Over Core
 - Improves UX but doesn't enable new capability
@@ -44,14 +44,14 @@ Features should be excluded from PoC when they meet ANY of these criteria:
 - Depends on third-party services not yet contracted
 - Needs data that doesn't exist yet
 
-**Mitigation**: Note as assumption; mock or stub for PoC if critical path
+**Mitigation**: Note as assumption; mock or stub if on the critical path
 
 ### 3. Scale and Performance
 - Handles edge cases for high volume
 - Optimizes for production load
 - Implements caching, queuing, or distribution
 
-**Rationale**: PoC validates functionality, not scale
+**Rationale**: Minimum viable scope validates functionality, not scale
 
 ### 4. Secondary User Flows
 - Error recovery workflows (manual intervention acceptable)
@@ -72,7 +72,7 @@ For each feature, ask these questions in order:
    YES → Exclude (unless required for demo flow)
    NO  → Include
 
-2. Can this feature be manually simulated for the PoC period?
+2. Can this feature be manually simulated for the initial scope?
    YES → Exclude (note in assumptions)
    NO  → Include
 
@@ -90,7 +90,7 @@ For each feature, ask these questions in order:
 For each excluded feature, document:
 - **Feature name**: Clear identifier
 - **Reason for exclusion**: Which criterion applies
-- **Mitigation**: How PoC handles absence (mock, manual, deferred)
+- **Mitigation**: How the system handles absence (mock, manual, deferred)
 - **Dependency**: What would need to change to include it
 
 Example:

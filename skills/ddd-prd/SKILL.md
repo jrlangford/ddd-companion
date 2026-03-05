@@ -35,13 +35,13 @@ When invoked without arguments, display the PRD structure summary.
 ```markdown
 ## PRD Schema Overview
 
-A lean PRD for PoC development consists of these sections:
+A lean PRD consists of these sections:
 
 | # | Section | Purpose |
 |---|---------|---------|
 | 1 | Executive Summary | Quick overview of project and scope |
 | 2 | Background & Context | Why this project exists |
-| 3 | PoC Scope | What's included and excluded |
+| 3 | Scope | What's included and excluded |
 | 4 | Functional Areas | Cohesive feature groupings (context candidates) |
 | 5 | Functional Requirements | Detailed specs by area |
 | 6 | Domain Glossary | Term definitions (Ubiquitous Language) |
@@ -108,7 +108,7 @@ Validate an existing PRD document against the schema.
 |---------|--------|-------|
 | 1. Executive Summary | ✓ | — |
 | 2. Background & Context | ✓ | — |
-| 3. PoC Scope | ✓ | — |
+| 3. Scope | ✓ | — |
 | 4. Functional Areas | ⚠ | Missing cohesion rationale for Area 2 |
 | 5. Functional Requirements | ✓ | — |
 | 6. Domain Glossary | ⚠ | 3 terms used but not defined |
@@ -149,7 +149,7 @@ Generate an empty PRD template with all required sections.
 
 1. Generate a complete PRD template following [schema.md](schema.md)
 2. Include placeholder text and guidance comments
-3. Write to `ddd-workspace/prd/prd-[project-name]-poc.md`
+3. Write to `ddd-workspace/prd/prd-[project-name]-[scope].md`
 4. If no project name provided, ask for one
 
 ### Output Template
@@ -158,7 +158,7 @@ Generate the following structure (see [output-formats.md](output-formats.md) for
 
 ```markdown
 # Product Requirements Document
-## [Project Name] — PoC
+## [Project Name] — [Scope]
 
 **Version**: 0.1 (Draft)
 **Date**: [Current Date]
@@ -170,7 +170,7 @@ Generate the following structure (see [output-formats.md](output-formats.md) for
 
 1. [Executive Summary](#1-executive-summary)
 2. [Background & Context](#2-background--context)
-3. [PoC Scope](#3-poc-scope)
+3. [Scope](#3-scope)
 4. [Functional Areas](#4-functional-areas)
 5. [Functional Requirements](#5-functional-requirements)
 6. [Domain Glossary](#6-domain-glossary)
@@ -193,12 +193,12 @@ Generate the following structure (see [output-formats.md](output-formats.md) for
 <!--
 Briefly describe:
 - What this project is
-- What the PoC will validate
+- What the project will validate
 - Key functional areas
 -->
 
-This PRD defines the scope for a lean PoC of [Project Name], focusing on [scope].
-The PoC will validate [hypothesis] before expanding to [future scope].
+This PRD defines the scope for [Project Name], focusing on [scope description].
+The project will validate [core hypothesis] before expanding to [future scope].
 
 **Objective**: [One sentence goal]
 
@@ -219,13 +219,13 @@ Explain:
 
 ---
 
-## 3. PoC Scope
+## 3. Scope
 
 ### 3.1 In Scope
 
 <!--
-List capabilities included in PoC with brief rationale.
-See poc-scoping.md for inclusion criteria.
+List capabilities included with brief rationale.
+See scoping-criteria.md for inclusion criteria.
 -->
 
 - [Capability 1]: [Why included]
@@ -235,7 +235,7 @@ See poc-scoping.md for inclusion criteria.
 
 | Feature | Reason | Mitigation |
 |---------|--------|------------|
-| [Feature] | [Why deferred] | [How PoC handles absence] |
+| [Feature] | [Why deferred] | [How handled in current scope] |
 
 ---
 
@@ -382,7 +382,7 @@ These inform Context Mapping in technical design.
 
 ## 14. Success Criteria
 
-The PoC is successful when:
+The project is successful when:
 
 1. [Measurable outcome]
 2. [Measurable outcome]
@@ -436,7 +436,7 @@ References, links, and supplementary material.
 ```markdown
 ## Template Generated
 
-**File**: `ddd-workspace/prd/prd-[project-name]-poc.md`
+**File**: `ddd-workspace/prd/prd-[project-name]-[scope].md`
 
 The template includes all 15 required sections with placeholder guidance.
 
@@ -477,7 +477,7 @@ Show the template and guidance for a specific PRD section.
 1. Look up the section in [schema.md](schema.md)
 2. Present the template with detailed guidance
 3. Include examples where helpful
-4. Reference related guidance docs ([ddd-alignment.md](ddd-alignment.md), [poc-scoping.md](poc-scoping.md))
+4. Reference related guidance docs ([ddd-alignment.md](ddd-alignment.md), [scoping-criteria.md](scoping-criteria.md))
 
 ### Example Output (for `business-rules`)
 
@@ -541,8 +541,8 @@ Use this command when you have an existing PRD that needs:
 ### Input
 
 Provide the path to an existing PRD file:
-- Absolute path: `/path/to/prd-project-poc.md`
-- Relative path: `ddd-workspace/prd/prd-project-poc.md`
+- Absolute path: `/path/to/prd-project-mvp.md`
+- Relative path: `ddd-workspace/prd/prd-project-mvp.md`
 
 ---
 
@@ -576,7 +576,7 @@ Provide the path to an existing PRD file:
 |---------|--------|-------|
 | Executive Summary | ✓ Present | — |
 | Background & Context | ✓ Present | — |
-| PoC Scope | ✓ Present | — |
+| Scope | ✓ Present | — |
 | Functional Areas | ✓ Present | — |
 | Functional Requirements | ✓ Present | — |
 | Domain Glossary | ⚠ Incomplete | 3 terms undefined |
@@ -776,7 +776,7 @@ Evaluate the PRD for downstream Bounded Context work:
 - Traceability Index: Added BR-06, BR-07, BR-08
 
 ### Files
-- **Updated**: ddd-workspace/prd/prd-project-poc.md
+- **Updated**: ddd-workspace/prd/prd-project-mvp.md
 
 **Apply these changes?**
 ```
@@ -786,7 +786,7 @@ After approval, write the file and confirm:
 ```markdown
 ## Changes Applied
 
-Updated: `ddd-workspace/prd/prd-project-poc.md`
+Updated: `ddd-workspace/prd/prd-project-mvp.md`
 
 ### Summary
 - Added Business Rules Catalog with 3 rules
@@ -814,7 +814,7 @@ Step-by-step review with approval at each change. Best for:
 User can specify multiple changes upfront as natural language:
 
 ```
-/ddd-prd edit ddd-workspace/prd/prd-project-poc.md extract embedded rules, define missing terms, add role-capability matrix
+/ddd-prd edit ddd-workspace/prd/prd-project-mvp.md extract embedded rules, define missing terms, add role-capability matrix
 ```
 
 Process all requested changes, then present unified review before applying.
@@ -849,7 +849,7 @@ This skill includes these reference documents:
 | [schema.md](schema.md) | Complete PRD structure and section templates |
 | [ddd-alignment.md](ddd-alignment.md) | Guidance for extracting DDD artifacts |
 | [output-formats.md](output-formats.md) | Markdown and Mermaid formatting |
-| [poc-scoping.md](poc-scoping.md) | Criteria for PoC feature selection |
+| [scoping-criteria.md](scoping-criteria.md) | Criteria for minimum viable scope feature selection |
 
 Related skills:
 - `/ddd-extract-prd` — extract PRD from source documentation (Notion, HTML, Markdown)

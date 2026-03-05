@@ -27,7 +27,7 @@ Skills are not code — they are structured prompts that Claude follows. There i
 ```
 skills/
 ├── ddd-extract-prd/       # SKILL.md + no supporting docs
-├── ddd-prd/               # SKILL.md + schema.md, ddd-alignment.md, output-formats.md, poc-scoping.md
+├── ddd-prd/               # SKILL.md + schema.md, ddd-alignment.md, output-formats.md, scoping-criteria.md
 ├── ddd-model/             # SKILL.md + fqbc-template.md, context-mapping-patterns.md,
 │                          #   api-conventions.md, manifest-schema.md
 ├── ddd-implement/         # SKILL.md + generator-architecture.md, bcr-to-typespec.md, validate.md

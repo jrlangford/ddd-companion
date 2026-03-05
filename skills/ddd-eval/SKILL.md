@@ -291,7 +291,7 @@ Score PRD quality through both lenses. Workspace mode only.
 |-----------|--------|---------------|
 | Requirements actionability | 25% | Can a developer read a requirement and know what to build? Are acceptance criteria specific enough to test? Deduct for vague stories or untestable criteria. |
 | Business rule usefulness | 25% | Are business rules stated in domain language a developer can translate to code? Do they capture real constraints the business cares about, not obvious validations? Deduct for trivial rules (e.g., "field is required") or rules that restate the requirement. |
-| Scope realism | 20% | Is the PoC scope achievable? Are out-of-scope items handled with mitigations? Deduct for scope that tries to cover too much or defers critical dependencies without mitigation. |
+| Scope realism | 20% | Is the scope achievable? Are out-of-scope items handled with mitigations? Deduct for scope that tries to cover too much or defers critical dependencies without mitigation. |
 | Domain language clarity | 15% | Does the glossary capture terms that actually disambiguate? Would a new team member understand the domain faster with this PRD? Deduct for glossary padding (obvious terms) or missing terms that caused real confusion. |
 | Downstream readiness | 15% | Can `/ddd-model` consume this PRD productively? Are functional areas cohesive enough to suggest bounded contexts? Deduct if areas are too coarse or too fine to map to contexts. |
 

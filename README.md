@@ -176,7 +176,7 @@ Markdown is recommended as the most portable format. Notion requires the Notion 
 **Phases:**
 
 1. **Discovery** — Understand project purpose, goals, key entities
-2. **Scope Definition** — Identify minimum viable PoC features, group by functional area
+2. **Scope Definition** — Identify minimum viable features, group by functional area
 3. **Functional Requirements** — Detail requirements with business rules, entities, roles
 4. **Document Generation** — Produce final PRD with DDD-ready artifacts
 
@@ -391,7 +391,7 @@ Let's walk through the pipeline with a hypothetical "Task Management" applicatio
 ### Initial Domain Terms
 Task, Project, Assignee, Status, Due Date, Priority, Sprint
 
-**Shall I proceed to identify PoC scope?**
+**Shall I proceed to define scope?**
 ```
 
 After reviewing and confirming each phase, the output is a PRD with:

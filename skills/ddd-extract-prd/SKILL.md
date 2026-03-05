@@ -1,6 +1,6 @@
 ---
 name: ddd-extract-prd
-description: Extract a lean PRD from source documentation (Notion, HTML, Markdown) for PoC development
+description: Extract a lean PRD from source documentation (Notion, HTML, Markdown)
 argument-hint: "[source-url-or-path]"
 ---
 
@@ -30,7 +30,7 @@ For PRD structure reference, validation, editing, or templates, use `/ddd-prd`.
 ## Core Principles
 
 1. **Human-in-the-loop**: Present findings at each phase; wait for user confirmation before proceeding
-2. **Minimum viable scope**: Identify the smallest feature set that validates the core hypothesis
+2. **Minimum viable scope**: Identify the smallest feature set that validates the core hypothesis. The scope descriptor (e.g., poc, mvp, phase1) is user-defined
 3. **Source as guideline, not gospel**: Technical details in source docs are context, not specifications
 4. **Output drives design**: The PRD defines what to build; technical design flows from requirements
 5. **DDD-ready artifacts**: Extract domain terminology, business rules, and functional cohesion to seed Bounded Context work
@@ -95,7 +95,7 @@ If the source type cannot be determined, ask the user to clarify.
 |-----------|------|-------------|
 | [US-123] | [Jira/Notion/etc.] | [Brief description] |
 
-**Shall I proceed to identify PoC scope?**
+**Shall I proceed to define scope?**
 ```
 
 Wait for user confirmation before Phase 2.
@@ -104,13 +104,13 @@ Wait for user confirmation before Phase 2.
 
 ## Phase 2: Scope Definition
 
-**Goal**: Identify the minimum feature set and functional areas for a valid PoC.
+**Goal**: Identify the minimum feature set and functional areas that validate the core hypothesis.
 
 ### Actions
 
 1. Extract user stories or requirements from the source
 2. Identify priority indicators (Priority field, Phase field, Status)
-3. Apply PoC scoping criteria (see [../ddd-prd/poc-scoping.md](../ddd-prd/poc-scoping.md))
+3. Apply scoping criteria (see [../ddd-prd/scoping-criteria.md](../ddd-prd/scoping-criteria.md))
 4. **Group features by functional cohesion** — areas that share terminology, entities, and rules
 5. **Extract domain terminology** — candidate glossary terms with working definitions
 6. **Surface business rules** — explicit policies and constraints (separate from acceptance criteria)
@@ -128,7 +128,7 @@ These functional areas are **candidates for Bounded Contexts** in downstream DDD
 ### Present to User
 
 ```markdown
-## Proposed PoC Scope
+## Proposed Scope
 
 ### Functional Areas (Potential Context Boundaries)
 
@@ -138,12 +138,12 @@ These functional areas are **candidates for Bounded Contexts** in downstream DDD
 
 | ID | Feature | Rationale |
 |----|---------|-----------|
-| US-01 | [Feature name] | [Why essential for PoC] |
+| US-01 | [Feature name] | [Why essential] |
 
 #### 2. [Area Name]
 ...
 
-### Excluded from PoC
+### Excluded from Scope
 | Feature | Reason |
 |---------|--------|
 | [Feature] | [Why deferred] |
@@ -265,7 +265,7 @@ Wait for user confirmation before Phase 4.
    |---|---------|-------------|
    | 1 | Executive Summary | Phase 1 (Discovery) |
    | 2 | Background & Context | Phase 1 (Discovery) |
-   | 3 | PoC Scope | Phase 2 (Scope Definition) |
+   | 3 | Scope | Phase 2 (Scope Definition) |
    | 4 | Functional Areas | Phase 2 (Scope Definition) |
    | 5 | Functional Requirements | Phase 3 (Functional Requirements) |
    | 6 | Domain Glossary | Phase 2 + Phase 3 |
@@ -335,7 +335,7 @@ Wait for user confirmation before Phase 4.
 User: /ddd-extract-prd https://notion.so/project/12345
 
 Claude: [Detects Notion source, fetches page, presents Phase 1 summary]
-        "Shall I proceed to identify PoC scope?"
+        "Shall I proceed to define scope?"
 
 User: Yes, looks good.
 
@@ -349,7 +349,7 @@ Claude: [Groups by functional area, extracts terms, presents Phase 2]
 User: /ddd-extract-prd https://docs.example.com/project-spec.html
 
 Claude: [Detects HTML URL, fetches content, presents Phase 1 summary]
-        "Shall I proceed to identify PoC scope?"
+        "Shall I proceed to define scope?"
 ...
 ```
 
@@ -358,6 +358,6 @@ Claude: [Detects HTML URL, fetches content, presents Phase 1 summary]
 User: /ddd-extract-prd /path/to/project-requirements.md
 
 Claude: [Detects Markdown file, reads content, presents Phase 1 summary]
-        "Shall I proceed to identify PoC scope?"
+        "Shall I proceed to define scope?"
 ...
 ```

@@ -1,6 +1,6 @@
 # PRD Schema
 
-This document defines the structure and content of a lean PRD for PoC development. PRDs following this schema are designed to feed downstream Bounded Context Review and Domain-Driven Design work.
+This document defines the structure and content of a lean PRD. PRDs following this schema are designed to feed downstream Bounded Context Review and Domain-Driven Design work.
 
 ## Purpose
 
@@ -32,7 +32,7 @@ PRD                           →  Bounded Context Review     →  FQBC Document
 |---|---------|---------|---------------|
 | 1 | Executive Summary | Quick overview | — |
 | 2 | Background & Context | Why this exists | Problem domain |
-| 3 | PoC Scope | What's in/out | Boundary definition |
+| 3 | Scope | What's in/out | Boundary definition |
 | 4 | Functional Areas | Cohesive groupings | Context candidates |
 | 5 | Functional Requirements | Detailed specs (by area) | Behaviors |
 | 6 | Domain Glossary | Term definitions | Ubiquitous Language |
@@ -57,8 +57,8 @@ PRD                           →  Bounded Context Review     →  FQBC Document
 ```markdown
 ## 1. Executive Summary
 
-This PRD defines the scope for a [lean PoC / MVP / Phase 1] of [Project Name],
-focusing on [scope description]. The [PoC/MVP] will validate [core hypothesis]
+This PRD defines the scope for [Project Name], focusing on [scope description].
+The project will validate [core hypothesis]
 before expanding to [future scope].
 
 **Objective**: [One sentence goal]
@@ -75,10 +75,10 @@ that represent potential Bounded Context boundaries for technical design.
 [Why this project exists, business drivers, current state problems]
 ```
 
-### 3. PoC Scope
+### 3. Scope
 
 ```markdown
-## 3. PoC Scope
+## 3. Scope
 
 ### 3.1 In Scope
 [List of included capabilities with rationale]
@@ -87,7 +87,7 @@ that represent potential Bounded Context boundaries for technical design.
 
 | Feature | Reason | Mitigation | Dependency |
 |---------|--------|------------|------------|
-| [Feature] | [Why deferred] | [How PoC handles absence] | [What would enable inclusion] |
+| [Feature] | [Why deferred] | [How handled in current scope] | [What would enable inclusion] |
 ```
 
 ### 4. Functional Areas
@@ -252,7 +252,7 @@ Conventions for HTTP APIs exposed by this system.
 
 **URL Structure**: [e.g., /api/{context}/{resource}, kebab-case]
 
-**Versioning Strategy**: [e.g., URL path /v1/, header-based, none for PoC]
+**Versioning Strategy**: [e.g., URL path /v1/, header-based, none for initial scope]
 
 **Response Format**: [e.g., envelope with data/meta/errors, or flat JSON]
 
@@ -278,7 +278,7 @@ Conventions for HTTP APIs exposed by this system.
 ```markdown
 ## 14. Success Criteria
 
-The [PoC/MVP] is successful when:
+The project is successful when:
 
 1. [Measurable outcome 1]
 2. [Measurable outcome 2]
@@ -384,7 +384,7 @@ prd-[project-name]-[scope].md
 ```
 
 Examples:
-- `prd-inventory-system-poc.md`
+- `prd-inventory-system-mvp.md`
 - `prd-user-auth-mvp.md`
 - `prd-reporting-dashboard-phase1.md`
 
