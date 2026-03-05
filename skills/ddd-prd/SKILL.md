@@ -103,6 +103,8 @@ Validate an existing PRD document against the schema.
 ```markdown
 ## PRD Validation: [filename]
 
+**Status symbols**: `✓` = present and complete | `⚠` = present but has issues | `✗` = missing or invalid | `—` = optional, not included
+
 ### Section Compliance
 
 | Section | Status | Notes |
