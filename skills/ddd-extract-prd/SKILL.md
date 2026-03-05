@@ -153,6 +153,11 @@ These functional areas are **candidates for Bounded Contexts** in downstream DDD
 |------|-------------------|------|
 | [Term] | [What it means in this domain] | [Functional area] |
 
+### Preliminary Business Rules
+| Rule | Type | Area |
+|------|------|------|
+| [Policy or constraint] | [Invariant/Precondition/Postcondition/Derivation] | [Functional area] |
+
 **Does this scope and grouping look right? Any features to add, remove, or regroup?**
 ```
 
