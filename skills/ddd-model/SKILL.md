@@ -35,6 +35,7 @@ Before starting BCR, you need a PRD with these sections:
   - Response format conventions
   - Authentication approach
 - **Authorization Pattern** (optional) — How authorization decisions are made across contexts
+- **Traceability Index** — Requirement IDs with Source Refs for end-to-end traceability
 
 **PRD can be in any format** (Markdown, HTML, etc.). The skill reads the content, not the format.
 
