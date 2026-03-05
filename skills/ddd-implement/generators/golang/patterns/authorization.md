@@ -238,8 +238,8 @@ func (m *AuthMiddleware) RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func (m *AuthMiddleware) parseToken(tokenString string) (*auth.Claims, error) {
-	// TODO: Implement JWT parsing with m.jwtSecret
-	// For walking skeleton, parse basic JWT or accept test tokens
+	// WALKING SKELETON STUB: Replace with real JWT parsing using m.jwtSecret
+	// For now, returns an error — implement actual token validation before production use
 	return nil, auth.NewAuthenticationError("token parsing not implemented")
 }
 ```
