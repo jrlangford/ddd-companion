@@ -309,6 +309,8 @@ import (
 
 	"{module}/internal/{context}/ports/{context}primary"
 	"{module}/internal/{context}/{context}domain"
+	"{module}/internal/support/auth"
+	supporterrors "{module}/internal/support/errors"
 	"{module}/internal/support/validation"
 )
 
@@ -345,7 +347,7 @@ func (h *Handler) {Operation}Handler(w http.ResponseWriter, r *http.Request) {
 	// Call service
 	result, err := h.{context}Service.{Operation}(r.Context(), req.{Params}...)
 	if err != nil {
-		h.writeErrorResponse(w, "{operation}_failed", err.Error(), http.StatusInternalServerError)
+		h.handleServiceError(w, err)
 		return
 	}
 
@@ -356,6 +358,21 @@ func (h *Handler) {Operation}Handler(w http.ResponseWriter, r *http.Request) {
 		Status: "success",
 		Data:   response,
 	})
+}
+
+// handleServiceError maps domain and auth errors to appropriate HTTP responses
+func (h *Handler) handleServiceError(w http.ResponseWriter, err error) {
+	switch e := err.(type) {
+	case auth.AuthenticationError:
+		h.writeErrorResponse(w, "authentication_failed", e.Error(), http.StatusUnauthorized)
+	case auth.AuthorizationError:
+		h.writeErrorResponse(w, "forbidden", e.Error(), http.StatusForbidden)
+	case {context}domain.DomainValidationError:
+		h.writeErrorResponse(w, "validation_error", e.Error(), http.StatusUnprocessableEntity)
+	default:
+		status := supporterrors.HTTPStatusCode(err)
+		h.writeErrorResponse(w, "error", err.Error(), status)
+	}
 }
 
 func (h *Handler) writeErrorResponse(w http.ResponseWriter, errorCode, message string, httpStatus int) {
