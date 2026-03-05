@@ -199,7 +199,7 @@ model ItemInstance {
   note: String?    — required if DISMISSED
 }
 
-**Authorization:** `permissions.roles.contains(item.assignedRole)`
+**Authorization:** `permissions.hasRole(item.assignedRole)`
 
 **Failure Scenarios:**
 - Item not found → 404 Not Found
@@ -421,8 +421,8 @@ FQBC authorization rules map to OpenAPI security requirements:
 
 | FQBC Authorization | TypeSpec Decorator |
 |-------------------|-------------------|
-| `permissions.roles.contains(X)` | `@useAuth(BearerAuth)` + document in `@doc` |
-| `permissions.roles.containsAny(X, Y)` | `@useAuth(BearerAuth)` + document in `@doc` |
+| `permissions.hasRole(X)` | `@useAuth(BearerAuth)` + document in `@doc` |
+| `permissions.hasAnyRole(X, Y)` | `@useAuth(BearerAuth)` + document in `@doc` |
 
 ---
 

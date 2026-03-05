@@ -265,7 +265,7 @@ Authorization: Bearer <jwt-token>
 In API Binding, specify required roles:
 
 ```markdown
-**Authorization**: `permissions.roles.contains(ATSSupervisor)`
+**Authorization**: `permissions.hasRole('ATSSupervisor')`
 ```
 
 ---

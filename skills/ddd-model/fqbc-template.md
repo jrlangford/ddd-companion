@@ -193,8 +193,8 @@ Operations in this context require these permissions:
 | Operation | Required Permission | Check Method |
 |-----------|---------------------|--------------|
 | [CommandName] | [Role or capability] | `permissions.hasAnyRole('Admin', 'Manager')` |
-| [CommandName] | [Role or capability] | `permissions.canAccess('resource', 'write')` |
-| [QueryName] | [Role or capability — often "authenticated user"] | `permissions.isAuthenticated()` |
+| [CommandName] | [Role or capability] | `permissions.hasRole('Supervisor')` |
+| [QueryName] | [Role or capability — often "any authenticated role"] | `permissions.hasAnyRole('Admin', 'User', 'ReadOnly')` |
 
 ### Permission Definitions
 
@@ -252,8 +252,7 @@ Messages that tell this context to perform an action. Directed at this context s
 **Intent**: [What the caller wants to achieve]
 
 **Authorization**: [Required permissions — use pattern from manifest.authorization]
-- Example (Permissions Object): `permissions.hasAnyRole('Admin', 'Manager')` or `permissions.canAccess('resource', 'write')`
-- Example (RBAC): Requires role `ADMIN` or `MANAGER`
+- Example: `permissions.hasAnyRole('Admin', 'Manager')` or `permissions.hasRole('Supervisor')`
 
 **Payload**:
 ```
