@@ -275,7 +275,7 @@ The manifest tracks granular progress for reliable session resumption.
 
 | Field | Purpose |
 |-------|---------|
-| `currentPhase` | Where in the overall workflow: `init`, `support`, `contexts`, `apiContracts`, `drivingAdapters`, `mainWiring`, `validation`, `complete` |
+| `currentPhase` | Where in the overall workflow: `init`, `support`, `contexts`, `drivingAdapters`, `apiContracts`, `mainWiring`, `validation`, `complete` |
 | `currentContext` | Which context is being processed (null if between contexts) |
 | `contexts[].status` | `pending`, `in_progress`, `complete`, `error` |
 | `contexts[].generatedFiles` | Array of file paths created for each phase |
