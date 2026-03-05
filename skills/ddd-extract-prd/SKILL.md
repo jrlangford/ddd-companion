@@ -135,6 +135,8 @@ These functional areas are **candidates for Bounded Contexts** in downstream DDD
 #### 1. [Area Name]
 **Cohesion**: [Why these features belong together]
 **Key Terms**: [Domain terms specific to this area]
+**Key Entities**: [Conceptual entities owned by this area]
+**Stakeholder**: [Primary business owner]
 
 | ID | Feature | Rationale |
 |----|---------|-----------|
@@ -143,10 +145,10 @@ These functional areas are **candidates for Bounded Contexts** in downstream DDD
 #### 2. [Area Name]
 ...
 
-### Excluded from Scope
-| Feature | Reason |
-|---------|--------|
-| [Feature] | [Why deferred] |
+### Out of Scope
+| Feature | Reason | Mitigation | Dependency |
+|---------|--------|------------|------------|
+| [Feature] | [Why deferred] | [How handled in current scope] | [What would enable inclusion] |
 
 ### Candidate Domain Glossary
 | Term | Working Definition | Area |
