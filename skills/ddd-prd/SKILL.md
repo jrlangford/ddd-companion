@@ -88,7 +88,8 @@ Validate an existing PRD document against the schema.
 ### Actions
 
 1. Read the PRD file from the provided path
-2. Check for required sections (see [schema.md](schema.md))
+2. Apply the validation checklist from [schema.md](schema.md#validation-checklist) as the baseline for structural checks
+3. Check for required sections (see [schema.md](schema.md))
 3. Validate content quality:
    - Business rules are in catalog (not embedded in acceptance criteria)
    - Domain terms are defined in glossary
