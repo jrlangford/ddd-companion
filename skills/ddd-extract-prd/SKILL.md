@@ -55,7 +55,7 @@ If the source type cannot be determined, ask the user to clarify.
 ### Actions
 
 1. Fetch the source document using the appropriate method:
-   - **Notion**: `Notion:notion-fetch` with the URL, then identify and fetch related databases and linked pages
+   - **Notion**: `Notion:notion-fetch` with the URL, then identify and fetch related databases and linked pages (limit to 1 level of linked pages to avoid runaway traversal; skip pages already fetched to prevent circular links; summarize skipped links for the user)
    - **HTML**: `WebFetch` for URLs or `Read` for local files
    - **Markdown**: `Read` the file directly
 
