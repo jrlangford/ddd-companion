@@ -266,7 +266,7 @@ Wait for user confirmation before Phase 4.
 ### Actions
 
 1. Compile all approved content from previous phases
-2. Structure according to the canonical PRD schema defined in [../ddd-prd/schema.md](../ddd-prd/schema.md) (15 required + 2 optional sections):
+2. Structure according to the canonical PRD schema defined in [../ddd-prd/schema.md](../ddd-prd/schema.md) (17 sections: 15 required, 2 optional — sections 11 and 12):
 
    | # | Section | Source Phase |
    |---|---------|-------------|

@@ -448,7 +448,7 @@ References, links, and supplementary material.
 
 **File**: `ddd-workspace/prd/prd-[project-name]-[scope].md`
 
-The template includes all 15 required sections with placeholder guidance.
+The template includes all 17 sections (15 required, 2 optional: sections 11 and 12) with placeholder guidance.
 
 **Next steps**:
 1. Fill in sections manually, or

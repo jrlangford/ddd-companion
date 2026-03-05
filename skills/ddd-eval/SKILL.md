@@ -299,7 +299,7 @@ Score PRD quality through both lenses. Workspace mode only.
 
 | Criterion | Weight | What to Check |
 |-----------|--------|---------------|
-| Section completeness | 25% | All 15 required sections from [schema.md](../ddd-prd/schema.md) present (sections 11 and 12 are optional). Deduct proportionally per missing required section. |
+| Section completeness | 25% | All 17 sections from [schema.md](../ddd-prd/schema.md) present (15 required, 2 optional: sections 11 and 12). Deduct proportionally per missing required section. |
 | Business rule explicitness | 20% | Rules in catalog (Section 7), not embedded in acceptance criteria. Score 100 if all rules are in catalog; deduct per embedded rule found in Section 5. |
 | Glossary coverage | 15% | Domain terms in glossary (Section 6) match terms used throughout. Score based on ratio of defined vs. referenced terms. |
 | Functional area cohesion | 15% | Each area (Section 4) has cohesion rationale, key terms, key entities. Deduct per area missing rationale. |
