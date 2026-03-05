@@ -209,7 +209,7 @@ Permissions used by this context:
 **This context expects**:
 - Authenticated identity (e.g., JWT claims) provided by upstream authentication
 - Service middleware builds Permissions object using this context's role definitions
-- Permissions object passed to handlers via [mechanism — e.g., request context, dependency injection]
+- Permissions object passed to handlers via request context (`auth.ClaimsContextKey`)
 
 **This context owns**:
 - Role definitions relevant to its domain (e.g., `OrderManager`, `InventoryClerk`)
