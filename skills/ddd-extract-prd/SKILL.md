@@ -304,6 +304,16 @@ Wait for user confirmation before Phase 4.
         └── prd-[project-name]-[scope].md
 ```
 
+### Next Steps
+
+After writing the PRD, present:
+
+> PRD written to `ddd-workspace/prd/prd-[project-name]-[scope].md`
+>
+> **Recommended next steps:**
+> 1. `/ddd-prd validate ddd-workspace/prd/prd-[project-name]-[scope].md` — check completeness
+> 2. `/ddd-model ddd-workspace/prd/prd-[project-name]-[scope].md` — begin bounded context decomposition
+
 ---
 
 ## Error Handling
