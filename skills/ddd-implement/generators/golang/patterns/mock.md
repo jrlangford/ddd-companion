@@ -31,7 +31,9 @@ import (
 	"{module}/internal/support/auth"
 )
 
-// Mock{Context}Application embeds the real application service but provides test data population capabilities
+// Mock{Context}Application embeds the real application service, wired with in-memory adapters.
+// It satisfies the same primary port interface as the real service, adding only test data
+// population capabilities. In mock mode, this IS the service that handlers use.
 type Mock{Context}Application struct {
 	*{context}application.{Context}ApplicationService
 	logger *slog.Logger
@@ -258,7 +260,9 @@ var _ bookingprimary.BookingService = (*MockBookingApplication)(nil)
 
 ## APP_MODE Wiring Pattern
 
-The `cmd/server/main.go` entry point uses the `APP_MODE` environment variable to switch between live and mock implementations. Both modes use the same repositories and real application services — mock mode additionally populates test data at startup.
+The `cmd/server/main.go` entry point uses the `APP_MODE` environment variable to switch between live and mock implementations.
+
+The mock application **embeds** the real application service and satisfies the same primary port interface. In mock mode, `main.go` creates the mock app (which internally instantiates the real service with in-memory adapters), populates test data through it, and wires handlers to it. Only one service instance exists per context in either mode.
 
 ```go
 package main
@@ -275,16 +279,13 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	appMode := os.Getenv("APP_MODE") // "mock" or "" (live)
 
-	// Repositories are the same in both modes (in-memory for walking skeleton)
+	// Repositories (in-memory for walking skeleton — both modes)
 	{entity}Repo := inmemory.NewInMemory{Entity}Repository()
 	eventBus := eventbus.NewInMemoryEventBus(logger)
 
-	// Application service is always the real one
-	{context}Svc := {context}application.New{Context}ApplicationService(
-		{entity}Repo, eventBus, logger,
-	)
+	// Single service instance — declared as the primary port interface
+	var {context}Svc {context}primary.{Context}Service
 
-	// In mock mode, populate test data through the application layer
 	if appMode == "mock" {
 		logger.Info("Running in mock mode — populating test data")
 		mockApp := {context}mock.NewMock{Context}Application(
@@ -295,9 +296,14 @@ func main() {
 			logger.Error("Failed to populate test data", "error", err)
 			os.Exit(1)
 		}
+		{context}Svc = mockApp
+	} else {
+		{context}Svc = {context}application.New{Context}ApplicationService(
+			{entity}Repo, eventBus, logger,
+		)
 	}
 
-	// Wire handlers — same service reference regardless of mode
+	// Wire handlers to whichever service was created
 	handler := httpadapter.NewHandler({context}Svc, logger)
 
 	// Start server
@@ -306,14 +312,134 @@ func main() {
 ```
 
 **Key points**:
-- Both modes use the same application service and repositories
-- Mock mode only adds test data population at startup — it does not swap implementations
-- The `Mock{Context}Application` embeds the real service, so populated data flows through real business logic
+- Only one service instance exists per context — either the real app or the mock app
+- The mock app embeds the real service, so all business logic executes identically in both modes
+- Mock mode populates data through the embedded service, then the same instance serves requests
+- Handlers accept the primary port interface, so they work with either implementation
+
+## Test Setup Through Application Services
+
+Tests should create their required state by calling application services during setup — not by using static fixture data. This ensures business rules are validated during setup and prevents fixture drift when domain rules change.
+
+### Test Helper Pattern
+
+Tests compose thin helper functions that call application services to build up state:
+
+```go
+package booking_test
+
+import (
+	"context"
+	"testing"
+
+	"myproject/internal/booking/bookingmock"
+	"myproject/internal/support/auth"
+)
+
+// Helper: create an authenticated test context
+func testContext(t *testing.T, roles ...string) context.Context {
+	t.Helper()
+	claims, _ := auth.NewClaims("test-user", "test-system", "test@example.com", roles, nil)
+	return context.WithValue(context.Background(), auth.ClaimsContextKey, claims)
+}
+
+// Helper: create a booked cargo and return its tracking ID
+func createBookedCargo(t *testing.T, app *bookingmock.MockBookingApplication, origin, dest string) string {
+	t.Helper()
+	ctx := testContext(t, string(auth.RoleAdmin))
+	cargo, err := app.BookNewCargo(ctx, origin, dest, "2026-12-31T00:00:00Z")
+	if err != nil {
+		t.Fatalf("failed to create test cargo: %v", err)
+	}
+	return cargo.GetTrackingId()
+}
+
+// Helper: create a cargo with an assigned route
+func createRoutedCargo(t *testing.T, app *bookingmock.MockBookingApplication, origin, dest string) string {
+	t.Helper()
+	trackingID := createBookedCargo(t, app, origin, dest)
+	ctx := testContext(t, string(auth.RoleAdmin))
+	if err := app.AssignRouteToCargo(ctx, trackingID, someItinerary()); err != nil {
+		t.Fatalf("failed to assign route: %v", err)
+	}
+	return trackingID
+}
+
+func TestCancelBooking(t *testing.T) {
+	app := setupMockApp(t)
+
+	// Setup: create the state this test needs via application services
+	trackingID := createBookedCargo(t, app, "USNYC", "JPTYO")
+
+	// Act
+	ctx := testContext(t, string(auth.RoleOperator))
+	err := app.CancelBooking(ctx, trackingID)
+
+	// Assert
+	if err != nil {
+		t.Errorf("expected cancellation to succeed: %v", err)
+	}
+}
+```
+
+**Key principles:**
+- Helpers call application services, never repositories directly
+- Each test creates exactly the state it needs — no shared mutable fixtures
+- If setup fails, the test fails fast with a clear message — this validates your domain assumptions
+- Helpers compose: `createRoutedCargo` calls `createBookedCargo`
+
+### Mock External Service Pattern
+
+When a bounded context depends on an external service (via secondary port), provide a mock implementation that tests can configure:
+
+```go
+package bookingmock
+
+import (
+	"myproject/internal/booking/bookingdomain"
+	"myproject/internal/booking/ports/bookingsecondary"
+)
+
+// MockRoutingService implements the RoutingService secondary port for testing
+type MockRoutingService struct {
+	routes map[string]bookingdomain.Itinerary
+}
+
+func NewMockRoutingService() *MockRoutingService {
+	return &MockRoutingService{
+		routes: make(map[string]bookingdomain.Itinerary),
+	}
+}
+
+// ConfigureRoute sets up a route that the mock will return for a given origin-destination pair
+func (m *MockRoutingService) ConfigureRoute(origin, destination string, itinerary bookingdomain.Itinerary) {
+	m.routes[origin+":"+destination] = itinerary
+}
+
+// FindOptimalRoute implements bookingsecondary.RoutingService
+func (m *MockRoutingService) FindOptimalRoute(origin, destination string) (bookingdomain.Itinerary, error) {
+	key := origin + ":" + destination
+	if route, ok := m.routes[key]; ok {
+		return route, nil
+	}
+	return bookingdomain.Itinerary{}, fmt.Errorf("no route configured for %s → %s", origin, destination)
+}
+
+var _ bookingsecondary.RoutingService = (*MockRoutingService)(nil)
+```
+
+**Key principles:**
+- Mock implements the same secondary port interface as the real adapter
+- Tests configure the mock's responses before acting — no static data
+- Missing configuration produces clear errors, not silent defaults
 
 ## Guidelines
 
 1. **Embed real service**: Mock embeds the actual application service
-2. **Seeded randomization**: Use seeded random for reproducibility
-3. **Admin context**: Test operations use admin permissions
-4. **Factory functions**: Generate realistic scenarios programmatically
-5. **Port compliance**: Mock must implement same interfaces as real service
+2. **Setup through services**: Tests create state by calling application services, not by populating repositories directly
+3. **No static fixtures**: Avoid global test data generators — each test creates what it needs
+4. **Composable helpers**: Build thin `t.Helper()` functions that compose service calls
+5. **Mock external dependencies**: Implement secondary port interfaces with configurable mocks
+6. **Admin context**: Test setup operations use admin permissions
+7. **Seeded randomization**: Use seeded random for reproducible scenario generation in mock mode
+8. **Port compliance**: Mock must implement same interfaces as real service

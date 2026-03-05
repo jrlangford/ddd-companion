@@ -201,14 +201,19 @@ TypeSpec files live at the project root level in the `api/` directory and serve 
 
 ## Phase Execution Order
 
-1. `support` - Generate support packages first
-2. `domain` - Generate domain layer for each context
-3. `ports` - Generate port interfaces
-4. `application` - Generate application services
-5. `adapters/driven` - Generate repositories and event bus
-6. `adapters/integration` - Generate ACL adapters
-7. `mock` - Generate mock applications
-8. `adapters/driving` - Generate HTTP handlers from FQBC + primary ports
-9. `api-contracts` - Generate TypeSpec definitions (documentation only)
-10. `fixtures` - Generate test data factories
-11. `main` - Wire dependencies in main.go
+These steps map to SKILL.md execution phases as shown:
+
+| # | Generator Step | SKILL.md Phase |
+|---|---------------|----------------|
+| 1 | `support` - Generate support packages | Phase 2 |
+| 2 | `domain` - Generate domain layer for each context | Phase 3a |
+| 3 | `ports` - Generate port interfaces | Phase 3b |
+| 4 | `application` - Generate application services | Phase 3c |
+| 5 | `adapters/driven` - Generate repositories and event bus | Phase 3d |
+| 6 | `adapters/integration` - Generate ACL adapters | Phase 3d |
+| 7 | `mock` - Generate mock applications | Phase 3e |
+| 8 | `adapters/driving` - Generate HTTP handlers from FQBC + primary ports | Phase 4 |
+| 9 | `api-contracts` - Generate TypeSpec definitions (documentation only) | Phase 5 |
+| 10 | `main` - Wire dependencies in main.go | Phase 6 |
+
+Steps 2–7 are executed per context (complete one context before starting the next). Steps 8–10 run after all contexts are complete.
