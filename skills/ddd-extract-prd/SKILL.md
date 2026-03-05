@@ -19,6 +19,8 @@ For PRD structure reference, validation, editing, or templates, use `/ddd-prd`.
 | **Local HTML** | `.html`, `.htm` file path | `Read` |
 | **Markdown** | `.md` file path | `Read` |
 
+> **Notion setup**: The `Notion:notion-fetch` method requires the [Notion MCP server](https://github.com/anthropics/notion-mcp-server). Add it to your Claude Code MCP config (`~/.claude/mcp.json`) with a Notion integration token that has access to the pages you want to extract. If Notion MCP is not configured, export the page as Markdown or HTML and use that as input instead.
+
 ## Output
 
 - **Format**: Markdown optimized for Obsidian (see [../ddd-prd/output-formats.md](../ddd-prd/output-formats.md))
