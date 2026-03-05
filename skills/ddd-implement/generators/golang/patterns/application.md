@@ -220,7 +220,7 @@ func (s *BookingApplicationService) BookNewCargo(ctx context.Context, origin, de
 	}
 
 	// Store cargo (infrastructure)
-	if err := s.cargoRepo.Store(cargo); err != nil {
+	if err := s.cargoRepo.Store(ctx, cargo); err != nil {
 		s.logger.Error("Failed to store cargo", "trackingId", cargo.GetTrackingId(), "error", err)
 		return bookingdomain.Cargo{}, err
 	}

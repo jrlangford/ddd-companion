@@ -87,6 +87,8 @@ func (c *Claims) HasAnyRole(roles ...Role) bool {
 ```go
 package auth
 
+import "context"
+
 // Permission represents a named capability
 type Permission string
 
@@ -194,6 +196,7 @@ The middleware extracts JWT claims and attaches them to the request context. It 
 package httpmiddleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
