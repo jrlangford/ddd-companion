@@ -180,7 +180,14 @@ func New{ValueObject}({{constructor_params}}) ({ValueObject}, error) {
 ```go
 package {context}domain
 
-import "time"
+import (
+	"time"
+
+	"{{module}}/internal/support/basedomain"
+)
+
+// Compile-time interface assertion
+var _ basedomain.DomainEvent = (*{EventName}Event)(nil)
 
 // {EventName}Event is raised when {event_description}
 type {EventName}Event struct {
