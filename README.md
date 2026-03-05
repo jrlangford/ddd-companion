@@ -35,12 +35,14 @@ flowchart LR
 /ddd-implement
 ```
 
+> **Starting from an existing PRD?** Use `/ddd-prd validate` to check schema alignment before running `/ddd-model`.
+
 Each skill is interactive and guides the user through its phases. The human-in-the-loop is essential—Claude presents findings at each stage and waits for confirmation before proceeding.
 
 ### Prerequisites
 
 - **Go 1.21+** — for skeleton compilation and execution
-- **Node.js 18+** — for TypeSpec API contract compilation (runs `npm install` in `/api`)
+- **Node.js 18+** *(optional)* — for TypeSpec API contract compilation (runs `npm install` in `/api`)
 - **[just](https://github.com/casey/just)** — for skill installation commands
 - **Claude Code** — with skills installed (see Installation)
 
