@@ -58,11 +58,11 @@
 │   │   │       ├── dto.go                # Request/response DTOs (derived from TypeSpec)
 │   │   │       ├── handlers.go           # HTTP handlers (implement TypeSpec contract)
 │   │   │       ├── routes.go             # Route registration
-│   │   │       └── middleware/
+│   │   │       └── httpmiddleware/
 │   │   │           └── auth_middleware.go
 │   │   ├── driven/                       # Outbound adapters
-│   │   │   ├── inmemory/                 # In-memory repositories
-│   │   │   └── eventbus/                 # Event publishing
+│   │   │   ├── in_memory_{entity}_repo/  # In-memory repositories (one per entity)
+│   │   │   └── event_bus/                # Event publishing
 │   │   └── integration/                  # Cross-context adapters (ACLs)
 │   │       └── {context_a}_to_{context_b}_handler.go
 │   └── support/                          # Shared infrastructure
@@ -72,7 +72,6 @@
 │       ├── errors/                       # Common error types
 │       ├── eventbus/                     # Event bus infrastructure
 │       ├── logging/                      # Structured logging
-│       ├── middleware/                   # HTTP middleware
 │       ├── server/                       # HTTP server setup
 │       └── validation/                   # Input validation
 ├── test/

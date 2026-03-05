@@ -12,7 +12,7 @@ Defines the shared infrastructure packages generated in Phase 2. These types are
 - `internal/support/logging/logger.go` - Structured logger interface
 - `internal/support/server/server.go` - HTTP server setup
 
-Note: `auth/` patterns are defined in `authorization.md`. `eventbus/` patterns are defined in `adapters.md`.
+Note: `auth/` patterns are defined in `authorization.md`. `eventbus/` patterns are defined in `adapters.md`. Auth middleware (`httpmiddleware/`) is a driving adapter defined in `authorization.md`, generated in Phase 4.
 
 ## Patterns
 

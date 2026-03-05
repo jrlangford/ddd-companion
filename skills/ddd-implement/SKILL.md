@@ -430,10 +430,9 @@ To resume: re-invoke `/ddd-implement` — the manifest tracks all progress.
 5. Generate `internal/support/errors/`
 6. Generate `internal/support/logging/`
 7. Generate `internal/support/eventbus/`
-8. Generate `internal/support/middleware/`
-9. Generate `internal/support/server/`
+8. Generate `internal/support/server/`
 
-**Checkpoint**: Update `infrastructure.support.status = "complete"` and `files` array
+**Checkpoint**: Update `infrastructure.support.status = "complete"` and `infrastructure.eventBus.status = "complete"` with their respective `files` arrays
 
 **Reference**: `generators/golang/generator.md`
 
