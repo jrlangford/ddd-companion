@@ -196,12 +196,7 @@ Operations in this context require these permissions:
 | [CommandName] | [Role or capability] | `permissions.hasRole('Supervisor')` |
 | [QueryName] | [Role or capability — often "any authenticated role"] | `permissions.hasAnyRole('Admin', 'User', 'ReadOnly')` |
 
-**Query Permissions:**
-
-| Query | Required Permission |
-|-------|---------------------|
-| List{Resource} | `{context}.{resource}.read` |
-| Get{Resource} | `{context}.{resource}.read` |
+> **Permission check style**: Use role-based checks (`permissions.hasRole(...)`, `permissions.hasAnyRole(...)`) for all operations. The `{context}.{resource}.action` naming convention in the Permission Definitions table below is for documenting permission *names* — the runtime check is always role-based via the Permissions Object Pattern.
 
 > All queries require authentication. Document required permissions explicitly — do not assume "any authenticated role" without stating it.
 
