@@ -123,6 +123,23 @@ Use standard Markdown checkboxes. Obsidian renders these as interactive checkbox
 - [x] Error messages display inline
 ```
 
+## Callouts
+
+Use Obsidian callout syntax for important notes, warnings, and assumptions:
+
+```markdown
+> [!note] Implementation Note
+> This feature depends on the authentication service being available.
+
+> [!warning] Out of Scope
+> Real-time sync is excluded from MVP — see Section 3.2.
+
+> [!info] Assumption
+> All users have a valid email address on file.
+```
+
+Supported types: `note`, `warning`, `info`, `tip`, `important`, `caution`.
+
 ## File Naming
 
 Use descriptive, kebab-case file names:
