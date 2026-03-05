@@ -1,10 +1,10 @@
 # DDD Standards Validation
 
-Validate an existing Go hexagonal architecture project against the DDD standards defined by ddd-implement.
+Validate an existing project against the DDD standards defined by ddd-implement's generator patterns.
 
 ## Purpose
 
-This document defines the validation workflow for auditing a project that follows (or intends to follow) the patterns in ddd-implement. It references the existing pattern files as the authoritative rules — it does not restate them.
+This document defines the validation workflow for auditing a project that follows (or intends to follow) the patterns in ddd-implement. It references the generator's pattern files as the authoritative rules — it does not restate them. The resolved generator determines which language-specific checks apply.
 
 ## When to Use
 
@@ -13,12 +13,12 @@ This document defines the validation workflow for auditing a project that follow
 - As a periodic health check during active development
 - Before code review, to catch structural drift early
 
-**Relationship to ddd-eval**: This validation workflow provides detailed Go-specific findings with file:line references and severity levels. `/ddd-eval impl` uses the same criteria at a higher level, scoring implementation quality on a 0–100 scale through pragmatic and purity lenses. Use validate.md for actionable fix lists; use ddd-eval for project health assessment.
+**Relationship to ddd-eval**: This validation workflow produces the structural findings that `/ddd-eval impl` consumes for its purity lens scoring. Validate is the single source of truth for structural checks — eval scores the findings, it does not re-implement them.
 
 ## Prerequisites
 
-- A Go project using hexagonal architecture with bounded contexts
-- The project root must contain `internal/` with context directories
+- A project using hexagonal architecture with bounded contexts
+- A matching generator in `generators/` for the project's language (resolved via module file detection — see `generator.md` Metadata for the expected module file)
 
 Optional but useful:
 - A `ddd-workspace/ddd-implement.manifest.json` (provides context names, entity lists, and expected file paths to validate against)

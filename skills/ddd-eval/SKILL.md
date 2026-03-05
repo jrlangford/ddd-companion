@@ -411,13 +411,14 @@ Score domain modeling quality through both lenses. Works in both data source mod
 
 **Codebase mode**:
 
-| Criterion | Weight | What to Check |
-|-----------|--------|---------------|
-| Domain layer structure | 25% | Each context has a dedicated domain package with entities and VOs. Score based on ratio of contexts with domain packages. |
-| Entity/VO/Aggregate patterns | 25% | Domain types follow expected patterns — entities have IDs, VOs are immutable with validated constructors, aggregates embed base entity. Deduct per type that lacks expected patterns. |
-| Bounded context separation | 20% | Contexts have distinct domain packages that don't import each other's domain types. Deduct per cross-context domain import. |
-| Event definitions | 15% | Domain events exist with proper structure (`EventName()`, `OccurredAt()`, payload). Score based on presence and completeness. |
-| Port interfaces | 15% | Port interfaces exist defining context boundaries — primary (service) and secondary (repository). Score based on coverage. |
+Derive from validate findings (same as impl purity). Use validate phases 1–3 and 8b findings to score domain modeling quality in code:
+
+| Category | Weight | Source (validate phases) |
+|----------|--------|--------------------------|
+| Domain layer structure | 30% | Phase 1 (directory structure) + Phase 2 (domain layer) findings |
+| Entity/VO/Aggregate patterns | 30% | Phase 2 (domain layer) findings |
+| Bounded context separation | 20% | Phase 8b (cross-context isolation) findings |
+| Event & port definitions | 20% | Phase 2 (domain events) + Phase 3 (ports) findings |
 
 ### Output
 
@@ -465,14 +466,9 @@ Score implementation architecture conformance through both lenses. Works in both
 
 ### Actions
 
-1. Scan the project for implementation artifacts using the resolved generator's directory structure (or generic patterns):
-   - **With generator**: Use directory structure defined in `generator.md`
-   - **Generic fallback**: Look for common DDD directory structures across the project
-   - Source files in domain, application, ports, adapter packages
-   - Entry point files as defined by the generator or by convention
-   - `api/` directory for TypeSpec/OpenAPI contracts
-2. If workspace mode, read `ddd-workspace/ddd-implement.manifest.json` for expected structure
-3. Score against both rubrics using rules from the generator's pattern files (`generators/{generator}/patterns/*.md`) and `generator.md`
+1. **Run validate** (from `ddd-implement/validate.md`) against the project to produce structural findings. If a `ddd-validation-report.md` already exists and is recent, read it instead of re-running.
+2. Score the **pragmatic lens** by reading the source code directly — pragmatic assessment requires understanding intent, not just structure.
+3. Score the **purity lens** by categorizing and counting validate findings by severity and phase.
 
 ### Impl Pragmatic Rubric
 
@@ -486,28 +482,22 @@ Score implementation architecture conformance through both lenses. Works in both
 
 ### Impl Purity Rubric
 
-Uses the rules from the generator's pattern files (`generators/{generator}/patterns/*.md`) and `generator.md`. For detailed per-file validation with severity-based findings, see `ddd-implement/validate.md` — it implements these same criteria as a comprehensive structural audit. This rubric scores the same concerns at a higher level for the evaluation report.
+The purity score is **derived from validate findings** (`ddd-implement/validate.md`). Validate is the single source of truth for structural checks — eval does not re-implement them.
 
-| Criterion | Weight | What to Check |
-|-----------|--------|---------------|
-| Hexagonal layer separation | 20% | Each context has domain, ports, application packages. Adapters are separate from contexts. Deduct per context missing layers. (ref: `generator.md` directory structure) |
-| Dependency direction | 25% | Domain does not depend on application or adapters. Application does not depend on adapters. No forbidden dependency patterns. (ref: `generator.md` import conventions) |
-| Domain isolation | 20% | Domain packages/modules depend only on support packages and standard library. No infrastructure types in domain layer. (ref: `patterns/domain.md`) |
-| Port/adapter pattern | 20% | Interfaces in port packages. Implementations in adapter or mock packages. Compile-time interface compliance assertions (`var _ Interface = (*Impl)(nil)`). (ref: `patterns/ports.md`, `patterns/application.md`, `patterns/adapters.md`) |
-| Cross-context isolation | 15% | No direct domain imports across context boundaries. Cross-context communication through events or integration adapters. (ref: `patterns/adapters.md` integration section) |
+**Scoring method**: Convert validate findings into a score per category by counting errors and warnings.
 
-### Checking Dependency Direction (Purity)
+| Category | Weight | Source (validate phases) |
+|----------|--------|--------------------------|
+| Directory structure | 15% | Phase 0–1 findings |
+| Domain layer correctness | 20% | Phase 2 findings |
+| Port/adapter contracts | 20% | Phase 3–6 findings |
+| Mock layer | 10% | Phase 7 findings |
+| Dependency direction & isolation | 25% | Phase 8a–8b findings |
+| API contract alignment | 10% | Phase 8c findings |
 
-**With generator**: Apply the dependency direction rules defined in the generator's pattern files directly. Do NOT redefine rules here — the pattern files are the single source of truth:
-- `generator.md` — import path conventions and forbidden dependency patterns
-- `patterns/domain.md` — domain layer constraints
-- `patterns/ports.md` — port interface rules
-- `patterns/application.md` — application layer dependency rules
-- `patterns/adapters.md` — adapter layer and cross-context isolation rules
+**Scoring formula per category**: Start at 100. Deduct 10 per error, 3 per warning. Floor at 0.
 
-For comprehensive phase-by-phase validation, see `validate.md` which implements these same checks with severity-based findings.
-
-**Generic fallback** (no generator available): Apply language-agnostic hexagonal dependency rules — domain must not depend on application or adapters, application must not depend on adapters, no cross-context domain imports. Inspect whatever import/require/include mechanism the language uses.
+**Overall purity score**: Weighted average of category scores.
 
 ### Output
 
@@ -532,22 +522,18 @@ For comprehensive phase-by-phase validation, see `validate.md` which implements 
 | Error Handling Value | [score] | [verdict] |
 | Cross-Context Communication | [score] | [verdict] |
 
-### Purity Assessment
+### Purity Assessment (from validate)
 
-| Criterion | Score | Details |
-|-----------|-------|---------|
-| Hexagonal Layer Separation | [score] | [N/M] contexts complete |
-| Dependency Direction | [score] | [N] violations |
-| Domain Isolation | [score] | [N] forbidden imports |
-| Port/Adapter Pattern | [score] | [N/M] with assertions |
-| Cross-Context Isolation | [score] | [N] cross-imports |
+| Category | Score | Errors | Warnings |
+|----------|-------|--------|----------|
+| Directory Structure | [score] | [N] | [N] |
+| Domain Layer | [score] | [N] | [N] |
+| Port/Adapter Contracts | [score] | [N] | [N] |
+| Mock Layer | [score] | [N] | [N] |
+| Dependency & Isolation | [score] | [N] | [N] |
+| API Contract Alignment | [score] | [N] | [N] |
 
-### Violations (Purity)
-
-| Severity | Violation | File | Details |
-|----------|-----------|------|---------|
-| error | [violation] | [file:line] | [description] |
-| warning | [violation] | [file:line] | [description] |
+See `ddd-validation-report.md` for detailed findings with file:line references.
 
 ### Synthesis
 
