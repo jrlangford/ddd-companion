@@ -603,6 +603,19 @@ In Phase 4, scan all FQBC API bindings for consolidation opportunities across co
 3. **Explicitly ask**: "Should we restructure these contexts, or accept the duplication?"
 4. If restructuring chosen, mark affected FQBCs for regeneration
 
+### Phase 4b: Revision Handling
+
+If any contexts are flagged as `needsRevision` in the coherence review:
+
+1. Check manifest for contexts with `status: "needsRevision"`
+2. Present the specific coherence findings for that context to the user
+3. Ask user whether to:
+   a. **Revise** — Update the FQBC to address findings, then set status back to `complete`
+   b. **Accept as-is** — Acknowledge the finding and set status to `complete` without changes
+   c. **Defer** — Leave as `needsRevision` for later resolution
+4. For revisions: re-read the FQBC, apply changes, update manifest status and `updated` timestamp
+5. After all `needsRevision` contexts are resolved, set `currentPhase` to `complete`
+
 ---
 
 ## User Review Protocol
