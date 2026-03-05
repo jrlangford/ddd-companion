@@ -199,7 +199,7 @@ Look for `ddd-model.manifest.json` in the workspace:
 **If no manifest:**
 - Check if PRD exists
 - If no PRD, direct user to create one first
-- If PRD exists, initialize workspace and start Phase 1
+- If PRD exists, suggest running `/ddd-prd validate [file]` if user hasn't already, then initialize workspace and start Phase 1
 
 ### Response Template: Resuming Work
 
@@ -240,6 +240,8 @@ The PRD can be Markdown (.md) or HTML (.html).
 Do you have a PRD ready?
 - **Yes** — Share it or point me to the file
 - **No** — Create one first before running /ddd-model
+
+**Tip**: Run `/ddd-prd validate [file]` before starting to catch structural issues early.
 
 Once I have the PRD, I'll check for authorization patterns and initialize the workspace.
 ```
