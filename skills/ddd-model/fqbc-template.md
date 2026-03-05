@@ -390,6 +390,8 @@ Commands map to state-changing HTTP methods (POST, PUT, PATCH, DELETE).
 | 404 | NOT_FOUND | [condition] |
 | 409 | CONFLICT | [condition] |
 
+> Use specific error codes from `api-conventions.md` (e.g., `VALIDATION_ERROR`, `INSUFFICIENT_ROLE`, `RESOURCE_NOT_FOUND`) rather than generic HTTP status descriptions.
+
 ### Query Bindings
 
 Queries map to GET requests.
