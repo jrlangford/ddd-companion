@@ -485,7 +485,7 @@ The subagent should:
 - Value objects with validation
 - Domain events
 - Domain errors
-- **Preserve traceability**: When generating domain entities and application services that enforce business rules, include a comment referencing the FQBC behavior ID and PRD Source Ref from Section 9 (Traceability). Example: `// Enforces BR-01 (Source: US-123)`
+- **Preserve traceability**: When generating application services that implement behaviors, include a comment linking to the FQBC behavior ID, PRD functional requirement, and source document reference (from FQBC Section 9). Use `—` when no source ref exists. Example: `// Implements: BH-01 | FR: FR-ordering-01 | Source: US-789`
 
 **Reference**: `generators/golang/patterns/domain.md`
 
