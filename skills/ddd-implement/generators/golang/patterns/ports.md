@@ -210,12 +210,41 @@ type EventPublisher interface {
 
 - **Port packages MUST contain only Go interface definitions.** No structs, type aliases, enums, or other concrete types may be defined in port files. All domain types (entities, value objects, IDs, enums, events) referenced by port interfaces MUST be imported from `{context}domain`. If a type does not yet exist in the domain package, create it there first.
 
+## Pagination
+
+When a list endpoint uses pagination (per FQBC API Binding / api-conventions.md), add a paginated list method to the repository alongside `FindAll`. The query and result types live in the domain package since port packages contain only interfaces.
+
+### Domain types (in `{context}domain`)
+
+```go
+// ListQuery holds pagination parameters
+type ListQuery struct {
+	Offset int
+	Limit  int
+}
+
+// ListResult holds a paginated result set
+type ListResult[T any] struct {
+	Items      []T
+	TotalCount int
+}
+```
+
+### Repository method (added to interface)
+
+```go
+	// List retrieves a paginated set of {entities}
+	List(ctx context.Context, query {context}domain.ListQuery) ({context}domain.ListResult[{context}domain.{Entity}], error)
+```
+
+The HTTP handler reads `offset` and `limit` from query parameters, calls `List`, and builds the response envelope with `next`/`previous` links per api-conventions.md.
+
 ## Guidelines
 
 1. **Primary ports** define what the context offers to the outside world
 2. **Secondary ports** define what the context needs from the outside world
 3. All ports use **context-local domain types** (never cross-context domain types)
-4. Repository interfaces follow standard patterns: `Store`, `FindById`, `FindAll`, `Update`, `Delete`
+4. Repository interfaces follow standard patterns: `Store`, `FindById`, `FindAll`, `Update`, `Delete`, and optionally `List` for paginated endpoints
 5. Use `context.Context` as first parameter for all operations
 6. Return `error` as last return value
 7. Document each method with its purpose
