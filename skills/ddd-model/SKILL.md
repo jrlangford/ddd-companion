@@ -234,6 +234,10 @@ Once I have the PRD, I'll check for authorization patterns and initialize the wo
 
 ### Response Template: Authorization Pattern Confirmation
 
+> **Note**: If the PRD specifies an authorization pattern other than Permissions Object Pattern,
+> inform the user that this is the only pattern currently supported by the implementation pipeline
+> (`/ddd-implement`). Ask whether to proceed with Permissions Object Pattern or pause for discussion.
+
 If the PRD does not explicitly mention authorization, inform the user:
 
 ```markdown
