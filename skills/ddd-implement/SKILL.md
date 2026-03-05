@@ -915,8 +915,8 @@ When invoked for generation:
 2. If exists: analyze state, report current progress, identify next action
 3. If not exists: look for BCR workspace, create initial manifest
 4. Execute ONE bounded context at a time using subagents
-5. After all contexts: generate TypeSpec contracts
-6. After contracts: generate HTTP adapters from contracts
+5. After all contexts: generate HTTP adapters from FQBC definitions
+6. Generate TypeSpec API documentation
 7. Generate main wiring
 8. Verify build after each major phase
 9. Report progress clearly for session handoff
