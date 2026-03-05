@@ -11,9 +11,9 @@ From manifest and FQBC:
 ## Output Files
 
 Shared support infrastructure:
-- `internal/support/auth/claims.go` - JWT claims and identity
+- `internal/support/auth/claims.go` - Claims type, constructor, role-check methods
 - `internal/support/auth/permissions.go` - Permissions interface and errors
-- `internal/support/auth/context.go` - Context key for claims propagation
+- `internal/support/auth/context.go` - `ClaimsContextKey` constant and `contextKey` type (extracted from Claims pattern block, lines 34-36)
 
 Per context:
 - `internal/{context}/{context}application/permissions.go` - Context-specific permissions
