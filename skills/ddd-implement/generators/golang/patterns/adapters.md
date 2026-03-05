@@ -333,14 +333,14 @@ func (h *Handler) {Operation}Handler(w http.ResponseWriter, r *http.Request) {
 	// Parse request body
 	var req {Operation}Request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		h.writeErrorResponse(w, "invalid_request", "Invalid JSON format", http.StatusBadRequest)
+		h.writeErrorResponse(w, "INVALID_REQUEST", "Invalid JSON format", http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
 
 	// Validate request
 	if err := validation.Validate(req); err != nil {
-		h.writeErrorResponse(w, "validation_error", err.Error(), http.StatusBadRequest)
+		h.writeErrorResponse(w, "VALIDATION_ERROR", err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -364,14 +364,14 @@ func (h *Handler) {Operation}Handler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleServiceError(w http.ResponseWriter, err error) {
 	switch e := err.(type) {
 	case auth.AuthenticationError:
-		h.writeErrorResponse(w, "authentication_failed", e.Error(), http.StatusUnauthorized)
+		h.writeErrorResponse(w, "UNAUTHORIZED", e.Error(), http.StatusUnauthorized)
 	case auth.AuthorizationError:
-		h.writeErrorResponse(w, "forbidden", e.Error(), http.StatusForbidden)
+		h.writeErrorResponse(w, "INSUFFICIENT_ROLE", e.Error(), http.StatusForbidden)
 	case {context}domain.DomainValidationError:
-		h.writeErrorResponse(w, "validation_error", e.Error(), http.StatusUnprocessableEntity)
+		h.writeErrorResponse(w, "VALIDATION_ERROR", e.Error(), http.StatusUnprocessableEntity)
 	default:
 		status := supporterrors.HTTPStatusCode(err)
-		h.writeErrorResponse(w, "error", err.Error(), status)
+		h.writeErrorResponse(w, "INTERNAL_ERROR", err.Error(), status)
 	}
 }
 

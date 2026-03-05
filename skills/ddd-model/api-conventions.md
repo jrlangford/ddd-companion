@@ -216,6 +216,7 @@ For DELETE operations, return 204 with no body.
 
 | HTTP Status | Error Code | When to Use |
 |-------------|------------|-------------|
+| 400 | `INVALID_REQUEST` | Malformed request (e.g., invalid JSON) |
 | 400 | `VALIDATION_ERROR` | Request body validation failed |
 | 400 | `INVALID_PARAMETER` | Query parameter invalid |
 | 400 | `MISSING_REQUIRED_FIELD` | Required field not provided |
