@@ -41,6 +41,7 @@ Each skill is interactive and guides the user through its phases. The human-in-t
 
 - **Go 1.21+** — for skeleton compilation and execution
 - **Node.js 18+** — for TypeSpec API contract compilation (runs `npm install` in `/api`)
+- **[just](https://github.com/casey/just)** — for skill installation commands
 - **Claude Code** — with skills installed (see Installation)
 
 ---
@@ -338,19 +339,17 @@ Install skills globally using symbolic links. This keeps skills synced with the 
 git clone https://github.com/jrlangford/ddd-companion.git
 cd ddd-companion
 
-# Create user skills directory if it doesn't exist
-mkdir -p ~/.claude/skills
-
-# Create symbolic links for each skill
-ln -s "$(pwd)/skills/ddd-extract-prd" ~/.claude/skills/ddd-extract-prd
-ln -s "$(pwd)/skills/ddd-model" ~/.claude/skills/ddd-model
-ln -s "$(pwd)/skills/ddd-implement" ~/.claude/skills/ddd-implement
-ln -s "$(pwd)/skills/ddd-prd" ~/.claude/skills/ddd-prd
-ln -s "$(pwd)/skills/ddd-list" ~/.claude/skills/ddd-list
-ln -s "$(pwd)/skills/ddd-eval" ~/.claude/skills/ddd-eval
+# Install all skills as user-level symlinks
+just install
 ```
 
 Skills are now available in all your projects. Updates to the source repository are reflected immediately.
+
+To remove all skill symlinks:
+
+```bash
+just uninstall
+```
 
 ### Option 2: Project Skills
 
