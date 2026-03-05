@@ -522,7 +522,7 @@ The subagent should:
 
 Handlers are generated directly from FQBC definitions and primary port interfaces — not from TypeSpec.
 
-**Reference**: `api-conventions.md` in the `ddd-model` skill defines project-wide HTTP conventions (URL structure, response envelope, error codes, pagination). FQBC API Bindings already follow these conventions — handlers must match them exactly.
+**Reference**: Read `../ddd-model/api-conventions.md` for project-wide HTTP conventions (URL structure, response envelope, error codes, pagination). FQBC API Bindings already follow these conventions — handlers must match them exactly.
 
 **Actions**:
 
