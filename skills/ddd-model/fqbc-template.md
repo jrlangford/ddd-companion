@@ -323,6 +323,8 @@ Messages announcing facts that occurred. Broadcast to interested consumers.
 }
 ```
 
+**Schema Version**: 1
+
 **Guarantees**: [Delivery semantics, ordering]
 ````
 
