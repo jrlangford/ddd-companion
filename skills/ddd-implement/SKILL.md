@@ -702,7 +702,7 @@ docker logs swagger-ui
 
 ### Phase 6: Generate Main Wiring
 
-**Trigger**: Driving adapters complete (Phase 4), `infrastructure.mainWiring.status = "pending"`
+**Trigger**: API contracts complete (Phase 5), `infrastructure.mainWiring.status = "pending"`
 
 **Note**: TypeSpec/OpenAPI (Phase 5) does not affect handler code, but the workflow proceeds sequentially through the manifest phases for simplicity.
 
