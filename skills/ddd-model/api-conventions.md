@@ -95,8 +95,8 @@ Internal endpoints are not exposed to external clients but follow the same conve
 
 | Purpose | Parameter | Type | Default | Notes |
 |---------|-----------|------|---------|-------|
-| Pagination (page) | `page` | integer | 1 | 1-indexed |
-| Pagination (size) | `pageSize` | integer | 20 | Max typically 100 |
+| Pagination (offset) | `offset` | integer | 0 | 0-indexed item offset |
+| Pagination (limit) | `limit` | integer | 20 | Max typically 100 |
 | Date range start | `dateFrom` | string | — | ISO-8601 format |
 | Date range end | `dateTo` | string | — | ISO-8601 format |
 | Sort field | `sortBy` | string | varies | Field name |
@@ -115,7 +115,7 @@ Internal endpoints are not exposed to external clients but follow the same conve
 
 ### Naming Convention
 
-- Use camelCase: `pageSize`, `sortBy`, `dateFrom`
+- Use camelCase: `offset`, `limit`, `sortBy`, `dateFrom`
 - Match domain model field names where possible
 - Avoid abbreviations unless universally understood
 
@@ -171,9 +171,8 @@ Content-Type: application/json
     "totalCount": 150
   },
   "meta": {
-    "page": 1,
-    "pageSize": 20,
-    "totalPages": 8
+    "next": "/api/{context-slug}/v1/{resource}?offset=20&limit=20",
+    "previous": null
   }
 }
 ```
@@ -273,10 +272,14 @@ In API Binding, specify required roles:
 
 ## Pagination
 
+### Strategy: Offset Pagination
+
+Offset pagination uses `offset` (number of items to skip) and `limit` (number of items to return). Responses include `next` and `previous` navigation URLs as relative paths so frontends can follow them directly without computing offsets.
+
 ### Request
 
 ```
-GET /api/surveillance-items/v1/items?page=2&pageSize=50
+GET /api/surveillance-items/v1/items?offset=40&limit=20
 ```
 
 ### Response
@@ -289,19 +292,37 @@ GET /api/surveillance-items/v1/items?page=2&pageSize=50
     "totalCount": 237
   },
   "meta": {
-    "page": 2,
-    "pageSize": 50,
-    "totalPages": 5
+    "next": "/api/surveillance-items/v1/items?offset=60&limit=20",
+    "previous": "/api/surveillance-items/v1/items?offset=20&limit=20"
   }
 }
+```
+
+### Navigation URLs
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `next` | string \| null | Relative path for the next page, or `null` if on last page |
+| `previous` | string \| null | Relative path for the previous page, or `null` if on first page |
+
+Navigation URLs preserve any filters and sort parameters from the original request. For example:
+
+```
+GET /api/surveillance-items/v1/items?status=PENDING&offset=20&limit=20
+```
+
+Returns:
+```json
+"next": "/api/surveillance-items/v1/items?status=PENDING&offset=40&limit=20",
+"previous": "/api/surveillance-items/v1/items?status=PENDING&offset=0&limit=20"
 ```
 
 ### Constraints
 
 | Parameter | Min | Max | Default |
 |-----------|-----|-----|---------|
-| page | 1 | — | 1 |
-| pageSize | 1 | 100 | 20 |
+| offset | 0 | — | 0 |
+| limit | 1 | 100 | 20 |
 
 ---
 
@@ -358,34 +379,13 @@ Version is scoped per context, enabling independent evolution of each bounded co
 
 ---
 
-## HATEOAS (Optional)
-
-For APIs that benefit from discoverability:
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "item-123",
-    "status": "PENDING"
-  },
-  "links": {
-    "self": "/api/v1/surveillance-items/items/item-123",
-    "updateStatus": "/api/v1/surveillance-items/items/item-123/status",
-    "history": "/api/v1/surveillance-items/items/item-123/history"
-  }
-}
-```
-
----
-
 ## Summary Checklist
 
 When defining API bindings, verify:
 
 - [ ] Base path follows `/api/{context-slug}/v1/` pattern
 - [ ] HTTP methods match operation semantics
-- [ ] Query parameters use standard names (page, pageSize, dateFrom, etc.)
+- [ ] Query parameters use standard names (offset, limit, dateFrom, etc.)
 - [ ] Request/response bodies use camelCase
 - [ ] Response envelope includes `success` and `data`/`error`
 - [ ] Error responses include `code` and `message`

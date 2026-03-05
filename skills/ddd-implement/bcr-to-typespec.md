@@ -250,7 +250,7 @@ model ConflictError {
   message: string;
 }
 
-@route("/api/v1/items/{itemId}/status")
+@route("/api/surveillance-items/v1/items/{itemId}/status")
 interface ItemStatusOperations {
   @put
   @doc("Update surveillance item status (mark as checked or dismissed)")
@@ -276,16 +276,16 @@ interface ItemStatusOperations {
   dateTo: Date?
   sortBy: "createdAt" | "status" | "itemType"
   sortOrder: "asc" | "desc"
-  page: Int
-  pageSize: Int
+  offset: Int
+  limit: Int
 }
 
 **Response:**
 {
   items: [...]
   totalCount: Int
-  page: Int
-  pageSize: Int
+  next: String?
+  previous: String?
 }
 ```
 
@@ -299,11 +299,11 @@ model ItemsListResponse {
   @doc("Total count of matching items")
   totalCount: int32;
 
-  @doc("Current page number")
-  page: int32;
+  @doc("Relative path for next page, or null if on last page")
+  next: string | null;
 
-  @doc("Items per page")
-  pageSize: int32;
+  @doc("Relative path for previous page, or null if on first page")
+  previous: string | null;
 }
 
 model ItemSummary {
@@ -315,7 +315,7 @@ model ItemSummary {
   metadataSummary: string;
 }
 
-@route("/api/v1/items")
+@route("/api/surveillance-items/v1/items")
 interface ItemsQueries {
   @get
   @doc("List surveillance items for authenticated user's roles")
@@ -326,8 +326,8 @@ interface ItemsQueries {
     @query dateTo?: plainDate,
     @query sortBy?: "createdAt" | "status" | "itemType",
     @query sortOrder?: "asc" | "desc",
-    @query page?: int32 = 1,
-    @query pageSize?: int32 = 20,
+    @query offset?: int32 = 0,
+    @query limit?: int32 = 20,
   ): ItemsListResponse;
 
   @get

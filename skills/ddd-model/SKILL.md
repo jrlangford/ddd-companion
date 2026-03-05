@@ -519,7 +519,7 @@ When generating API bindings:
 6. **API Surface Validation**:
    - Path uniqueness: No collisions across contexts
    - Method consistency: Similar operations use same HTTP methods
-   - Parameter naming: All contexts use standard names (page, pageSize, etc.)
+   - Parameter naming: All contexts use standard names (offset, limit, etc.)
    - Response envelope: All contexts use consistent envelope structure
    - Error codes: Consistent error code usage across contexts
 
@@ -582,7 +582,7 @@ If API binding issues are found, document them:
 |-------|---------|---------|----------------|
 | Path collision | A, B | Both use `/api/v1/items` | Prefix with context slug |
 | Method inconsistency | A | Uses PUT for partial update | Change to PATCH |
-| Non-standard param | C | Uses `limit` instead of `pageSize` | Rename to `pageSize` |
+| Non-standard param | C | Uses `page` instead of `offset` | Rename to `offset` |
 ```
 
 ### Endpoint Consolidation Review

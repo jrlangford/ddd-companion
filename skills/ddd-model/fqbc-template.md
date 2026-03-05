@@ -397,8 +397,8 @@ Queries map to GET requests.
 **Query Parameters**:
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| page | integer | No | Page number (1-indexed, default: 1) |
-| pageSize | integer | No | Items per page (default: 20, max: 100) |
+| offset | integer | No | Number of items to skip (default: 0) |
+| limit | integer | No | Items to return (default: 20, max: 100) |
 | [filter] | string | No | [description] |
 
 **Response**:
@@ -410,8 +410,8 @@ Queries map to GET requests.
     "totalCount": 100
   },
   "meta": {
-    "page": 1,
-    "pageSize": 20
+    "next": "/api/[context-slug]/v1/[path]?offset=20&limit=20",
+    "previous": null
   }
 }
 ```
