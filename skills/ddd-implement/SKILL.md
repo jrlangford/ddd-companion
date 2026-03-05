@@ -663,7 +663,11 @@ npm install        # Install TypeSpec compiler and dependencies
 npm run build      # Compile TypeSpec to OpenAPI
 ```
 
-If `npm` is not found or compilation fails, log a warning and continue to Phase 6. Set `apiContracts.status = "complete"` regardless — the TypeSpec source files are the primary artifact, not the compiled output.
+If `npm` is not found or compilation fails:
+1. **Report the failure to the user** with the specific error (missing npm, compilation error, etc.)
+2. Record the error in `apiContracts.compilationError` (free-form string)
+3. Set `apiContracts.status = "complete"` — the TypeSpec source files are the primary artifact, not the compiled output
+4. Continue to Phase 6 — the walking skeleton is fully functional without compiled OpenAPI specs
 
 The generated OpenAPI spec (when compiled) will be at `api/tsp-output/openapi/openapi.yaml`.
 
