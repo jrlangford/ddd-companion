@@ -158,7 +158,11 @@ These functional areas are **candidates for Bounded Contexts** in downstream DDD
 ### Preliminary Business Rules
 | Rule | Type | Area |
 |------|------|------|
-| [Policy or constraint] | [Invariant/Precondition/Postcondition/Derivation] | [Functional area] |
+| [Policy or constraint] | [Invariant/Pre/Post/Derivation] | [Functional area] |
+
+### Success Criteria
+- [ ] [Measurable outcome 1]
+- [ ] [Measurable outcome 2]
 
 **Does this scope and grouping look right? Any features to add, remove, or regroup?**
 ```
@@ -196,6 +200,12 @@ Wait for user confirmation before Phase 3.
    - Review technical details in source docs
    - Summarize as context, not specifications
    - Note assumptions and constraints
+
+5. Refine the Domain Glossary:
+   - Start from the Candidate Domain Glossary (Phase 2)
+   - Add terms discovered during functional requirements extraction
+   - Refine definitions for precision
+   - Remove terms that proved irrelevant
 
 See [../ddd-prd/ddd-alignment.md](../ddd-prd/ddd-alignment.md) for extraction guidance.
 
