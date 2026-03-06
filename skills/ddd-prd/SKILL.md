@@ -236,9 +236,9 @@ See scoping-criteria.md for inclusion criteria.
 
 ### 3.2 Out of Scope
 
-| Feature | Reason | Mitigation |
-|---------|--------|------------|
-| [Feature] | [Why deferred] | [How handled in current scope] |
+| Feature | Reason | Mitigation | Dependency |
+|---------|--------|------------|------------|
+| [Feature] | [Why deferred] | [How handled in current scope] | [What would enable inclusion] |
 
 ---
 
@@ -335,9 +335,9 @@ Where functional areas or external systems interact.
 These inform Context Mapping in technical design.
 -->
 
-| From | To | Trigger | Data Flow | Timing |
-|------|-----|---------|-----------|--------|
-| [Area] | [Area/System] | [Event] | [Data] | Sync/Async |
+| From | To | Trigger | Data Flow | Timing | Notes |
+|------|-----|---------|-----------|--------|-------|
+| [Area] | [Area/System] | [Event] | [Data] | Sync/Async | [Constraints] |
 
 ---
 

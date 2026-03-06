@@ -95,11 +95,11 @@ For each excluded feature, document:
 
 Example:
 ```
-| Feature | Reason | Mitigation |
-|---------|--------|------------|
-| Email notifications | External dependency (email service) | Manual notification during demo |
-| Bulk status update | Enhancement over core | Single-item update sufficient |
-| Threshold configuration | Admin feature | Pre-seed thresholds in database |
+| Feature | Reason | Mitigation | Dependency |
+|---------|--------|------------|------------|
+| Email notifications | External dependency (email service) | Manual notification during demo | Email service integration |
+| Bulk status update | Enhancement over core | Single-item update sufficient | Core CRUD complete |
+| Threshold configuration | Admin feature | Pre-seed thresholds in database | Admin UI scope decision |
 ```
 
 ## Functional Cohesion Criteria

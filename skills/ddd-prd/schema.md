@@ -336,6 +336,16 @@ Reference IDs for citation in Bounded Context Review and FQBC documents.
 | IT-01 | [Area] → [Area/System] |
 ```
 
+### 17. Appendix
+
+```markdown
+## 17. Appendix
+
+References, links, and supplementary material.
+
+- [Link or reference]
+```
+
 ---
 
 ## Validation Checklist
