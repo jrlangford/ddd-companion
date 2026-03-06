@@ -1,5 +1,7 @@
 # API Design Conventions
 
+> **Cross-skill dependency**: This file is consumed by both `/ddd-model` (FQBC API Binding generation) and `/ddd-implement` (HTTP handler generation). Changes here affect the entire pipeline.
+
 Standard HTTP API conventions for use across all Bounded Contexts. Reference this document when generating API Binding sections in FQBC documents.
 
 ## URL Structure

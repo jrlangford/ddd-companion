@@ -243,7 +243,7 @@ How authorization decisions are made across the system.
 
 ### 12. API Design Principles *(optional)*
 
-Include when the system exposes HTTP APIs and the product team has preferences about API conventions. If omitted, `/ddd-model` applies standard HTTP conventions (URL structure, response envelopes, error handling, pagination).
+Include when the system exposes HTTP APIs and the product team has preferences about API conventions. If omitted, `/ddd-model` applies the standard conventions defined in `ddd-model/api-conventions.md` (URL structure, response envelopes, error handling, pagination). When specifying preferences here, note any intentional deviations from that standard.
 
 ```markdown
 ## 12. API Design Principles
