@@ -113,7 +113,7 @@ Wait for user confirmation before Phase 2.
 3. Apply scoping criteria (see [../ddd-prd/scoping-criteria.md](../ddd-prd/scoping-criteria.md))
 4. **Group features by functional cohesion** — areas that share terminology, entities, and rules
 5. **Extract domain terminology** — candidate glossary terms with working definitions
-6. **Surface business rules** — explicit policies and constraints (separate from acceptance criteria)
+6. **Surface business rules** — explicit policies and constraints (separate from acceptance criteria). Assign preliminary IDs (`BR-01`, `BR-02`, ...) during this phase so they carry through to Phase 3
 
 ### Functional Area Grouping
 
@@ -156,9 +156,9 @@ These functional areas are **candidates for Bounded Contexts** in downstream DDD
 | [Term] | [What it means in this domain] | [Functional area] |
 
 ### Preliminary Business Rules
-| Rule | Type | Area |
-|------|------|------|
-| [Policy or constraint] | [Invariant/Pre/Post/Derivation] | [Functional area] |
+| ID | Rule | Type | Area |
+|----|------|------|------|
+| BR-01 | [Policy or constraint] | [Invariant/Pre/Post/Derivation] | [Functional area] |
 
 ### Success Criteria
 - [ ] [Measurable outcome 1]
@@ -190,6 +190,9 @@ Wait for user confirmation before Phase 3.
    - Authorization rules (role-based access)
    - Audit/logging requirements
    - Error handling expectations
+   - Performance expectations (response times, throughput)
+   - Availability and reliability requirements
+   - Security requirements beyond authorization
 
 3. Identify integration touchpoints:
    - External systems
@@ -256,9 +259,23 @@ See [../ddd-prd/ddd-alignment.md](../ddd-prd/ddd-alignment.md) for extraction gu
 |------|-----|---------|-----------|--------|-------|
 | [Area/System] | [Area/System] | [Initiating event] | [What passes] | Sync/Async | [Constraints] |
 
+### Role-Capability Matrix
+
+| Role | Area | Capabilities | Restrictions |
+|------|------|-------------|--------------|
+| [Role] | [Functional Area] | [What they can do] | [What they cannot do] |
+
 ### Cross-Cutting Requirements
 - **Authorization**: [Rules by role]
 - **Audit Trail**: [What to log]
+
+### Non-Functional Requirements
+
+| Category | Requirement | Metric |
+|----------|-------------|--------|
+| Performance | [e.g., List queries respond within 500ms] | [Target] |
+| Availability | [e.g., 99.5% uptime during business hours] | [Target] |
+| Security | [e.g., All API calls require authentication] | — |
 
 ### Product Team Expectations
 Technical concepts from source docs (context for engineering, not specifications):
@@ -300,12 +317,22 @@ Wait for user confirmation before Phase 4.
    | 16 | Traceability Index | Generated from FR IDs + Source Refs |
    | 17 | Appendix | Source document links, references |
 
-3. Generate Markdown document with:
+3. Generate the **Traceability Index** (Section 16) by collecting all FR, BR, CE (Conceptual Entity), and IT (Integration Touchpoint) IDs from previous phases and cross-referencing them with their Source Ref IDs:
+
+   | FR ID | BR IDs | CE IDs | IT IDs | Source Refs |
+   |-------|--------|--------|--------|-------------|
+   | FR-area-01 | BR-01, BR-02 | CE-01 | IT-01 | US-123 |
+
+4. **Consolidate the Conceptual Entity Map** (Section 8): Merge entities discovered across all functional areas in Phase 3, resolve duplicates, and document relationships and lifecycles using a Mermaid entity relationship diagram.
+
+5. **Consolidate the Role-Capability Matrix** (Section 10): Merge per-feature role-capability bullets from Phase 3 into a single table across all functional areas.
+
+7. Generate Markdown document with:
    - Mermaid diagrams for entity relationships and lifecycles
    - Tables for structured data (glossary, rules, touchpoints)
    - Checkbox lists for acceptance criteria
-4. Create `ddd-workspace/prd/` directory if it doesn't exist
-5. Write the document to `ddd-workspace/prd/prd-[project-name]-[scope].md`
+8. Create `ddd-workspace/prd/` directory if it doesn't exist
+9. Write the document to `ddd-workspace/prd/prd-[project-name]-[scope].md`
 
 ### Output Location
 
