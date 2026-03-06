@@ -220,6 +220,11 @@
                 "status": {
                   "type": "string",
                   "enum": ["pending", "implemented"]
+                },
+                "adapterFiles": {
+                  "type": "array",
+                  "description": "File paths of generated ACL adapters or event handlers for this integration",
+                  "items": { "type": "string" }
                 }
               }
             }

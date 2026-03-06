@@ -1,6 +1,7 @@
 ---
 name: ddd-model
 description: Decompose a system into well-defined Bounded Contexts using Domain-Driven Design principles. This command manages workflow state through a manifest file, enabling complex BCR work across multiple chat sessions.
+argument-hint: "[prd-file-path]"
 ---
 
 # Bounded Context Review (Multi-Session)
@@ -170,7 +171,10 @@ The manifest tracks workflow state and PRD location:
 
 ## Entry Point: First Message Handling
 
-When invoked via `/ddd-model`:
+When invoked via `/ddd-model` or `/ddd-model [prd-path]`:
+
+- If a PRD path argument is provided, use that file directly
+- If no argument, auto-discover from `manifest.prd.path` (if manifest exists) or prompt the user
 
 ### Step 1: Check for Existing Manifest
 
@@ -180,7 +184,10 @@ Look for `ddd-model.manifest.json` in the workspace:
 ### Step 2: Resume or Start
 
 **If manifest found:**
-- Read it and validate against `manifest.schema.json` — report any missing required fields or invalid values before continuing
+- Read it and validate against `manifest.schema.json` — report any missing required fields or invalid values before continuing. Examples:
+  - Missing required field: `prd.format is required but missing — add "format": "md" or "html"`
+  - Invalid enum value: `context status "waiting" is invalid — must be one of: pending, in_progress, complete, needsRevision`
+  - If manifest is too corrupted to repair, suggest reconstructing from existing artifact files or starting fresh
 - Report status, offer to continue
 
 **If no manifest:**
@@ -429,7 +436,8 @@ This is where context window savings are realized. Each FQBC is a separate file 
 ### Actions
 
 1. Check manifest for next pending context
-2. Read minimal required sections
+2. Set that context's status to `in_progress` in the manifest
+3. Read minimal required sections
 3. Generate FQBC following fqbc-template.md
 4. **Propagate Source Refs**: When populating FQBC Section 9 (Traceability), carry forward Source Ref IDs from the PRD Traceability Index into the PRD References table. This preserves the chain from original source documents (Jira, Notion, etc.) through FR IDs to FQBC behaviors.
 5. **Apply authorization pattern from manifest:**
@@ -795,7 +803,10 @@ If a phase fails partway through (e.g., context window exhaustion during FQBC ge
 
 1. The manifest reflects the last completed unit of work
 2. Partially written files may exist — check the workspace
-3. If the FQBC file is incomplete, delete it and regenerate from scratch
+3. If the FQBC file is incomplete, delete it and regenerate from scratch. An FQBC is incomplete if:
+   - The file is truncated (does not end with Section 10: Decisions & Next Steps)
+   - Any section from 1–8 in fqbc-template.md is missing entirely
+   - The context's manifest status is `in_progress` (generation was interrupted before confirmation)
 4. The manifest's per-context status tracks which FQBCs are `complete` vs `pending`
 
 **Recovery steps**:

@@ -57,7 +57,7 @@ The `prd` field tracks the prerequisite PRD document:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| ready | boolean | Whether PRD is available |
+| ready | boolean | `true` once the PRD at `path` has been provided and confirmed by the user; `false` until then. Workflow cannot proceed past Phase 1 while `false`. |
 | path | string | Relative path to PRD file |
 | format | string | File format: `md` or `html` |
 

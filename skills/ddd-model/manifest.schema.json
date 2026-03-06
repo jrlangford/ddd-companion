@@ -32,7 +32,7 @@
       "properties": {
         "ready": {
           "type": "boolean",
-          "description": "Whether PRD is available"
+          "description": "true once the PRD at prd.path has been provided and confirmed by the user; false until then. Workflow cannot proceed past Phase 1 while false."
         },
         "path": {
           "type": "string",

@@ -419,6 +419,7 @@ internal/{other_context}/{other_context}domain  → error: cross-context domain 
 | Cross-context calls use ACL service adapter in `internal/adapters/integration/` | warning | ACL pattern for synchronous integration |
 | Cross-context events use event handler in `internal/adapters/integration/` | warning | Event handler pattern for asynchronous integration |
 | Integration adapters translate between domain types (no passthrough) | info | ACL adapter must translate, not leak types |
+| If manifest exists, each integration entry has `adapterFiles` matching actual files | warning | Manifest tracks integration adapter completeness |
 
 #### 8c: API Contract Alignment
 
