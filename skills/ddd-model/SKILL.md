@@ -804,7 +804,7 @@ If a phase fails partway through (e.g., context window exhaustion during FQBC ge
 1. The manifest reflects the last completed unit of work
 2. Partially written files may exist — check the workspace
 3. If the FQBC file is incomplete, delete it and regenerate from scratch. An FQBC is incomplete if:
-   - The file is truncated (does not end with Section 10: Decisions & Next Steps)
+   - The file is truncated (does not end with Section 9: Traceability)
    - Any section from 1–8 in fqbc-template.md is missing entirely
    - The context's manifest status is `in_progress` (generation was interrupted before confirmation)
 4. The manifest's per-context status tracks which FQBCs are `complete` vs `pending`

@@ -198,7 +198,7 @@ The manifest tracks granular progress for reliable session resumption.
 Phases progress strictly forward:
 
 ```
-init → support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
+support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
 ```
 
 Each phase requires the previous phase to be `complete` before starting. The `currentPhase` field in the manifest reflects the active phase.
@@ -327,7 +327,7 @@ Phases within a context progress strictly forward. If a phase fails, the context
 **Overall workflow** (`currentPhase`):
 
 ```
-init → support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
+support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
 ```
 
 ---
