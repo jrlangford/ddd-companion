@@ -193,6 +193,16 @@ Do NOT modify files outside this context.
 
 The manifest tracks granular progress for reliable session resumption.
 
+### Phase Progression
+
+Phases progress strictly forward:
+
+```
+init → support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
+```
+
+Each phase requires the previous phase to be `complete` before starting. The `currentPhase` field in the manifest reflects the active phase.
+
 ### Full Manifest Schema
 
 ```json
@@ -439,7 +449,7 @@ To resume: re-invoke `/ddd-implement` — the manifest tracks all progress.
 7. Generate `internal/support/eventbus/`
 8. Generate `internal/support/server/`
 
-**Checkpoint**: Update `infrastructure.support.status = "complete"` and `infrastructure.eventBus.status = "complete"` with their respective `files` arrays
+**Checkpoint**: Run `go build ./...` to verify. Update `infrastructure.support.status = "complete"` and `infrastructure.eventBus.status = "complete"` with their respective `files` arrays.
 
 **Reference**: `generators/golang/generator.md`
 
@@ -770,7 +780,10 @@ The server starts on `http://localhost:8080` by default.
 
 ### API Endpoints
 
-{List key endpoints per context}
+{For each context with an API binding, list key endpoints from FQBC Section 7, e.g.:}
+{**Context Name**}
+{- `POST /api/{context-slug}/v1/{resource}` — Create resource}
+{- `GET /api/{context-slug}/v1/{resource}/{id}` — Get resource by ID}
 
 ## Project Structure
 

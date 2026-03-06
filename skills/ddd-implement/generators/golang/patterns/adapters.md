@@ -433,6 +433,15 @@ func {Entity}ToResponse(entity {context}domain.{Entity}) {Entity}Response {
 		{{end}}
 	}
 }
+
+// RequestTo{DomainInput} converts request DTO to domain input type
+func RequestTo{DomainInput}(req {Operation}Request) {context}domain.{DomainInput} {
+	return {context}domain.{DomainInput}{
+		{{range .FieldMappings}}
+		{DomainField}: req.{RequestField},
+		{{end}}
+	}
+}
 ```
 
 ### Routes Pattern

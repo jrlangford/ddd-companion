@@ -105,8 +105,9 @@ import (
 	"{module}/internal/{context}/{context}domain"
 )
 
-// {ExternalContext}Service defines the secondary port for {external_context} integration
-// This is implemented by an ACL adapter that translates between contexts
+// {ExternalContext}Service defines the secondary port for {external_context} integration.
+// Parameters and return types use LOCAL context domain types — the ACL adapter
+// (implementation) handles translation to/from the external context's types.
 type {ExternalContext}Service interface {
 	{{range .ExternalOperations}}
 	// {OperationName} {operation_description}

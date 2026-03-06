@@ -278,6 +278,10 @@
           "action": {
             "type": "string"
           },
+          "phase": {
+            "type": "string",
+            "description": "Which manifest phase this action belongs to"
+          },
           "context": {
             "type": "string"
           },

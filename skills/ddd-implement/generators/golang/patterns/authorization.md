@@ -239,7 +239,9 @@ func (m *AuthMiddleware) RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 
 func (m *AuthMiddleware) parseToken(tokenString string) (*auth.Claims, error) {
 	// WALKING SKELETON STUB: Replace with real JWT parsing using m.jwtSecret
-	// For now, returns an error — implement actual token validation before production use
+	// Recommended: github.com/golang-jwt/jwt/v5
+	// Implementation should: parse and validate signature with m.jwtSecret,
+	// check expiration/issuer, extract subject/email/roles into *auth.Claims
 	return nil, auth.NewAuthenticationError("token parsing not implemented")
 }
 ```
