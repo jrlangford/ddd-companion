@@ -162,6 +162,7 @@
           "phases": {
             "type": "object",
             "description": "Per-phase implementation status",
+            "required": ["domain", "ports", "application", "drivenAdapters", "mock"],
             "properties": {
               "domain": { "$ref": "#/$defs/phaseStatus" },
               "ports": { "$ref": "#/$defs/phaseStatus" },
@@ -199,6 +200,7 @@
           "integrations": {
             "type": "array",
             "description": "Integrations with other contexts",
+            "default": [],
             "items": {
               "type": "object",
               "required": ["targetContext", "type"],
