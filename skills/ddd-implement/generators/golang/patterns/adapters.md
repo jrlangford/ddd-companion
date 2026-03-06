@@ -111,6 +111,33 @@ func (r *InMemory{Entity}Repository) Delete(ctx context.Context, id {context}dom
 	delete(r.{entities}, id.String())
 	return nil
 }
+
+// List retrieves a paginated set of {entities}
+// Include this method when the FQBC API Binding defines a paginated list endpoint.
+func (r *InMemory{Entity}Repository) List(ctx context.Context, query {context}domain.ListQuery) ({context}domain.ListResult[{context}domain.{Entity}], error) {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
+
+	all := make([]{context}domain.{Entity}, 0, len(r.{entities}))
+	for _, {entity} := range r.{entities} {
+		all = append(all, {entity})
+	}
+
+	totalCount := len(all)
+	start := query.Offset
+	if start > totalCount {
+		start = totalCount
+	}
+	end := start + query.Limit
+	if end > totalCount {
+		end = totalCount
+	}
+
+	return {context}domain.ListResult[{context}domain.{Entity}]{
+		Items:      all[start:end],
+		TotalCount: totalCount,
+	}, nil
+}
 ```
 
 ### Event Bus Pattern
@@ -389,8 +416,8 @@ func (h *Handler) {Operation}Handler(w http.ResponseWriter, r *http.Request) {
 	response := {Operation}ToResponse(result)
 	w.WriteHeader(http.StatusOK) // or http.StatusCreated for POST
 	json.NewEncoder(w).Encode(SuccessResponse{
-		Status: "success",
-		Data:   response,
+		Success: true,
+		Data:    response,
 	})
 }
 
@@ -412,12 +439,120 @@ func (h *Handler) handleServiceError(w http.ResponseWriter, err error) {
 func (h *Handler) writeErrorResponse(w http.ResponseWriter, errorCode, message string, httpStatus int) {
 	w.WriteHeader(httpStatus)
 	json.NewEncoder(w).Encode(ErrorResponse{
-		Error:   errorCode,
-		Message: message,
-		Code:    httpStatus,
+		Success: false,
+		Error: ErrorDetail{
+			Code:    errorCode,
+			Message: message,
+		},
 	})
 }
+
+func (h *Handler) writeValidationErrorResponse(w http.ResponseWriter, message string, fields []FieldError) {
+	w.WriteHeader(http.StatusBadRequest)
+	json.NewEncoder(w).Encode(ErrorResponse{
+		Success: false,
+		Error: ErrorDetail{
+			Code:    "VALIDATION_ERROR",
+			Message: message,
+			Details: map[string]interface{}{"fields": fields},
+		},
+	})
+}
+
+// FieldError represents a single field validation failure
+type FieldError struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
 ```
+
+### List Handler Pattern (Paginated Query)
+
+When a context exposes a paginated list endpoint (per FQBC API Binding), generate this handler alongside the standard command handler above. It reads query parameters instead of a JSON body and builds the paginated response envelope per api-conventions.md.
+
+```go
+// List{Entities}Handler handles paginated list requests
+func (h *Handler) List{Entities}Handler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Parse query parameters
+	offset, limit := parsePaginationParams(r)
+
+	// Call service
+	result, err := h.{context}Service.List{Entities}(r.Context(), {context}domain.ListQuery{
+		Offset: offset,
+		Limit:  limit,
+	})
+	if err != nil {
+		h.handleServiceError(w, err)
+		return
+	}
+
+	// Build response items
+	items := make([]{Entity}Response, len(result.Items))
+	for i, entity := range result.Items {
+		items[i] = {Entity}ToResponse(entity)
+	}
+
+	// Build pagination links
+	meta := buildPaginationMeta(r, offset, limit, result.TotalCount)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(SuccessResponse{
+		Success: true,
+		Data: map[string]interface{}{
+			"items":      items,
+			"totalCount": result.TotalCount,
+		},
+		Meta: meta,
+	})
+}
+
+// parsePaginationParams extracts offset and limit from query string with defaults
+func parsePaginationParams(r *http.Request) (offset, limit int) {
+	offset = 0
+	limit = 20 // default per api-conventions.md
+
+	if v := r.URL.Query().Get("offset"); v != "" {
+		if parsed, err := strconv.Atoi(v); err == nil && parsed >= 0 {
+			offset = parsed
+		}
+	}
+	if v := r.URL.Query().Get("limit"); v != "" {
+		if parsed, err := strconv.Atoi(v); err == nil && parsed >= 1 && parsed <= 100 {
+			limit = parsed
+		}
+	}
+	return
+}
+
+// buildPaginationMeta builds next/previous links preserving existing query parameters
+func buildPaginationMeta(r *http.Request, offset, limit, totalCount int) *Meta {
+	meta := &Meta{}
+	basePath := r.URL.Path
+	query := r.URL.Query()
+
+	if offset+limit < totalCount {
+		query.Set("offset", strconv.Itoa(offset+limit))
+		query.Set("limit", strconv.Itoa(limit))
+		next := basePath + "?" + query.Encode()
+		meta.Next = &next
+	}
+	if offset > 0 {
+		prevOffset := offset - limit
+		if prevOffset < 0 {
+			prevOffset = 0
+		}
+		query.Set("offset", strconv.Itoa(prevOffset))
+		query.Set("limit", strconv.Itoa(limit))
+		previous := basePath + "?" + query.Encode()
+		meta.Previous = &previous
+	}
+	return meta
+}
+```
+
+**Note**: Add `"strconv"` to the import block when generating list handlers.
 
 ### Request/Response Types (DTO) Pattern
 
@@ -446,17 +581,30 @@ type {Entity}Response struct {
 	{{end}}
 }
 
-// SuccessResponse wraps successful responses
+// SuccessResponse wraps successful responses per api-conventions.md envelope
 type SuccessResponse struct {
-	Status string      `json:"status"`
-	Data   interface{} `json:"data,omitempty"`
+	Success bool        `json:"success"`
+	Data    interface{} `json:"data"`
+	Meta    *Meta       `json:"meta,omitempty"`
 }
 
-// ErrorResponse represents error responses
+// Meta holds response metadata (pagination links, etc.)
+type Meta struct {
+	Next     *string `json:"next"`
+	Previous *string `json:"previous"`
+}
+
+// ErrorDetail represents the nested error object in error responses
+type ErrorDetail struct {
+	Code    string      `json:"code"`
+	Message string      `json:"message"`
+	Details interface{} `json:"details,omitempty"`
+}
+
+// ErrorResponse wraps error responses per api-conventions.md envelope
 type ErrorResponse struct {
-	Error   string `json:"error"`
-	Message string `json:"message"`
-	Code    int    `json:"code"`
+	Success bool        `json:"success"`
+	Error   ErrorDetail `json:"error"`
 }
 
 // {Entity}ToResponse converts domain entity to response DTO
@@ -496,11 +644,12 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, authMiddleware *httpmiddlew
 	mux.HandleFunc("GET /info", h.InfoHandler)
 
 	// Protected endpoints - {Context}
-	mux.HandleFunc("POST /api/v1/{entities}", authMiddleware.RequireAuth(h.Create{Entity}Handler))
-	mux.HandleFunc("GET /api/v1/{entities}", authMiddleware.RequireAuth(h.List{Entities}Handler))
-	mux.HandleFunc("GET /api/v1/{entities}/{id}", authMiddleware.RequireAuth(h.Get{Entity}Handler))
-	mux.HandleFunc("PUT /api/v1/{entities}/{id}", authMiddleware.RequireAuth(h.Update{Entity}Handler))
-	mux.HandleFunc("DELETE /api/v1/{entities}/{id}", authMiddleware.RequireAuth(h.Delete{Entity}Handler))
+	// Base path follows api-conventions.md: /api/{context-slug}/v1/{resource}
+	mux.HandleFunc("POST /api/{context-slug}/v1/{entities}", authMiddleware.RequireAuth(h.Create{Entity}Handler))
+	mux.HandleFunc("GET /api/{context-slug}/v1/{entities}", authMiddleware.RequireAuth(h.List{Entities}Handler))
+	mux.HandleFunc("GET /api/{context-slug}/v1/{entities}/{id}", authMiddleware.RequireAuth(h.Get{Entity}Handler))
+	mux.HandleFunc("PUT /api/{context-slug}/v1/{entities}/{id}", authMiddleware.RequireAuth(h.Update{Entity}Handler))
+	mux.HandleFunc("DELETE /api/{context-slug}/v1/{entities}/{id}", authMiddleware.RequireAuth(h.Delete{Entity}Handler))
 }
 ```
 
