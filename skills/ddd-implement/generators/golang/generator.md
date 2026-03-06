@@ -48,19 +48,19 @@
 │   │   ├── {context}mock/                # Mock implementation
 │   │   │   └── mock_{context}_application.go
 │   │   └── ports/
-│   │       ├── {context}primary/         # Inbound interfaces (use cases)
+│   │       ├── {context}primary/         # Primary port interfaces (use cases)
 │   │       │   └── {context}_service.go
-│   │       └── {context}secondary/       # Outbound interfaces (repos, services)
+│   │       └── {context}secondary/       # Secondary port interfaces (repos, services)
 │   │           └── repositories.go
 │   ├── adapters/
-│   │   ├── driving/                      # Inbound adapters
+│   │   ├── driving/                      # Driving adapters (HTTP, CLI, etc.)
 │   │   │   └── httpadapter/
-│   │   │       ├── dto.go                # Request/response DTOs (derived from TypeSpec)
-│   │   │       ├── handlers.go           # HTTP handlers (implement TypeSpec contract)
+│   │   │       ├── dto.go                # Request/response DTOs (derived from FQBC)
+│   │   │       ├── handlers.go           # HTTP handlers (generated from FQBC + primary ports)
 │   │   │       ├── routes.go             # Route registration
 │   │   │       └── httpmiddleware/
 │   │   │           └── auth_middleware.go
-│   │   ├── driven/                       # Outbound adapters
+│   │   ├── driven/                       # Driven adapters (repositories, event publishers)
 │   │   │   ├── in_memory_{entity}_repo/  # In-memory repositories (one per entity)
 │   │   │   └── event_bus/                # Event publishing
 │   │   └── integration/                  # Cross-context adapters (ACLs)
