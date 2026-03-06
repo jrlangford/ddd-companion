@@ -97,6 +97,7 @@ When invoked without arguments, display a high-level workspace overview.
 
 - `/ddd-list domains` — detailed domain model per context
 - `/ddd-list events` — full event catalog with payloads
+- `/ddd-eval` — evaluate DDD project quality (pragmatic vs. purity)
 ```
 
 ---

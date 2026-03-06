@@ -175,7 +175,7 @@ Wait for user confirmation before Phase 3.
 
 ### Actions
 
-1. For each scoped feature, extract and assign a `FR-[area]-NN` ID (e.g., `FR-ordering-01`) — these IDs are critical for traceability through to FQBC behaviors:
+1. For each scoped feature, extract and assign a `FR-[area]-NN` ID (e.g., `FR-ordering-01`) — these IDs are critical for traceability through to FQBC (Fully Qualified Bounded Context) behaviors:
    - User story statement (As a [role], I want [action], so that [benefit])
    - Acceptance criteria (specific, testable conditions)
    - **Business rules** (explicit policies, constraints — first-class artifacts)

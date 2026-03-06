@@ -73,8 +73,8 @@
       "properties": {
         "topology": {
           "type": "string",
-          "description": "Deployment model",
-          "enum": ["single-service"]
+          "description": "Deployment model. single-service deploys all contexts in one binary; microservices deploys each context independently.",
+          "enum": ["single-service", "microservices"]
         },
         "notes": {
           "type": "string",

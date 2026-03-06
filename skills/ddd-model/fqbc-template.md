@@ -345,7 +345,7 @@ This section maps domain Commands and Queries to concrete HTTP endpoints.
 
 | Setting | Value |
 |---------|-------|
-| Context slug | [kebab-case identifier, e.g., `surveillance-items`] |
+| Context slug | [kebab-case identifier per `api-conventions.md` § Context Slug Derivation] |
 | Base path | `/api/[context-slug]/v1` |
 
 ### Command Bindings

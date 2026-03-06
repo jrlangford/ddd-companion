@@ -22,6 +22,8 @@ Detection is automatic:
 
 All reads are non-destructive. This skill never writes or modifies project files.
 
+**Related**: `/ddd-list` — inspect bounded contexts, domain models, and events without evaluation.
+
 ## Data Sources
 
 | Source | Workspace Mode | Codebase Mode |

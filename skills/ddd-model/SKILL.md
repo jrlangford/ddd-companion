@@ -475,7 +475,7 @@ When generating API bindings:
 | Query (list) | GET collection with filters |
 | Query (single) | GET resource by ID |
 
-**Context slug**: Derive from context name using kebab-case (e.g., "Surveillance Items" → `surveillance-items`)
+**Context slug**: Derive from context name using kebab-case (see `api-conventions.md` § Context Slug Derivation for rules and examples)
 
 **Base path**: `/api/{context-slug}/v1/` (version is per-context, enabling independent evolution)
 

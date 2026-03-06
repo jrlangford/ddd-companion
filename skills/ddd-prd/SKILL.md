@@ -54,7 +54,7 @@ A lean PRD consists of these sections:
 | 13 | Non-Functional Requirements | Quality attributes |
 | 14 | Success Criteria | How we know it works |
 | 15 | Product Team Expectations | Technical context (not specs) |
-| 16 | Traceability Index | Requirement IDs for FQBC citation |
+| 16 | Traceability Index | Requirement IDs for FQBC (Fully Qualified Bounded Context) citation |
 | 17 | Appendix | References, links, supplementary material |
 
 ### Pipeline Context
