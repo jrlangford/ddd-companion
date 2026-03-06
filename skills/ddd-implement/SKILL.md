@@ -166,7 +166,15 @@ Generate [PHASE] for context [CONTEXT_NAME]:
 
 Manifest location: ./ddd-workspace/ddd-implement.manifest.json
 Context definition: [paste relevant context object from manifest]
-Generator patterns: [reference pattern files]
+Generator patterns: Read these files for code generation rules:
+  - generators/golang/patterns/domain.md
+  - generators/golang/patterns/ports.md
+  - generators/golang/patterns/application.md
+  - generators/golang/patterns/adapters.md
+  - generators/golang/patterns/mock.md
+  - generators/golang/patterns/authorization.md
+  - generators/golang/patterns/support.md
+  (Include only patterns relevant to [PHASE])
 
 Requirements:
 1. Generate files for this context only
@@ -532,7 +540,7 @@ The subagent should:
 
 Handlers are generated directly from FQBC definitions and primary port interfaces — not from TypeSpec.
 
-**Reference**: Read `../ddd-model/api-conventions.md` for project-wide HTTP conventions (URL structure, response envelope, error codes, pagination). FQBC API Bindings already follow these conventions — handlers must match them exactly.
+**Reference**: Read `../ddd-model/api-conventions.md` for project-wide HTTP conventions (URL structure, response envelope, error codes, pagination). FQBC API Bindings already follow these conventions — handlers must match them exactly. (This file is a cross-skill dependency shared with `/ddd-model` — see its header for edit guidelines.)
 
 **Actions**:
 
@@ -724,7 +732,11 @@ docker logs swagger-ui
 **Actions**:
 1. Generate `cmd/server/main.go`
 2. Wire all repositories, services, handlers
-3. Subscribe event handlers to event bus — for each cross-context event relationship in the FQBC context map, create the integration event handler (see `adapters.md` Event Handler Pattern) and subscribe it: `eventBus.Subscribe("{EventName}", handler)`
+3. Subscribe event handlers to event bus:
+   1. Read `bcr/context-map.md` — identify all relationships with integration pattern "Pub/Sub" or "Domain Events"
+   2. For each such relationship, read the publishing context's FQBC Section 6 (Context Contract → Outbound Events) for the event name and payload
+   3. In the subscribing context, create an integration event handler per `adapters.md` Event Handler Pattern
+   4. Wire the subscription: `eventBus.Subscribe("{EventName}", handler)`
 4. Support APP_MODE env var (default: live, set to "mock" for test data). In mock mode, create the mock application (which embeds the real service), populate test data through it, and wire handlers to it. Only one service instance should exist per context in either mode. See `generators/golang/patterns/mock.md` for the wiring pattern.
 5. **Generate `README.md`** with usage instructions (see below)
 

@@ -138,6 +138,19 @@ func (e NotFoundError) Error() string {
 	return e.Resource + " not found: " + e.ID
 }
 
+// ValidationError indicates invalid input or domain rule violation
+type ValidationError struct {
+	Message string
+}
+
+func NewValidationError(message string) ValidationError {
+	return ValidationError{Message: message}
+}
+
+func (e ValidationError) Error() string {
+	return "validation: " + e.Message
+}
+
 // ConflictError indicates a resource already exists or state conflict
 type ConflictError struct {
 	Message string
@@ -155,6 +168,8 @@ func (e ConflictError) Error() string {
 // Used by HTTP handlers to translate errors into responses.
 func HTTPStatusCode(err error) int {
 	switch err.(type) {
+	case ValidationError:
+		return http.StatusUnprocessableEntity
 	case NotFoundError:
 		return http.StatusNotFound
 	case ConflictError:
@@ -165,7 +180,7 @@ func HTTPStatusCode(err error) int {
 }
 ```
 
-Note: `auth.AuthenticationError` maps to 401 and `auth.AuthorizationError` maps to 403. Those types are defined in `authorization.md`. HTTP handlers should check for auth errors first, then call `errors.HTTPStatusCode` for remaining errors.
+Note: `auth.AuthenticationError` maps to 401 and `auth.AuthorizationError` maps to 403. Those types are defined in `authorization.md`. HTTP handlers should check for auth errors first, then call `errors.HTTPStatusCode` for remaining errors. If a context defines additional domain-specific error types, add cases to `HTTPStatusCode` or check for them via type assertion in the handler before falling through to this function.
 
 ### Logging
 

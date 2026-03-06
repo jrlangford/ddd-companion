@@ -93,7 +93,7 @@
 | Primary ports package | `{context}primary` | `bookingprimary` |
 | Secondary ports package | `{context}secondary` | `bookingsecondary` |
 | Entity | PascalCase | `Cargo` |
-| Entity ID type | `{Entity}Id` or descriptive | `TrackingId`, `VoyageNumber` |
+| Entity ID type | `{Entity}Id` (default); descriptive only when FQBC ubiquitous language defines the term | `CargoId`, `TrackingId` |
 | Value Object | PascalCase | `RouteSpecification` |
 | Data container (VO group) | `{Entity}Data` | `CargoData` |
 | Domain Event | PascalCase, past tense | `CargoBooked`, `CargoRouted` |
