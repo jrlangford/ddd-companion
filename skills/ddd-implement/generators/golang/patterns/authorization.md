@@ -14,12 +14,16 @@ Shared support infrastructure:
 - `internal/support/auth/claims.go` - Claims type, constructor, role-check methods
 - `internal/support/auth/permissions.go` - Permissions interface and errors
 - `internal/support/auth/context.go` - `ClaimsContextKey` constant and `contextKey` type (extracted from Claims pattern block, lines 34-36)
+- `internal/support/auth/jwt.go` - JWT signing and parsing using `github.com/golang-jwt/jwt/v5`
 
 Per context:
 - `internal/{context}/{context}application/permissions.go` - Context-specific permissions
 
 HTTP middleware:
 - `internal/adapters/driving/httpadapter/httpmiddleware/auth_middleware.go` - JWT extraction and Permissions building
+
+Token generation tool:
+- `cmd/gentoken/main.go` - CLI utility to mint JWTs for development and testing
 
 ## Patterns
 
@@ -188,6 +192,124 @@ func Require{Context}Permission(claims *auth.Claims, permission auth.Permission)
 }
 ```
 
+### JWT Signing and Parsing (Support Layer)
+
+This package provides real JWT operations using `github.com/golang-jwt/jwt/v5`. The walking skeleton ships with a known dev secret (`dev-secret-change-me` from config) so tokens generated with the `gentoken` tool work immediately.
+
+```go
+package auth
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
+
+// jwtClaims maps JWT standard + custom claims
+type jwtClaims struct {
+	jwt.RegisteredClaims
+	Email string   `json:"email,omitempty"`
+	Roles []string `json:"roles"`
+}
+
+// GenerateToken creates a signed JWT with the given claims and secret
+func GenerateToken(subject, issuer, email string, roles []string, secret []byte, ttl time.Duration) (string, error) {
+	now := time.Now()
+	claims := jwtClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   subject,
+			Issuer:    issuer,
+			IssuedAt:  jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(now.Add(ttl)),
+		},
+		Email: email,
+		Roles: roles,
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(secret)
+}
+
+// ParseToken validates a JWT string and returns Claims
+func ParseToken(tokenString string, secret []byte) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &jwtClaims{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return secret, nil
+	})
+	if err != nil {
+		return nil, NewAuthenticationError("invalid token: " + err.Error())
+	}
+
+	jc, ok := token.Claims.(*jwtClaims)
+	if !ok || !token.Valid {
+		return nil, NewAuthenticationError("invalid token claims")
+	}
+
+	return NewClaims(jc.Subject, jc.Issuer, jc.Email, jc.Roles, nil)
+}
+```
+
+### Token Generation Tool
+
+A CLI utility for minting JWTs during development and testing. Developers use it to create tokens with specific roles to exercise all authorization paths.
+
+```go
+// cmd/gentoken/main.go
+package main
+
+import (
+	"flag"
+	"fmt"
+	"os"
+	"strings"
+	"time"
+
+	"{module}/internal/support/auth"
+)
+
+func main() {
+	subject := flag.String("sub", "dev-user", "Token subject (user ID)")
+	email := flag.String("email", "dev@localhost", "User email")
+	roles := flag.String("roles", "admin", "Comma-separated roles")
+	ttl := flag.Duration("ttl", 24*time.Hour, "Token time-to-live")
+	secret := flag.String("secret", "", "JWT secret (default: JWT_SECRET env or dev-secret-change-me)")
+	flag.Parse()
+
+	jwtSecret := *secret
+	if jwtSecret == "" {
+		jwtSecret = os.Getenv("JWT_SECRET")
+	}
+	if jwtSecret == "" {
+		jwtSecret = "dev-secret-change-me"
+	}
+
+	roleList := strings.Split(*roles, ",")
+	token, err := auth.GenerateToken(*subject, "dev", *email, roleList, []byte(jwtSecret), *ttl)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Println(token)
+}
+```
+
+Usage:
+```bash
+# Generate an admin token (default)
+go run cmd/gentoken/main.go
+
+# Generate a token with specific roles
+go run cmd/gentoken/main.go -roles "user,supervisor" -email "test@example.com"
+
+# Use with curl
+TOKEN=$(go run cmd/gentoken/main.go -roles "admin")
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/{context-slug}/v1/{resource}
+```
+
 ### Auth Middleware (Driving Adapter Layer)
 
 The middleware extracts JWT claims and attaches them to the request context. It does NOT resolve context-specific permissions — that happens in the application service.
@@ -238,11 +360,7 @@ func (m *AuthMiddleware) RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func (m *AuthMiddleware) parseToken(tokenString string) (*auth.Claims, error) {
-	// WALKING SKELETON STUB: Replace with real JWT parsing using m.jwtSecret
-	// Recommended: github.com/golang-jwt/jwt/v5
-	// Implementation should: parse and validate signature with m.jwtSecret,
-	// check expiration/issuer, extract subject/email/roles into *auth.Claims
-	return nil, auth.NewAuthenticationError("token parsing not implemented")
+	return auth.ParseToken(tokenString, m.jwtSecret)
 }
 ```
 

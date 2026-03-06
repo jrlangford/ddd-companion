@@ -13,7 +13,7 @@ Defines the shared infrastructure packages generated in Phase 2. These types are
 - `internal/support/server/server.go` - HTTP server setup
 - `internal/support/eventbus/event_bus.go` - In-memory event bus (pattern in `adapters.md`)
 
-Note: `auth/` patterns are defined in `authorization.md`. Auth middleware (`httpmiddleware/`) is a driving adapter defined in `authorization.md`, generated in Phase 4.
+Note: `auth/` patterns (including `jwt.go` for signing/parsing and `cmd/gentoken/` for the token generation CLI) are defined in `authorization.md`. Auth middleware (`httpmiddleware/`) is a driving adapter defined in `authorization.md`, generated in Phase 4.
 
 ## Patterns
 
