@@ -21,7 +21,8 @@ From manifest and BCR:
 
 ### Driving Adapters (Inbound)
 - `internal/adapters/driving/httpadapter/dto.go`
-- `internal/adapters/driving/httpadapter/http_handlers.go`
+- `internal/adapters/driving/httpadapter/handlers.go`
+- `internal/adapters/driving/httpadapter/internal_handlers.go` (if internal endpoints exist)
 - `internal/adapters/driving/httpadapter/routes.go`
 - `internal/adapters/driving/httpadapter/httpmiddleware/auth_middleware.go`
 
@@ -655,14 +656,51 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, authMiddleware *httpmiddlew
 
 ### Internal Endpoint Handlers
 
-Internal endpoints follow the same handler pattern as public endpoints but:
-1. Registered under `/internal/{context-name}/` path prefix
+Internal endpoints follow the same handler pattern as public endpoints but live in a separate file (`internal_handlers.go`). Only generate this file when the FQBC API Binding defines internal endpoints.
+
+Differences from public handlers:
+1. Registered under `/api/{context-slug}/v1/internal/{operation}` path prefix (per api-conventions.md)
 2. Not included in TypeSpec/OpenAPI generation
 3. Used for context-to-context synchronous communication
+
+```go
+// internal_handlers.go
+package httpadapter
+
+import (
+	"encoding/json"
+	"net/http"
+)
+
+// {InternalOperation}Handler handles internal {operation} requests from other contexts
+func (h *Handler) {InternalOperation}Handler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var req {InternalOperation}Request
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.writeErrorResponse(w, "INVALID_REQUEST", "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	result, err := h.{context}Service.{InternalOperation}(r.Context(), req.{Params}...)
+	if err != nil {
+		h.handleServiceError(w, err)
+		return
+	}
+
+	response := {InternalOperation}ToResponse(result)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(SuccessResponse{
+		Success: true,
+		Data:    response,
+	})
+}
+```
 
 Route registration in `routes.go`:
 
 ```go
 	// Internal routes (not documented in OpenAPI)
-	mux.HandleFunc("{METHOD} /internal/{context-name}/{path}", authMiddleware.RequireAuth(h.{OperationName}Handler))
+	mux.HandleFunc("{METHOD} /api/{context-slug}/v1/internal/{path}", authMiddleware.RequireAuth(h.{InternalOperation}Handler))
 ```
