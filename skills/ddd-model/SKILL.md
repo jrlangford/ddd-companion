@@ -41,7 +41,7 @@ Before starting BCR, you need a PRD with these sections:
 
 ### Authorization Pattern (Built-in)
 
-This skill uses the **Permissions Object Pattern** for all generated contexts. The full pattern specification lives in `fqbc-template.md` Section 5 (Authorization) — that is the single source of truth.
+This skill uses the **Permissions Object Pattern** for all generated contexts. The pattern definition and FQBC template live in `fqbc-template.md` Section 5 (Authorization) — that is the single source of truth for how each context documents its authorization design.
 
 Key points:
 - Each microservice owns its role definitions — roles are not centralized
@@ -138,7 +138,7 @@ The manifest tracks workflow state and PRD location:
   },
   "authorization": {
     "pattern": "permissions-object",
-    "source": "user-selected",
+    "source": "default",
     "notes": "Service middleware builds Permissions object from JWT claims"
   },
   "deployment": {
@@ -302,8 +302,15 @@ Before Phase 1, set up the workspace:
 1. Create `ddd-workspace/` directory
 2. Create `prd/`, `bcr/`, and `fqbc/` subdirectories
 3. Copy PRD to `ddd-workspace/prd/` (preserve original format)
-4. **Check PRD for authorization pattern** — if not specified, inform user that Permissions Object Pattern will be used (see Response Template: Authorization Pattern Confirmation)
-5. Create `ddd-model.manifest.json` with PRD path, format, and authorization pattern
+4. **Verify PRD has required sections** — scan for these sections that the BCR workflow depends on:
+   - **Domain Glossary** (Section 6) — needed by Phase 1 context discovery
+   - **Business Rules Catalog** (Section 7) — needed by Phase 1 context discovery
+   - **Functional Areas** (Section 4) — needed by Phase 1 context discovery
+   - **Integration Touchpoints** (Section 9) — needed by Phase 2 context mapping
+
+   If any are missing, **stop and report** which sections are absent. Suggest running `/ddd-prd validate [file]` and `/ddd-prd edit [file]` to fix the PRD before continuing. Do not proceed to Phase 1 with a PRD that lacks these sections.
+5. **Check PRD for authorization pattern** — if not specified, inform user that Permissions Object Pattern will be used (see Response Template: Authorization Pattern Confirmation)
+6. Create `ddd-model.manifest.json` with PRD path, format, and authorization pattern
 
 ### Initial Manifest
 

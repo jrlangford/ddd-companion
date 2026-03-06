@@ -175,6 +175,8 @@ Operations that don't naturally fit in an Entity or Value Object.
 
 ## 5. Authorization
 
+The **Permissions Object Pattern** works as follows: upstream authentication (e.g., API gateway) provides an authenticated identity. Service middleware extracts that identity, resolves it against the context's own role definitions, and builds a Claims/Permissions object. This object is attached to the request context and passed to application services, which check permissions per-operation. Each context owns its role definitions independently — there is no centralized role registry.
+
 ````markdown
 ## Authorization
 
