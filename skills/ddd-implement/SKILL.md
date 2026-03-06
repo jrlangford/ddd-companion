@@ -435,7 +435,7 @@ To resume: re-invoke `/ddd-implement` — the manifest tracks all progress.
 
 **Checkpoint**: Write manifest immediately
 
-### Phase 2: Generate Support Infrastructure
+### Phase 2: Generate Support Infrastructure (`support`)
 
 **Trigger**: `infrastructure.support.status = "pending"`
 
@@ -453,7 +453,7 @@ To resume: re-invoke `/ddd-implement` — the manifest tracks all progress.
 
 **Reference**: `generators/golang/generator.md`
 
-### Phase 3: Generate Contexts (One at a Time)
+### Phase 3: Generate Contexts (`contexts`)
 
 #### Prerequisite: Determine Context Order
 
@@ -544,7 +544,7 @@ The subagent should:
 **Reference**: `generators/golang/patterns/mock.md`
 
 
-### Phase 4: Generate Driving Adapters (HTTP)
+### Phase 4: Generate Driving Adapters (`drivingAdapters`)
 
 **Trigger**: All contexts complete, `drivingAdapters.http.status = "pending"`
 
@@ -610,7 +610,7 @@ For contexts with Internal Endpoints defined in FQBC Section 7:
 
 **Checkpoint**: Update `drivingAdapters.http.status = "complete"` and `files` array
 
-### Phase 5: Generate API Documentation (TypeSpec)
+### Phase 5: Generate API Contracts (`apiContracts`)
 
 **Trigger**: Driving adapters complete, `apiContracts.status = "pending"`
 
@@ -733,7 +733,7 @@ docker logs swagger-ui
 
 **Checkpoint**: Update `apiContracts.status = "complete"` and `files` array
 
-### Phase 6: Generate Main Wiring
+### Phase 6: Generate Main Wiring (`mainWiring`)
 
 **Trigger**: API contracts complete (Phase 5), `infrastructure.mainWiring.status = "pending"`
 
@@ -819,7 +819,7 @@ go build ./cmd/server
 ```
 ```
 
-### Phase 7: Validation
+### Phase 7: Validation (`validation`)
 
 > **Note**: This phase validates that generated code compiles and tests pass. For DDD pattern conformance auditing, use `/ddd-eval` (which consults `validate.md` rubrics) as a separate post-generation step.
 

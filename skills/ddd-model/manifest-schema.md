@@ -77,7 +77,7 @@ The `deployment` field records the deployment topology for the PoC:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| topology | string | **Required.** Deployment model: `single-service` for PoC |
+| topology | string | **Required.** Deployment model: `single-service` (all contexts in one binary, default for PoC) or `microservices` (separate deployable per context) |
 | notes | string | Optional. Additional deployment context |
 
 ## Decisions Array
