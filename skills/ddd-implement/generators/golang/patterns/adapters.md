@@ -273,10 +273,15 @@ func New{Target}ServiceAdapter({target}Service {target_context}primary.{Target}S
 
 // {OperationName} adapts the {target} service's interface to the {source} context's needs
 func (a *{Target}ServiceAdapter) {OperationName}(ctx context.Context, input {source_context}domain.{InputType}) ([]{source_context}domain.{OutputType}, error) {
-	// Convert {Source} domain types to {Target} domain types (ACL translation)
+	// ACL Translation: Convert {Source} domain types → {Target} domain types.
+	// Field mapping rules:
+	//   - Same-name, same-type fields: assign directly (e.g., Name → Name)
+	//   - Same-concept, different-name: map explicitly (e.g., source.ItemId → target.ProductId)
+	//   - Value object unwrap/wrap: call constructors (e.g., source.Price.Amount() → target.Cost)
+	//   - Missing fields: use zero values or domain defaults with a comment explaining why
 	{target}Input := {target_context}domain.{TargetInputType}{
-		// Map fields from source domain to target domain
-		{field_mappings}
+		{TargetField1}: input.{SourceField1},           // direct mapping
+		{TargetField2}: input.{SourceValueObj}.Value(),  // value object unwrap example
 	}
 
 	// Call the target service
@@ -285,12 +290,12 @@ func (a *{Target}ServiceAdapter) {OperationName}(ctx context.Context, input {sou
 		return nil, err
 	}
 
-	// Convert {Target} domain types back to {Source} domain types (ACL translation)
+	// ACL Translation: Convert {Target} domain types → {Source} domain types (reverse)
 	{source}Output := make([]{source_context}domain.{OutputType}, len({target}Output))
 	for i, item := range {target}Output {
 		{source}Output[i] = {source_context}domain.{OutputType}{
-			// Map fields from target domain to source domain
-			{reverse_field_mappings}
+			{SourceField1}: item.{TargetField1},
+			{SourceField2}: {source_context}domain.New{ValueObj}(item.{TargetField2}),  // value object wrap example
 		}
 	}
 
@@ -344,8 +349,8 @@ func (h *{Source}To{Target}EventHandler) Handle(ctx context.Context, event based
 func (h *{Source}To{Target}EventHandler) handle{EventName}(ctx context.Context, event {source_context}domain.{EventName}Event) error {
 	h.logger.Info("Handling {EventName} event", "payload", event)
 
-	// Translate event to {Target} context operation
-	// Call {Target} service to update state
+	// TODO: Translate {Source} event fields to {Target} context domain types (ACL translation)
+	// TODO: Call h.{target}Service.{TargetOperation}(ctx, ...) to update {Target} state
 
 	return nil
 }
