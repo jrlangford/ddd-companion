@@ -821,6 +821,8 @@ go build ./cmd/server
 
 ### Phase 7: Validation
 
+> **Note**: This phase validates that generated code compiles and tests pass. For DDD pattern conformance auditing, use `/ddd-eval` (which consults `validate.md` rubrics) as a separate post-generation step.
+
 **Trigger**: Main wiring complete
 
 **Actions**:

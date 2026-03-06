@@ -177,6 +177,40 @@ func (b *InMemoryEventBus) Publish(event basedomain.DomainEvent) error {
 }
 ```
 
+### Stdout Event Publisher Pattern
+
+```go
+package stdout_event_publisher
+
+import (
+	"encoding/json"
+	"log/slog"
+
+	"{module}/internal/support/basedomain"
+)
+
+// StdoutEventPublisher logs domain events to stdout for development/debugging
+type StdoutEventPublisher struct {
+	logger *slog.Logger
+}
+
+// NewStdoutEventPublisher creates a new stdout event publisher
+func NewStdoutEventPublisher(logger *slog.Logger) *StdoutEventPublisher {
+	return &StdoutEventPublisher{logger: logger}
+}
+
+// Publish logs the event as structured JSON
+func (p *StdoutEventPublisher) Publish(event basedomain.DomainEvent) error {
+	payload, _ := json.Marshal(event)
+	p.logger.Info("DomainEvent published",
+		"eventName", event.EventName(),
+		"occurredAt", event.OccurredAt(),
+		"payload", string(payload),
+	)
+	return nil
+}
+```
+
 ---
 
 ## Integration Adapter Patterns

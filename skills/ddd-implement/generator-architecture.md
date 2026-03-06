@@ -255,6 +255,14 @@ Standard placeholders available to all generators:
 | `{Entity}` | Entity name (PascalCase) | `Cargo` |
 | `{entity_snake}` | Entity name (snake_case) | `cargo` |
 | `{EntityId}` | Entity ID type | `TrackingId` |
+| `{context}domain` | Context domain package | `bookingdomain` |
+| `{context}primary` | Primary port package | `bookingprimary` |
+| `{context}secondary` | Context secondary port package | `bookingsecondary` |
+| `{context}application` | Application package | `bookingapplication` |
+| `{zero_value}` | Go zero value for the return type | `nil`, `""`, `0` |
+| `{return_type}` | Go return type for operations | `domain.Cargo` |
+
+> **Syntax convention**: `{placeholder}` denotes simple value substitution. `{{range .Items}}` and `{{if .Condition}}` are iteration/conditional markers that instruct the generator to repeat or conditionally include a block — they are not Go template literals.
 
 ## Validation Rules
 

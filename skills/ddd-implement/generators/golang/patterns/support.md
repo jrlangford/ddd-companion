@@ -98,6 +98,7 @@ type Config struct {
 	Port      string
 	LogLevel  string
 	JWTSecret string
+	AppMode   string // "mock" enables test data seeding; empty or "live" for production
 }
 
 // Load reads configuration from environment variables with defaults
@@ -106,6 +107,7 @@ func Load() Config {
 		Port:      getEnv("PORT", "8080"),
 		LogLevel:  getEnv("LOG_LEVEL", "info"),
 		JWTSecret: getEnv("JWT_SECRET", "dev-secret-change-me"),
+		AppMode:   getEnv("APP_MODE", ""),
 	}
 }
 

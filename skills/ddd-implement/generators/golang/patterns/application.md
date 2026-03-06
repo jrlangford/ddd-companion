@@ -66,6 +66,7 @@ func New{Context}ApplicationService(
 {{range .Operations}}
 // {OperationName} {operation_description}
 // Implements: {BehaviorId} | FR: {FrId} | Source: {SourceRef}
+// ↑ BehaviorId from FQBC Section 3 (BH-XX), FrId from PRD Section 5 (FR-area-XX), SourceRef from FQBC Section 9
 func (s *{Context}ApplicationService) {OperationName}(ctx context.Context{{range .InputParams}}, {param_name} {param_type}{{end}}) ({{if .ReturnType}}{return_type}, {{end}}error) {
 	// Check permissions
 	claims, err := auth.ExtractClaims(ctx)

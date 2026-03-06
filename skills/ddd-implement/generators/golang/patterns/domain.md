@@ -183,7 +183,7 @@ package {context}domain
 import (
 	"time"
 
-	"{{module}}/internal/support/basedomain"
+	"{module}/internal/support/basedomain"
 )
 
 // Compile-time interface assertion
