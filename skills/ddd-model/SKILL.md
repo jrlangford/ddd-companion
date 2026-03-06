@@ -435,33 +435,34 @@ This is where context window savings are realized. Each FQBC is a separate file 
 
 ### Actions
 
-1. Check manifest for next pending context
+1. Check manifest for next pending context (status = `pending`)
+   - If the context's status is already `complete`, prompt the user for confirmation before regenerating: "Context [name] already has a complete FQBC. Regenerate? This will overwrite the existing file."
 2. Set that context's status to `in_progress` in the manifest
 3. Read minimal required sections
-3. Generate FQBC following fqbc-template.md
-4. **Propagate Source Refs**: When populating FQBC Section 9 (Traceability), carry forward Source Ref IDs from the PRD Traceability Index into the PRD References table. This preserves the chain from original source documents (Jira, Notion, etc.) through FR IDs to FQBC behaviors.
-5. **Apply authorization pattern from manifest:**
-   - For each Command, specify required permissions
+4. Generate FQBC following fqbc-template.md
+5. **Propagate Source Refs**: When populating FQBC Section 9 (Traceability), carry forward Source Ref IDs from the PRD Traceability Index into the PRD References table. This preserves the chain from original source documents (Jira, Notion, etc.) through FR IDs to FQBC behaviors.
+6. **Apply authorization pattern from manifest:**
+   - For each Command and Query, specify required permissions
    - Document how the Permissions object is used (if Permissions Object Pattern)
    - Specify authorization failure responses (403 Forbidden)
-6. **If context exposes HTTP API:**
+7. **If context exposes HTTP API** (skip if context is purely event-driven):
    - Read api-conventions.md for project-wide HTTP standards
    - Generate "API Binding" section (Section 7) with concrete paths
    - Map Commands to appropriate HTTP methods per conventions
    - Map Queries to GET endpoints with standard parameter names
    - Specify request/response schemas matching the response envelope
    - Document error codes for each failure scenario (including 403 for authorization)
-7. **Detect and highlight inconsistencies:**
+8. **Detect and highlight inconsistencies:**
    - Compare with previously generated FQBCs for path collisions
    - Check for queries that traverse the same relationship (consolidation candidates)
    - Flag any deviations from api-conventions.md
    - Note overlapping functionality with other contexts
-8. Write `fqbc/[context-name].md`
-9. **Present summary and request user review** (see User Review Protocol)
-   - Show API binding table
-   - List any detected inconsistencies or consolidation opportunities
-   - Wait for user confirmation before proceeding
-10. Update manifest
+9. Write `fqbc/[context-name].md`
+10. **Present summary and request user review** (see User Review Protocol)
+    - Show API binding table (if context exposes HTTP API)
+    - List any detected inconsistencies or consolidation opportunities
+    - Wait for user confirmation before proceeding
+11. Update manifest
 
 ### API Binding Guidance
 
