@@ -1,5 +1,7 @@
 # Output Format
 
+PRDs produced in this format feed into `/ddd-model` (Bounded Context Review) and ultimately `/ddd-implement` (code generation). For PRD structure and validation, see `schema.md`.
+
 This command produces Markdown documents optimized for rendering in Obsidian and similar tools that natively support Mermaid diagrams and formatted tables.
 
 ## Markdown Structure

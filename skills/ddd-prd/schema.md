@@ -142,7 +142,9 @@ that represent potential Bounded Context boundaries for technical design.
 
 Candidate terms for Ubiquitous Language. These terms have specific meanings
 within this domain and should be used consistently across all documentation
-and implementation.
+and implementation. Refine throughout PRD development: add terms discovered
+during requirements analysis, remove terms that prove irrelevant, and clarify
+definitions based on usage in business rules and features.
 
 | Term | Definition | Functional Area | Notes |
 |------|------------|-----------------|-------|
