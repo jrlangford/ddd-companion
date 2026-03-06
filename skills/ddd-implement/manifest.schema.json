@@ -110,6 +110,10 @@
         "outputDir": {
           "type": "string",
           "description": "Output directory for contracts (defaults to ./api)"
+        },
+        "compilationError": {
+          "type": ["string", "null"],
+          "description": "Error message if TypeSpec compilation failed (npm missing, compilation error, etc.). Null or absent when compilation succeeded or was not attempted."
         }
       }
     },

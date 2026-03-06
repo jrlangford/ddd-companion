@@ -445,6 +445,8 @@ TypeSpec is generated in Phase 5, **after** HTTP handlers are already built and 
 ```
 api/
 ├── main.tsp                    # Main entry point, imports all contexts
+├── package.json                # TypeSpec dependencies
+├── tspconfig.yaml              # TypeSpec compiler configuration
 ├── common/
 │   └── types.tsp               # Shared types (PersonId, Permissions, etc.)
 ├── {context-name}/

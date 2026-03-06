@@ -50,7 +50,7 @@ This skill takes BCR (Bounded Context Review) workspace definitions and generate
 
 1. **Walking skeleton for iterative development**: Generate a runnable application with all layers connected (domain → ports → application → adapters → main) but minimal business logic. Developers add flesh to the bones without structural refactoring.
 2. **Mock server for frontend teams**: The skeleton can run in mock mode (`APP_MODE=mock`), providing realistic API responses for parallel frontend development.
-3. **Spec-first API design**: API contracts (TypeSpec) are the source of truth for the HTTP layer.
+3. **API documentation**: TypeSpec generates OpenAPI specs and client libraries from the same FQBC definitions that drive handler generation.
 
 ## Prerequisites
 
@@ -468,7 +468,7 @@ The subagent should:
 2. Generate domain layer → update phases.domain, generatedFiles.domain
 3. Generate ports → update phases.ports, generatedFiles.ports
 4. Generate application → update phases.application, generatedFiles.application
-5. Generate driven adapters (repositories) → update phases.drivenAdapters, generatedFiles.drivenAdapters
+5. Generate driven adapters (repositories, event publisher, ACL/integration adapters per §3d) → update phases.drivenAdapters, generatedFiles.drivenAdapters
 6. Generate mock → update phases.mock, generatedFiles.mock
 7. Run `go build ./...` to verify
 8. Set context.status = "complete"
@@ -506,7 +506,16 @@ The subagent should:
 #### 3d: Driven Adapters
 - In-memory repositories for this context
 - Event publisher adapter for this context
-- ACL adapters for cross-context integration
+- ACL adapters for cross-context integration:
+  1. Read this context's FQBC Section 8 (Context Relationships) → Upstream Dependencies table
+  2. For each upstream dependency: the secondary port interface was already generated in Phase 3b (External Service Interface Pattern). Now generate the ACL adapter that implements it using the ACL Service Adapter Pattern from `adapters.md`
+  3. The adapter imports the upstream context's primary port and domain types, translates between the two contexts' domain languages, and satisfies the downstream context's secondary port
+  4. Place integration adapters in `internal/adapters/integration/`
+  5. If the upstream context has not been generated yet (status != "complete"), generate the ACL adapter as a stub with TODO markers — it will be completed when both contexts exist
+- Event handlers for asynchronous integration:
+  1. Read FQBC Section 8 → check for event-based upstream dependencies (pattern column mentions events or Pub/Sub)
+  2. For each: generate an event handler using the Event Handler Pattern from `adapters.md`
+  3. Event handlers are instantiated and subscribed in Phase 6 (main wiring), not here
 
 **Reference**: `generators/golang/patterns/adapters.md`
 
@@ -606,14 +615,15 @@ TypeSpec is generated as a **documentation artifact** — it produces OpenAPI sp
 **Output Structure**:
 ```
 api/
-├── main.tsp                    # Main entry point
+├── main.tsp                    # Main entry point, imports all contexts
 ├── package.json                # TypeSpec dependencies
 ├── tspconfig.yaml              # TypeSpec compiler configuration
 ├── common/
 │   └── types.tsp               # Shared types (PersonId, Permissions)
 ├── {context-name}/
 │   ├── models.tsp              # Domain models for this context
-│   └── endpoints.tsp           # Public API endpoints
+│   ├── endpoints.tsp           # Public API endpoints
+│   └── events.tsp              # Domain event schemas (from FQBC §6 Outbound Events)
 └── tsp-output/
     └── openapi/
         └── openapi.yaml        # Generated OpenAPI spec
@@ -905,7 +915,7 @@ Generated files are placed in the project root directory.
 5. **Document interfaces**: Add doc comments to all exported types
 6. **Thread safety**: Use mutex in in-memory implementations
 7. **Valid test data**: Use valid UUID formats (hex only: 0-9, a-f)
-8. **Spec compliance**: HTTP handlers must match TypeSpec contracts exactly
+8. **FQBC compliance**: HTTP handlers and TypeSpec contracts must both derive from the same FQBC definitions
 
 ---
 
