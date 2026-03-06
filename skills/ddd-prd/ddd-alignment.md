@@ -201,7 +201,7 @@ Use consistent, traceable IDs:
 
 **ID Uniqueness Rules**:
 - All IDs are globally unique within the PRD (not just per-area)
-- Area codes must be consistent abbreviations (e.g., always `USER` not sometimes `USR`)
+- Area codes are short uppercase abbreviations of functional area names (e.g., "User Management" → `USER`, "Approval Workflow" → `APPR`, "Inventory" → `INV`). Use 3-5 characters. Be consistent — always use `USER`, never switch to `USR`.
 - Number sequences are per-prefix: FR-USER-01, FR-USER-02; BR-01, BR-02
 - If areas are merged or split, re-number affected IDs and update all cross-references
 

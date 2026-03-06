@@ -44,7 +44,7 @@ A lean PRD consists of these sections:
 | 3 | Scope | What's included and excluded |
 | 4 | Functional Areas | Cohesive feature groupings (context candidates) |
 | 5 | Functional Requirements | Detailed specs by area |
-| 6 | Domain Glossary | Term definitions (Ubiquitous Language) |
+| 6 | Domain Glossary | Candidate terms for Ubiquitous Language |
 | 7 | Business Rules Catalog | Explicit policies and constraints |
 | 8 | Conceptual Entity Map | Things and relationships |
 | 9 | Integration Touchpoints | External interactions |
@@ -453,10 +453,23 @@ References, links, and supplementary material.
 
 The template includes all 17 sections (15 required, 2 optional: sections 11 and 12) with placeholder guidance.
 
-**Next steps**:
-1. Fill in sections manually, or
-2. Use `/ddd-extract-prd [source]` to populate from documentation
-3. Use `/ddd-prd edit [file]` to refine iteratively
+**When to use which command**:
+- **Have source docs?** Use `/ddd-extract-prd [source]` to populate the PRD automatically
+- **Starting from scratch?** Fill sections in the recommended order below
+- **Refining an existing PRD?** Use `/ddd-prd edit [file]` for guided improvements
+
+**Recommended fill-in order** (each section builds on earlier ones):
+1. Executive Summary & Background (set the stage)
+2. Scope & Functional Areas (define boundaries)
+3. Domain Glossary (establish shared language)
+4. Functional Requirements (detail each area using the glossary)
+5. Business Rules Catalog (extract from requirements)
+6. Conceptual Entity Map (derive from requirements and rules)
+7. Remaining sections (roles, touchpoints, NFRs, traceability, etc.)
+
+**Optional sections**: Include Section 11 (Authorization Pattern) when the PRD defines roles in Section 10 — see [schema.md](schema.md) for inclusion criteria. Include Section 12 (API Design Principles) when source docs specify HTTP/API conventions — see [../ddd-model/api-conventions.md](../ddd-model/api-conventions.md) for default conventions.
+
+Use [scoping-criteria.md](scoping-criteria.md) to determine what goes in Section 3 (Scope).
 ```
 
 ---
