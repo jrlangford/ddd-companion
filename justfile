@@ -10,6 +10,14 @@ install:
         echo "linked $skill"; \
     done
 
+# Lint skills against Anthropic best practices
+lint:
+    python3 qa/lint_skills.py
+
+# Run QA tests
+test:
+    cd qa && python3 -m pytest -v
+
 # Remove all skill symlinks
 uninstall:
     @for skill in {{ skills }}; do \

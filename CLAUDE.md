@@ -11,6 +11,8 @@ DDD Companion is a collection of Claude Code skills that form a pipeline: PRD ex
 ```bash
 just install    # Symlink all skills to ~/.claude/skills/
 just uninstall  # Remove skill symlinks
+just lint       # Lint skills against Anthropic best practices
+just test       # Run QA tests
 ```
 
 ## Skill Anatomy
@@ -20,7 +22,7 @@ Each skill lives in `skills/{skill-name}/` and consists of:
 - **`SKILL.md`** — Entry point. YAML frontmatter (`name`, `description`, optional `argument-hint`) followed by the skill's behavioral specification.
 - **Supporting docs** — Referenced by SKILL.md and read at runtime (e.g., `fqbc-template.md`, `api-conventions.md`, `patterns/*.md`). Changes to these files directly affect skill behavior.
 
-Skills are not code — they are structured prompts that Claude follows. There is no build step, linting, or test suite for the skills themselves.
+Skills are not code — they are structured prompts that Claude follows. There is no build step, but `qa/` contains linting and tests that check skill quality (see below).
 
 ## Repository Structure
 
@@ -36,6 +38,7 @@ skills/
 ├── ddd-list/              # SKILL.md only
 └── ddd-eval/              # SKILL.md only
 justfile                   # Skill installation/removal
+qa/                        # Skill linting and tests
 local/                     # Local development workspace (not tracked)
 ```
 
@@ -45,6 +48,20 @@ local/                     # Local development workspace (not tracked)
 - **Subagent delegation**: `/ddd-implement` spawns subagents per bounded context to isolate context window usage
 - **Generator abstraction**: Code generation patterns live under `generators/{language}/` — currently only `golang/` exists, but the structure supports adding new language generators
 - **TypeSpec is documentation-only**: HTTP handlers are generated directly from FQBCs; TypeSpec produces OpenAPI specs as an additive artifact, not a handler dependency
+
+## QA
+
+`qa/lint_skills.py` (`just lint`) — Checks skills against [Anthropic's best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) and context window budget (200K tokens, Opus 4.6). Automated checks:
+
+- **Size** — All files under 500 lines (body lines for SKILL.md, total for others), per-file and per-skill token estimates vs context window thresholds
+- **Frontmatter** — `name` (max 64 chars, lowercase/numbers/hyphens, no reserved words) and `description` (non-empty, max 1024 chars)
+- **References** — links in SKILL.md resolve to existing files, no backslash paths, no deeply nested references (max 1 level from SKILL.md)
+- **Reference ToC** — files over 100 lines should have a table of contents
+- **Terminology** — configurable term groups flag inconsistent synonyms
+
+Exits non-zero on errors (frontmatter violations). Warnings flag size regressions and structural issues. Run after editing skills.
+
+`qa/test_lint_skills.py` (`just test`) — pytest suite validating the linter's checks against temporary skill directories.
 
 ## Conventions for Editing Skills
 
