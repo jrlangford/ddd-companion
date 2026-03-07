@@ -457,3 +457,91 @@ api/
     └── openapi/
         └── openapi.yaml        # Generated OpenAPI spec
 ```
+
+---
+
+## TypeSpec Project Configuration
+
+### package.json
+
+```json
+{
+  "name": "{project}-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsp compile .",
+    "watch": "tsp compile . --watch",
+    "format": "tsp format **/*.tsp"
+  },
+  "devDependencies": {
+    "@typespec/compiler": "latest",
+    "@typespec/http": "latest",
+    "@typespec/rest": "latest",
+    "@typespec/openapi": "latest",
+    "@typespec/openapi3": "latest"
+  }
+}
+```
+
+### tspconfig.yaml
+
+```yaml
+emit:
+  - "@typespec/openapi3"
+
+options:
+  "@typespec/openapi3":
+    output-file: openapi.yaml
+    emitter-output-dir: "{output-dir}/openapi"
+```
+
+## Compiling TypeSpec
+
+After generating TypeSpec files, attempt to compile to OpenAPI. This step is **best-effort** — if Node.js/npm is not available, skip compilation and note it in the manifest. The walking skeleton is fully functional without it.
+
+```bash
+cd api
+npm install        # Install TypeSpec compiler and dependencies
+npm run build      # Compile TypeSpec to OpenAPI
+```
+
+If `npm` is not found or compilation fails:
+1. **Report the failure to the user** with the specific error (missing npm, compilation error, etc.)
+2. Record the error in `apiContracts.compilationError` (free-form string)
+3. Set `apiContracts.status = "complete"` — the TypeSpec source files are the primary artifact, not the compiled output
+4. Continue to Phase 6 — the walking skeleton is fully functional without compiled OpenAPI specs
+
+The generated OpenAPI spec (when compiled) will be at `api/tsp-output/openapi/openapi.yaml`.
+
+## Visualizing the API with Swagger UI
+
+To launch an interactive API viewer for development and testing:
+
+```bash
+# Start Swagger UI with Docker (pointing to your OpenAPI spec)
+docker run -d \
+  --name swagger-ui \
+  -p 8081:8080 \
+  -e SWAGGER_JSON=/openapi/openapi.yaml \
+  -v "$(pwd)/api/tsp-output/openapi:/openapi" \
+  swaggerapi/swagger-ui
+
+# Access at http://localhost:8081
+```
+
+**Prerequisites**:
+- Docker installed and running
+- Go server running on port 8080 (for actual API interaction)
+
+**Useful commands**:
+```bash
+# Stop Swagger UI
+docker stop swagger-ui && docker rm swagger-ui
+
+# Restart after updating OpenAPI spec
+docker restart swagger-ui
+
+# View logs
+docker logs swagger-ui
+```

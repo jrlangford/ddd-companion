@@ -42,7 +42,7 @@ This skill takes BCR (Bounded Context Review) workspace definitions and generate
 4. Application layer with use case orchestration
 5. Driven adapters (repositories, event bus)
 6. Mock implementations with test data factories
-7. **Driving adapters** (HTTP handlers generated from FQBC (Fully Qualified Bounded Context) definitions)
+7. **Driving adapters** (HTTP handlers generated from FQBC definitions)
 8. **TypeSpec API documentation** (OpenAPI specs and client generation)
 9. Main wiring and validated boundaries
 
@@ -84,331 +84,47 @@ The following artifacts must exist in `ddd-workspace/`:
 
 ## API Design: FQBC-Driven Handlers + TypeSpec Documentation
 
-HTTP handlers are generated directly from FQBC definitions and primary port interfaces. TypeSpec is generated separately as a documentation artifact — it produces OpenAPI specs (for Swagger UI) and can generate client libraries for service consumers.
+HTTP handlers are generated directly from FQBC definitions and primary port interfaces. TypeSpec is generated separately as a documentation artifact.
 
-### Generation Pipeline
+Both handlers and TypeSpec derive from the same FQBC, preventing drift. Handlers don't wait for TypeSpec compilation — the skeleton is runnable sooner. TypeSpec is optional; the skeleton compiles and runs without it.
 
-```
-                    ┌─────────────────┐
-              ┌────►│  HTTP Adapters  │  Phase 4: Runnable handlers
-              │     │  (Go handlers)  │
-┌──────────┐  │     └─────────────────┘
-│   FQBC   │──┤
-│ + Ports  │  │     ┌─────────────────┐
-└──────────┘  └────►│    TypeSpec     │  Phase 5: API documentation
-                    │  (OpenAPI spec) │
-                    └─────────────────┘
-```
-
-### Why FQBC drives handlers directly
-
-1. **No intermediary dependency**: Handlers don't wait for TypeSpec compilation — the skeleton is runnable sooner
-2. **Single source of truth**: Both handlers and TypeSpec derive from the same FQBC, preventing drift
-3. **TypeSpec is optional**: The skeleton compiles and runs without TypeSpec; OpenAPI/clients are additive
-4. **Simpler pipeline**: No need to ensure TypeSpec output matches handler expectations
-
-### TypeSpec role
-
-TypeSpec is a **documentation and client generation tool**, not a handler generation dependency:
-- Generates OpenAPI specs for Swagger UI visualization
-- Can generate typed client libraries for other services to import
-- Validates that the public API surface is well-documented
+**TypeSpec role**: Generates OpenAPI specs for Swagger UI visualization, can generate typed client libraries, and validates the public API surface.
 
 ---
 
 ## Multi-Session Design
 
-This workflow is designed to span multiple sessions. Context window limits will be reached during generation of complex systems.
+This workflow spans multiple sessions. Context window limits will be reached during generation of complex systems.
 
-### Core Principles
+**Reference**: See `session-management.md` for subagent strategies, prompt templates, session resumption/stop protocols, and error recovery procedures.
 
-1. **Manifest is the source of truth** - All progress is tracked in `ddd-workspace/ddd-implement.manifest.json`
-2. **One context at a time** - Process each bounded context completely before moving to the next
-3. **Subagents for isolation** - Use Task tool subagents for each context to manage memory
-4. **Checkpoint after each operation** - Update manifest immediately after completing any unit of work
-5. **File-level tracking** - Track individual files created, not just phases
-
-### Context Window Management Strategies
-
-**Strategy 1: Subagent per Context (Recommended)**
-```
-Main Agent:
-  1. Read manifest, identify next context to process
-  2. Spawn subagent for that context with focused prompt
-  3. Subagent generates all layers for ONE context
-  4. Subagent updates manifest with files created
-  5. Main agent verifies, moves to next context
-```
-
-**Strategy 2: Subagent per Phase**
-```
-Main Agent:
-  1. For each phase (domain, ports, application, adapters):
-     - Spawn subagent with phase-specific prompt
-     - Subagent processes ALL contexts for that phase
-     - Subagent updates manifest
-```
-
-**Strategy 3: Checkpoint and Clear**
-```
-After completing each context:
-  1. Update manifest with all file paths created
-  2. Run `go build ./...` to verify
-  3. Summarize progress to user
-  4. User can continue in new session if needed
-```
-
-### Subagent Prompts
-
-When spawning a subagent for a context, provide:
-```
-Generate [PHASE] for context [CONTEXT_NAME]:
-
-Manifest location: ./ddd-workspace/ddd-implement.manifest.json
-Context definition: [paste relevant context object from manifest]
-Generator patterns: Read these files for code generation rules:
-  - generators/golang/patterns/domain.md
-  - generators/golang/patterns/ports.md
-  - generators/golang/patterns/application.md
-  - generators/golang/patterns/adapters.md
-  - generators/golang/patterns/mock.md
-  - generators/golang/patterns/authorization.md
-  - generators/golang/patterns/support.md
-  (Include only patterns relevant to [PHASE])
-
-Requirements:
-1. Generate files for this context only
-2. Update manifest.contexts[N].phases.[phase] = "complete"
-3. Update manifest.contexts[N].generatedFiles.[phase] = [list of files]
-4. Run `go build ./...` after generation
-5. Report any errors encountered
-
-Do NOT read other context directories.
-Do NOT modify files outside this context.
-```
+**Key principles**: Manifest is the source of truth. Process one context at a time. Use subagents for context isolation. Checkpoint after each operation.
 
 ---
 
 ## Manifest Structure
 
-The manifest tracks granular progress for reliable session resumption.
+The manifest (`ddd-workspace/ddd-implement.manifest.json`) tracks granular progress for reliable session resumption.
 
-### Phase Progression
+**Reference**: See `manifest-guide.md` for the full manifest example, field descriptions, and status transition diagrams. For JSON Schema validation, see `manifest.schema.json`.
 
-Phases progress strictly forward:
-
-```
-support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
-```
-
-Each phase requires the previous phase to be `complete` before starting. The `currentPhase` field in the manifest reflects the active phase.
-
-### Full Manifest Schema
-
-```json
-{
-  "version": "1.0",
-  "project": {
-    "name": "my-service",
-    "module": "github.com/org/my-service",
-    "language": "go",
-    "generator": "go-hex",
-    "outputDir": "."
-  },
-  "source": {
-    "bcrWorkspace": "./ddd-workspace"
-  },
-  "currentPhase": "contexts",
-  "currentContext": null,
-  "infrastructure": {
-    "support": {
-      "status": "pending",
-      "files": []
-    },
-    "eventBus": {
-      "status": "pending",
-      "files": []
-    },
-    "mainWiring": {
-      "status": "pending",
-      "files": []
-    }
-  },
-  "apiContracts": {
-    "status": "pending",
-    "files": [],
-    "format": "typespec",
-    "outputDir": "./api"
-  },
-  "drivingAdapters": {
-    "http": {
-      "status": "pending",
-      "files": []
-    }
-  },
-  "contexts": [
-    {
-      "name": "role-management",
-      "contextId": "CTX-001",
-      "fqbcFile": "fqbc/role-management.md",
-      "status": "pending",
-      "phases": {
-        "domain": "pending",
-        "ports": "pending",
-        "application": "pending",
-        "drivenAdapters": "pending",
-        "mock": "pending"
-      },
-      "generatedFiles": {
-        "domain": [],
-        "ports": [],
-        "application": [],
-        "drivenAdapters": [],
-        "mock": []
-      },
-      "entities": ["RoleAssignment", "SurveillanceRole"],
-      "valueObjects": ["PersonId", "RoleName", "Scope"],
-      "domainEvents": ["RoleAssigned", "RoleRevoked"],
-      "integrations": [],
-      "errors": []
-    }
-  ],
-  "validation": {
-    "build": "pending",
-    "tests": "pending",
-    "lastBuildOutput": null
-  },
-  "history": [
-    {
-      "timestamp": "2024-01-20T10:00:00Z",
-      "action": "context_complete",
-      "context": "role-management",
-      "filesCreated": 12
-    }
-  ]
-}
-```
-
-### Key Manifest Fields
-
-| Field | Purpose |
-|-------|---------|
-| `currentPhase` | Where in the overall workflow: `init`, `support`, `contexts`, `drivingAdapters`, `apiContracts`, `mainWiring`, `validation`, `complete` |
-| `currentContext` | Which context is being processed (null if between contexts) |
-| `contexts[].status` | `pending`, `in_progress`, `complete`, `error` |
-| `contexts[].generatedFiles` | Array of file paths created for each phase |
-| `contexts[].errors` | Any errors encountered during generation |
-| `apiContracts.status` | Status of TypeSpec contract generation |
-| `drivingAdapters.http.status` | Status of HTTP adapter generation |
-| `history` | Audit log of completed operations |
-
-### Status Transitions
-
-**Context status** (`contexts[].status`):
-
-```
-pending → in_progress → complete
-              │
-              ▼
-            error → in_progress → complete
-```
-
-- A context in `error` can be retried by fixing the issue and setting status back to `in_progress`
-- Once `complete`, a context is not regenerated unless the user explicitly requests it
-
-**Phase status** (`contexts[].phases.*`):
-
-```
-pending → in_progress → complete
-```
-
-Phases within a context progress strictly forward. If a phase fails, the context status is set to `error` with details in `contexts[].errors`.
-
-**Overall workflow** (`currentPhase`):
-
-```
-support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete
-```
+**Phase progression**: `support → contexts → drivingAdapters → apiContracts → mainWiring → validation → complete`
 
 ---
 
 ## Session Resumption Protocol
 
-When starting or resuming work:
+**Reference**: See `session-management.md` § Session Resumption Protocol for the full step-by-step procedure.
 
-### Step 1: Read and Analyze Manifest
-```
-1. Read ddd-workspace/ddd-implement.manifest.json
-2. Check currentPhase and currentContext
-3. For each context, check status and phases
-4. Identify the FIRST incomplete item
-```
-
-### Step 2: Determine Next Action
-
-| State | Action |
-|-------|--------|
-| No manifest | Create manifest, parse BCR workspace |
-| `infrastructure.support.status = pending` | Generate support packages |
-| Context with `status = in_progress` | Resume that context from incomplete phase |
-| Context with `status = pending` | Start that context |
-| All contexts complete, `apiContracts.status = pending` | Generate TypeSpec contracts |
-| API contracts complete, `drivingAdapters.http.status = pending` | Generate HTTP adapters |
-| Driving adapters complete, `mainWiring.status = pending` | Generate main wiring |
-| Main wiring complete, validation pending | Run validation |
-
-### Step 3: Execute with Checkpointing
-
-After EACH file or small group of files:
-1. Update `generatedFiles` array in manifest
-2. If completing a phase, update phase status
-3. If completing a context, update context status and `history`
-
-### Step 4: Verify Before Proceeding
-```bash
-go build ./...
-```
-If build fails, record error in manifest and stop.
+**Quick summary**: Read manifest → check `currentPhase` and `currentContext` → identify first incomplete item → execute with checkpointing → verify build before proceeding.
 
 ---
 
 ## Session Stop Protocol
 
-When context window is approaching capacity or you need to end a session, follow this protocol for a clean handoff.
+**Reference**: See `session-management.md` § Session Stop Protocol for when to stop, pre-stop checklist, and handoff report format.
 
-### When to Stop
-
-Stop at the nearest natural boundary:
-
-| Current Work | Natural Stopping Point |
-|-------------|----------------------|
-| Phase 3 (Contexts) | After completing any full context (all layers: domain → ports → application → adapters → mock) |
-| Phase 4 (HTTP Handlers) | After completing all handlers for one context |
-| Phase 5 (TypeSpec) | After completing TypeSpec for one context |
-| Phase 6 (Main Wiring) | After `main.go` is written and builds |
-| Phase 7 (Validation) | After build/test results are recorded |
-
-**Do not stop mid-layer** (e.g., domain generated but ports not started). Complete the current context's layer set or roll back to the last checkpoint.
-
-### Before Stopping
-
-1. **Update the manifest** — ensure all completed work is reflected in `generatedFiles`, phase statuses, and context statuses
-2. **Run `go build ./...`** — verify the codebase compiles; record result in manifest
-3. **Set `currentContext` to null** if the current context is fully complete; leave it set if mid-context (the resumption protocol will pick it up)
-
-### What to Report
-
-Provide the user with a handoff summary:
-
-```markdown
-**Session Complete**
-
-**Progress**: [N]/[Total] contexts generated | Phase [current] | [files created] files
-**Build status**: [pass/fail]
-**Next step**: [what the next session should do first]
-
-To resume: re-invoke `/ddd-implement` — the manifest tracks all progress.
-```
+**Key rule**: Do not stop mid-layer. Complete the current context's layer set or roll back to the last checkpoint.
 
 ---
 
@@ -476,12 +192,8 @@ If the manifest already has some contexts complete, skip them and continue with 
 
 **For each context where `status != "complete"`** (in dependency order):
 
-Use a **subagent** to process the entire context:
+Use a **subagent** to process the entire context (see `session-management.md` for prompt template):
 
-```
-Task: Generate all layers for context "{context.name}"
-
-The subagent should:
 1. Set context.status = "in_progress"
 2. Generate domain layer → update phases.domain, generatedFiles.domain
 3. Generate ports → update phases.ports, generatedFiles.ports
@@ -491,7 +203,6 @@ The subagent should:
 7. Run `go build ./...` to verify
 8. Set context.status = "complete"
 9. Add entry to history
-```
 
 **IMPORTANT**: Complete ONE context fully before starting the next.
 
@@ -570,26 +281,6 @@ For contexts with API Binding (FQBC Section 7) — skip event-driven-only contex
 5. Generate routes file with all endpoint registrations
 6. Generate DTO types matching FQBC request/response schemas
 
-**Generation Prompt Pattern**:
-```
-Generate HTTP handlers for context "{context.name}":
-
-Primary Port Interface:
-[Go interface definition]
-
-FQBC API Binding:
-[API Binding table from FQBC Section 7]
-
-FQBC Context Contract:
-[Command/Query details from FQBC Section 6]
-
-Requirements:
-1. Routes must match FQBC API Binding paths exactly
-2. Request/Response types must match FQBC schemas
-3. Call primary port methods for business logic
-4. Handle errors according to FQBC failure scenarios
-```
-
 #### 4b: Internal HTTP Handlers
 
 For contexts with Internal Endpoints defined in FQBC Section 7:
@@ -608,136 +299,32 @@ For contexts with Internal Endpoints defined in FQBC Section 7:
 - `internal/adapters/driving/httpadapter/internal_handlers.go` (if internal endpoints exist)
 - `internal/adapters/driving/httpadapter/routes.go`
 
+**Reference**: `generators/golang/patterns/adapters-driving.md`
+
 **Checkpoint**: Update `drivingAdapters.http.status = "complete"` and `files` array
 
 ### Phase 5: Generate API Contracts (`apiContracts`)
 
 **Trigger**: Driving adapters complete, `apiContracts.status = "pending"`
 
-TypeSpec is generated as a **documentation artifact** — it produces OpenAPI specs for Swagger UI and can generate client libraries for service consumers. It is not a dependency for handler generation.
+TypeSpec is generated as a **documentation artifact** — it produces OpenAPI specs for Swagger UI and can generate client libraries. It is not a dependency for handler generation.
 
 **Actions**:
-1. For each context **that has an API Binding section (FQBC Section 7)**, generate TypeSpec files derived from:
-   - FQBC Section 4 (Domain Model) for model/enum/scalar definitions
-   - FQBC Section 6 (Context Contract) for endpoint definitions
-   - FQBC Section 7 (API Binding) for route patterns (public endpoints only)
+1. For each context **that has an API Binding section (FQBC Section 7)**, generate TypeSpec files derived from FQBC Sections 4, 6, and 7
 2. **Skip contexts without API Binding** — event-driven-only contexts produce no TypeSpec output
 3. **Skip internal endpoints** — TypeSpec documents the public API surface only
 4. Generate shared types from context-map.md (Published Language)
 5. Generate main.tsp entry point
 6. Generate TypeSpec project configuration files
-7. Compile TypeSpec to generate OpenAPI specs
+7. Compile TypeSpec to generate OpenAPI specs (best-effort — see reference)
 
-**Reference**: `bcr-to-typespec.md`
-
-**Output Structure**:
-```
-api/
-├── main.tsp                    # Main entry point, imports all contexts
-├── package.json                # TypeSpec dependencies
-├── tspconfig.yaml              # TypeSpec compiler configuration
-├── common/
-│   └── types.tsp               # Shared types (PersonId, Permissions)
-├── {context-name}/
-│   ├── models.tsp              # Domain models for this context
-│   ├── endpoints.tsp           # Public API endpoints
-│   └── events.tsp              # Domain event schemas (from FQBC §6 Outbound Events)
-└── tsp-output/
-    └── openapi/
-        └── openapi.yaml        # Generated OpenAPI spec
-```
-
-#### TypeSpec Project Configuration
-
-**package.json**:
-```json
-{
-  "name": "{project}-api",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "build": "tsp compile .",
-    "watch": "tsp compile . --watch",
-    "format": "tsp format **/*.tsp"
-  },
-  "devDependencies": {
-    "@typespec/compiler": "latest",
-    "@typespec/http": "latest",
-    "@typespec/rest": "latest",
-    "@typespec/openapi": "latest",
-    "@typespec/openapi3": "latest"
-  }
-}
-```
-
-**tspconfig.yaml**:
-```yaml
-emit:
-  - "@typespec/openapi3"
-
-options:
-  "@typespec/openapi3":
-    output-file: openapi.yaml
-    emitter-output-dir: "{output-dir}/openapi"
-```
-
-#### Compiling TypeSpec
-
-After generating TypeSpec files, attempt to compile to OpenAPI. This step is **best-effort** — if Node.js/npm is not available, skip compilation and note it in the manifest. The walking skeleton is fully functional without it.
-
-```bash
-cd api
-npm install        # Install TypeSpec compiler and dependencies
-npm run build      # Compile TypeSpec to OpenAPI
-```
-
-If `npm` is not found or compilation fails:
-1. **Report the failure to the user** with the specific error (missing npm, compilation error, etc.)
-2. Record the error in `apiContracts.compilationError` (free-form string)
-3. Set `apiContracts.status = "complete"` — the TypeSpec source files are the primary artifact, not the compiled output
-4. Continue to Phase 6 — the walking skeleton is fully functional without compiled OpenAPI specs
-
-The generated OpenAPI spec (when compiled) will be at `api/tsp-output/openapi/openapi.yaml`.
-
-#### Visualizing the API with Swagger UI
-
-To launch an interactive API viewer for development and testing:
-
-```bash
-# Start Swagger UI with Docker (pointing to your OpenAPI spec)
-docker run -d \
-  --name swagger-ui \
-  -p 8081:8080 \
-  -e SWAGGER_JSON=/openapi/openapi.yaml \
-  -v "$(pwd)/api/tsp-output/openapi:/openapi" \
-  swaggerapi/swagger-ui
-
-# Access at http://localhost:8081
-```
-
-**Prerequisites**:
-- Docker installed and running
-- Go server running on port 8080 (for actual API interaction)
-
-**Useful commands**:
-```bash
-# Stop Swagger UI
-docker stop swagger-ui && docker rm swagger-ui
-
-# Restart after updating OpenAPI spec
-docker restart swagger-ui
-
-# View logs
-docker logs swagger-ui
-```
+**Reference**: `bcr-to-typespec.md` for mapping rules, output structure, project configuration, compilation, and Swagger UI setup.
 
 **Checkpoint**: Update `apiContracts.status = "complete"` and `files` array
 
 ### Phase 6: Generate Main Wiring (`mainWiring`)
 
 **Trigger**: API contracts complete (Phase 5), `infrastructure.mainWiring.status = "pending"`
-
-**Note**: TypeSpec/OpenAPI (Phase 5) does not affect handler code, but the workflow proceeds sequentially through the manifest phases for simplicity.
 
 **Actions**:
 1. Generate `cmd/server/main.go`
@@ -748,76 +335,9 @@ docker logs swagger-ui
    3. In the subscribing context, create an integration event handler per `adapters.md` Event Handler Pattern
    4. Wire the subscription: `eventBus.Subscribe("{EventName}", handler)`
 4. Support APP_MODE env var (default: live, set to "mock" for test data). In mock mode, create the mock application (which embeds the real service), populate test data through it, and wire handlers to it. Only one service instance should exist per context in either mode. See `generators/golang/patterns/mock.md` for the wiring pattern.
-5. **Generate `README.md`** with usage instructions (see below)
+5. **Generate `README.md`** with: quick start (prerequisites, run commands for live/mock modes), API endpoints summary (from FQBC Section 7), project structure overview, and development notes (TODO markers, test/build commands)
 
 **Checkpoint**: Update `infrastructure.mainWiring`
-
-#### README Generation
-
-Generate a `README.md` file with the following sections:
-
-```markdown
-# {Project Name}
-
-{Brief description from BCR context-map}
-
-## Quick Start
-
-### Prerequisites
-- Go 1.21+
-
-### Running the Server
-
-```bash
-# Run in live mode (default)
-go run ./cmd/server
-
-# Run in mock mode (uses in-memory repositories with test data)
-APP_MODE=mock go run ./cmd/server
-```
-
-The server starts on `http://localhost:8080` by default.
-
-### API Endpoints
-
-{For each context with an API binding, list key endpoints from FQBC Section 7, e.g.:}
-{**Context Name**}
-{- `POST /api/{context-slug}/v1/{resource}` — Create resource}
-{- `GET /api/{context-slug}/v1/{resource}/{id}` — Get resource by ID}
-
-## Project Structure
-
-```
-cmd/server/       - Application entry point
-internal/
-  {context}/      - Bounded context implementation
-    domain/       - Domain entities, value objects, events
-    application/  - Use case orchestration
-    ports/        - Primary (inbound) and secondary (outbound) interfaces
-    mock/         - Mock implementation with test data
-  adapters/       - Infrastructure adapters
-  support/        - Shared infrastructure (auth, logging, etc.)
-api/              - TypeSpec API contracts
-```
-
-## Development
-
-### Adding Business Logic
-
-Look for `// TODO:` markers in application services to implement actual business logic.
-
-### Running Tests
-
-```bash
-go test ./...
-```
-
-### Building
-
-```bash
-go build ./cmd/server
-```
-```
 
 ### Phase 7: Validation (`validation`)
 
@@ -836,100 +356,23 @@ go build ./cmd/server
 
 ## Error Recovery
 
-### Build Failure During Context Generation
+**Reference**: See `session-management.md` § Error Recovery for manifest error format and recovery procedures.
 
-```json
-{
-  "contexts": [{
-    "name": "role-management",
-    "status": "error",
-    "errors": [
-      {
-        "phase": "application",
-        "file": "internal/rolemanagement/rolemanagementapplication/service.go",
-        "error": "undefined: PersonId",
-        "timestamp": "2024-01-20T10:30:00Z"
-      }
-    ]
-  }]
-}
-```
-
-**Recovery**:
-1. Read the error from manifest
-2. Fix the specific file
-3. Re-run build
-4. If successful, clear error and continue
-
-### Session Interrupted Mid-Context
-
-The manifest shows exactly where we stopped:
-- `currentContext` indicates which context
-- `phases` shows which phases are complete
-- `generatedFiles` shows exactly what files exist
-
-Resume by checking which phase is incomplete and continuing from there.
+**Quick summary**: Read error from manifest → fix the specific file → re-run build → if successful, clear error and continue. For interrupted sessions, the manifest tracks `currentContext`, phase statuses, and `generatedFiles` for precise resumption.
 
 ---
 
 ## Output Structure
 
-Generated files are placed in the project root directory.
+**Reference**: See `generators/golang/generator.md` for the complete directory layout and naming conventions.
 
-```
-./
-├── api/                                # TypeSpec API contracts
-│   ├── main.tsp
-│   ├── common/
-│   │   └── types.tsp
-│   ├── {context}/
-│   │   ├── models.tsp
-│   │   ├── endpoints.tsp
-│   │   └── events.tsp
-│   └── openapi/
-│       └── {context}.yaml
-├── cmd/
-│   └── server/
-│       └── main.go
-├── internal/
-│   ├── {context}/
-│   │   ├── {context}domain/
-│   │   ├── {context}application/
-│   │   ├── {context}mock/
-│   │   └── ports/
-│   │       ├── {context}primary/
-│   │       └── {context}secondary/
-│   ├── adapters/
-│   │   ├── driving/
-│   │   │   └── httpadapter/
-│   │   │       ├── dto.go
-│   │   │       ├── handlers.go
-│   │   │       ├── routes.go
-│   │   │       └── middleware/
-│   │   ├── driven/
-│   │   │   ├── inmemory/
-│   │   │   └── eventbus/
-│   │   └── integration/
-│   └── support/
-│       ├── auth/
-│       ├── basedomain/
-│       ├── config/
-│       ├── errors/
-│       ├── eventbus/
-│       ├── logging/
-│       ├── middleware/
-│       ├── server/
-│       └── validation/
-├── test/
-│   ├── integration/
-│   └── testdata/
-├── go.mod
-├── go.sum
-├── README.md                           # Usage instructions
-└── ddd-workspace/
-    ├── ddd-model.manifest.json         # BCR workflow state (from /ddd-model)
-    └── ddd-implement.manifest.json     # Implementation workflow state
-```
+**Top-level structure**:
+- `cmd/server/` — Application entry point (`main.go`)
+- `internal/{context}/` — Per-context domain, application, ports, and mock layers
+- `internal/adapters/` — Driving (HTTP), driven (in-memory, event bus), and integration adapters
+- `internal/support/` — Shared infrastructure (auth, logging, validation, etc.)
+- `api/` — TypeSpec API contracts and generated OpenAPI specs
+- `ddd-workspace/` — BCR and implementation manifests
 
 ---
 
@@ -950,23 +393,17 @@ Generated files are placed in the project root directory.
 
 ### Generate Mode
 
-When invoked for generation:
-
 1. Check for existing `ddd-workspace/ddd-implement.manifest.json`
-2. If exists: validate against `manifest.schema.json` (report any missing required fields or invalid values), analyze state, report current progress, identify next action
+2. If exists: validate against `manifest.schema.json`, analyze state, report progress, identify next action
 3. If not exists: look for BCR workspace, create initial manifest
 4. Execute ONE bounded context at a time using subagents
-5. After all contexts: generate HTTP adapters from FQBC definitions
-6. Generate TypeSpec API documentation
-7. Generate main wiring
-8. Verify build after each major phase
-9. Report progress clearly for session handoff
+5. After all contexts: generate HTTP adapters, TypeSpec docs, main wiring
+6. Verify build after each major phase
+7. Report progress clearly for session handoff
 
 **Key principle**: Always leave the manifest in a state where the next session can pick up cleanly.
 
 ### Validate Mode
-
-When invoked for validation:
 
 1. Run Phase 0 (discovery) to identify contexts and project structure
 2. Execute validation phases 1–8 as defined in `validate.md`

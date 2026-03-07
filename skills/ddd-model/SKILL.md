@@ -19,7 +19,7 @@ All generated artifacts are **Markdown documents** optimized for rendering in Ob
 - Tables (formatted and sortable) — use for glossaries, rule catalogs, interface definitions
 - Checkbox lists (interactive) — use for progress tracking and verification checklists
 
-**Prefer Mermaid diagrams over ASCII/text diagrams** in all output files. Mermaid renders properly in modern editors while ASCII art does not.
+**Prefer Mermaid diagrams over ASCII/text diagrams** in all output files.
 
 ## Prerequisites
 
@@ -30,11 +30,7 @@ Before starting BCR, you need a PRD with these sections:
 - **Business Rules Catalog** — Explicit policies and constraints
 - **Functional Areas** — Grouped features with cohesion rationale
 - **Integration Touchpoints** — Where areas/systems interact
-- **API Design Principles** (optional but recommended) — If the system exposes HTTP APIs, include:
-  - URL structure preferences
-  - Versioning strategy
-  - Response format conventions
-  - Authentication approach
+- **API Design Principles** (optional but recommended) — URL structure, versioning, response format, auth
 - **Authorization Pattern** (optional) — How authorization decisions are made across contexts
 - **Traceability Index** — Requirement IDs with Source Refs for end-to-end traceability
 
@@ -42,7 +38,7 @@ Before starting BCR, you need a PRD with these sections:
 
 ### Authorization Pattern (Built-in)
 
-This skill uses the **Permissions Object Pattern** for all generated contexts. The pattern definition and FQBC template live in `fqbc-template.md` Section 5 (Authorization) — that is the single source of truth for how each context documents its authorization design.
+This skill uses the **Permissions Object Pattern** for all generated contexts. The pattern definition and FQBC template live in `fqbc-template.md` Section 5 (Authorization) — that is the single source of truth.
 
 Key points:
 - Each microservice owns its role definitions — roles are not centralized
@@ -53,55 +49,7 @@ This is the only authorization pattern currently supported by the implementation
 
 ### API Conventions (Built-in)
 
-This skill includes `api-conventions.md` with standard HTTP API conventions. These defaults apply when:
-- The PRD doesn't specify API design principles
-- You need consistent API bindings across bounded contexts
-
-The conventions cover: URL structure, HTTP methods, query parameters, response envelopes, error handling, pagination, and date formats.
-
-## Workflow Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                     BOUNDED CONTEXT REVIEW WORKFLOW                         │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  [PRD] ─────────────────────────────────────────────────────────────────┐   │
-│    │   Prerequisite: Must exist before BCR starts.                      │   │
-│    │   Required sections: Glossary, Business Rules, Functional Areas    │   │
-│  ──┴────────────────────────────────────────────────────────────────────┘   │
-│        │                                                                    │
-│        ▼                                                                    │
-│  ┌──────────────┐     Produces:                                             │
-│  │   Phase 1    │ ──► • bcr/context-discovery.md                            │
-│  │   Context    │     • Candidate contexts with rationale                   │
-│  │   Discovery  │                                                           │
-│  └──────────────┘                                                           │
-│        │                                                                    │
-│        ▼                                                                    │
-│  ┌──────────────┐     Produces:                                             │
-│  │   Phase 2    │ ──► • bcr/context-map.md                                  │
-│  │   Context    │     • Relationships and patterns                          │
-│  │   Mapping    │                                                           │
-│  └──────────────┘                                                           │
-│        │                                                                    │
-│        ▼                                                                    │
-│  ┌──────────────┐     Produces (one per context):                           │
-│  │   Phase 3    │ ──► • fqbc/[context-name].md                              │
-│  │   FQBC Gen   │     • One sub-phase per context (FQBC = Fully Qualified Bounded Context)                           │
-│  └──────────────┘                                                           │
-│        │                                                                    │
-│        ▼                                                                    │
-│  ┌──────────────┐     Produces:                                             │
-│  │   Phase 4    │ ──► • bcr/coherence-review.md                             │
-│  │   Coherence  │     • Boundary alignment verification                     │
-│  └──────────────┘     • Marks workflow complete                             │
-│        │                                                                    │
-│        ▼                                                                    │
-│  [Complete: All artifacts ready for Claude Code]                            │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+This skill includes `api-conventions.md` with standard HTTP API conventions. These defaults apply when the PRD doesn't specify API design principles. The conventions cover: URL structure, HTTP methods, query parameters, response envelopes, error handling, pagination, and date formats.
 
 ## Directory Structure
 
@@ -124,48 +72,9 @@ ddd-workspace/
 
 ## Manifest Structure
 
-The manifest tracks workflow state and PRD location:
+The manifest tracks workflow state. See `manifest-schema.md` for full schema and `manifest.schema.json` for validation.
 
-```json
-{
-  "version": "1.0",
-  "projectName": "Project Name",
-  "created": "2025-01-18T10:00:00Z",
-  "updated": "2025-01-18T14:30:00Z",
-  "prd": {
-    "ready": true,
-    "path": "prd/prd.html",
-    "format": "html"
-  },
-  "authorization": {
-    "pattern": "permissions-object",
-    "source": "default",
-    "notes": "Service middleware builds Permissions object from JWT claims"
-  },
-  "deployment": {
-    "topology": "single-service",
-    "notes": "All contexts deployed in a single service for POC"
-  },
-  "currentPhase": "fqbcGeneration",
-  "phases": {
-    "contextDiscovery": {
-      "status": "complete",
-      "contextsIdentified": ["ordering", "inventory", "fulfillment"]
-    },
-    "contextMapping": { "status": "complete" },
-    "fqbcGeneration": {
-      "status": "in_progress",
-      "contexts": {
-        "ordering": { "status": "complete" },
-        "inventory": { "status": "complete" },
-        "fulfillment": { "status": "pending" }
-      }
-    },
-    "coherenceReview": { "status": "pending" }
-  },
-  "decisions": []
-}
-```
+**Reference**: `manifest-schema.md`
 
 ---
 
@@ -184,85 +93,14 @@ Look for `ddd-model.manifest.json` in the workspace:
 ### Step 2: Resume or Start
 
 **If manifest found:**
-- Read it and validate against `manifest.schema.json` — report any missing required fields or invalid values before continuing. Examples:
-  - Missing required field: `prd.format is required but missing — add "format": "md" or "html"`
-  - Invalid enum value: `context status "waiting" is invalid — must be one of: pending, in_progress, complete, needsRevision`
-  - If manifest is too corrupted to repair, suggest reconstructing from existing artifact files or starting fresh
-- Report status, offer to continue
+- Read it and validate against `manifest.schema.json` — report any missing required fields or invalid values before continuing
+- Report status, offer to continue (see `review-protocol.md` § Resuming Work template)
 
 **If no manifest:**
 - Check if PRD exists
-- If no PRD, direct user to create one first
+- If no PRD, direct user to create one first (see `review-protocol.md` § New Workflow template)
 - If PRD exists, suggest running `/ddd-prd validate [file]` if user hasn't already, then initialize workspace and start Phase 1
-
-### Response Template: Resuming Work
-
-```markdown
-## BCR Workflow Status
-
-**Project**: [name]
-**PRD**: [manifest.prd.path] ([format])
-**Current Phase**: [phase name]
-**Last Updated**: [timestamp]
-
-### Progress
-- [x] PRD Ready
-- [x] Phase 1: Context Discovery (3 contexts)
-- [x] Phase 2: Context Mapping
-- [ ] Phase 3: FQBC Generation (2/3 complete)
-  - [x] Ordering
-  - [x] Inventory
-  - [ ] Fulfillment ← **Next**
-- [ ] Phase 4: Coherence Review
-
-**Ready to generate FQBC for Fulfillment?**
-```
-
-### Response Template: New Workflow
-
-```markdown
-## Starting Bounded Context Review
-
-To begin, I need a PRD with these sections:
-- **Domain Glossary** — Key terms and definitions
-- **Business Rules** — Explicit policies and constraints
-- **Functional Areas** — Grouped features with cohesion rationale
-- **Integration Touchpoints** — Where areas/systems interact
-
-The PRD can be Markdown (.md) or HTML (.html).
-
-Do you have a PRD ready?
-- **Yes** — Share it or point me to the file
-- **No** — Create one first before running /ddd-model
-
-**Tip**: Run `/ddd-prd validate [file]` before starting to catch structural issues early.
-
-Once I have the PRD, I'll check for authorization patterns and initialize the workspace.
-```
-
-### Response Template: Authorization Pattern Confirmation
-
-> **Note**: If the PRD specifies an authorization pattern other than Permissions Object Pattern,
-> inform the user that this is the only pattern currently supported by the implementation pipeline
-> (`/ddd-implement`). Ask whether to proceed with Permissions Object Pattern or pause for discussion.
-
-If the PRD does not explicitly mention authorization, inform the user:
-
-```markdown
-## Authorization Pattern
-
-The PRD doesn't specify how authorization will be handled across bounded contexts.
-
-This pipeline uses the **Permissions Object Pattern** for all generated contexts:
-
-- Each service owns its role definitions — roles are not centralized
-- Service middleware builds a Permissions object from authenticated identity (JWT claims)
-- Handlers receive the object — they don't query roles or external services
-- Authorization checks via `permissions.hasAnyRole('Admin', 'Manager')`
-- Keeps domain logic clean; authorization is a cross-cutting concern
-
-This pattern will be applied to all bounded contexts. Proceeding with this approach.
-```
+- Check PRD for authorization pattern; if not specified, inform user that Permissions Object Pattern will be used (see `review-protocol.md` § Authorization Pattern Confirmation)
 
 ---
 
@@ -297,6 +135,7 @@ Read these for domain knowledge during generation:
 - [fqbc-template.md](fqbc-template.md) — Complete FQBC document structure
 - [context-mapping-patterns.md](context-mapping-patterns.md) — DDD integration patterns
 - [api-conventions.md](api-conventions.md) — HTTP API design conventions for API bindings
+- [review-protocol.md](review-protocol.md) — Response templates and user review summaries
 
 ---
 
@@ -304,53 +143,11 @@ Read these for domain knowledge during generation:
 
 Before Phase 1, set up the workspace:
 
-### Actions
-
-1. Create `ddd-workspace/` directory
-2. Create `prd/`, `bcr/`, and `fqbc/` subdirectories
-3. Copy PRD to `ddd-workspace/prd/` (preserve original format)
-4. **Verify PRD has required sections** — scan for these sections that the BCR workflow depends on:
-   - **Domain Glossary** (Section 6) — needed by Phase 1 context discovery
-   - **Business Rules Catalog** (Section 7) — needed by Phase 1 context discovery
-   - **Functional Areas** (Section 4) — needed by Phase 1 context discovery
-   - **Integration Touchpoints** (Section 9) — needed by Phase 2 context mapping
-
-   If any are missing, **stop and report** which sections are absent. Suggest running `/ddd-prd validate [file]` and `/ddd-prd edit [file]` to fix the PRD before continuing. Do not proceed to Phase 1 with a PRD that lacks these sections.
-5. **Check PRD for authorization pattern** — if not specified, inform user that Permissions Object Pattern will be used (see Response Template: Authorization Pattern Confirmation)
-6. Create `ddd-model.manifest.json` with PRD path, format, and authorization pattern
-
-### Initial Manifest
-
-```json
-{
-  "version": "1.0",
-  "projectName": "[from PRD]",
-  "created": "[timestamp]",
-  "updated": "[timestamp]",
-  "prd": {
-    "ready": true,
-    "path": "prd/prd.html",
-    "format": "html"
-  },
-  "authorization": {
-    "pattern": "permissions-object",
-    "source": "[prd-specified|default]",
-    "notes": "[How/where permissions are resolved]"
-  },
-  "deployment": {
-    "topology": "single-service",
-    "notes": "All contexts deployed in a single service for POC"
-  },
-  "currentPhase": "contextDiscovery",
-  "phases": {
-    "contextDiscovery": { "status": "pending", "contextsIdentified": [] },
-    "contextMapping": { "status": "pending" },
-    "fqbcGeneration": { "status": "pending", "contexts": {} },
-    "coherenceReview": { "status": "pending" }
-  },
-  "decisions": []
-}
-```
+1. Create `ddd-workspace/` directory with `prd/`, `bcr/`, and `fqbc/` subdirectories
+2. Copy PRD to `ddd-workspace/prd/` (preserve original format)
+3. **Verify PRD has required sections** — scan for Domain Glossary, Business Rules Catalog, Functional Areas, and Integration Touchpoints. If any are missing, **stop and report** which sections are absent. Suggest running `/ddd-prd validate [file]` and `/ddd-prd edit [file]` to fix the PRD before continuing.
+4. **Check PRD for authorization pattern** — if not specified, inform user that Permissions Object Pattern will be used (see `review-protocol.md`)
+5. Create `ddd-model.manifest.json` with PRD path, format, and authorization pattern (see `manifest-schema.md` for initial structure)
 
 ---
 
@@ -372,11 +169,11 @@ Read from PRD (path in `manifest.prd.path`):
    - The area has its own ubiquitous language — terms mean something specific here that differs from other areas
    - It has a clear aggregate root with an independent lifecycle
    - It could be owned by a single team without heavy cross-team coordination
-   - Its data has its own consistency boundary (changes don't require immediate consistency with other areas)
+   - Its data has its own consistency boundary
 
    **Split a functional area into multiple contexts when:**
-   - It contains terms that mean different things depending on sub-area (e.g., "Account" in billing vs. identity)
-   - Parts of the area change at very different rates (e.g., user registration vs. user analytics)
+   - It contains terms that mean different things depending on sub-area
+   - Parts of the area change at very different rates
    - It has distinct subdomain types — a core domain concern mixed with a generic/supporting concern
 
    **Merge functional areas into one context when:**
@@ -386,9 +183,7 @@ Read from PRD (path in `manifest.prd.path`):
 
 2. Propose candidate contexts with rationale
 3. Write `bcr/context-discovery.md`
-4. **Present summary and request user review** (see User Review Protocol)
-   - List each context with brief rationale
-   - Wait for user confirmation before proceeding to Phase 2
+4. **Present summary and request user review** (see `review-protocol.md` § After Phase 1)
 5. Update manifest with contextsIdentified
 
 **Note:** All contexts are deployed in a single service for POC. If contexts need to be split into independent microservices, each microservice should follow the full DDD pipeline independently.
@@ -409,11 +204,7 @@ Read from PRD (path in `manifest.prd.path`):
 2. **Shared Kernel decision gate**: For any proposed Shared Kernel relationship, explicitly justify why ACL is insufficient. Document the justification in `bcr/context-map.md`. If the shared concepts are still evolving, teams deploy independently, or the model is trivially duplicated — use ACL instead (see `context-mapping-patterns.md` for criteria).
 3. Create context map with diagram
 4. Write `bcr/context-map.md`
-5. **Present summary and request user review** (see User Review Protocol)
-   - Show relationship summary and diagram reference
-   - Highlight any potentially problematic dependencies
-   - **Flag any Shared Kernel relationships with their justification** for explicit user approval
-   - Wait for user confirmation before proceeding to Phase 3
+5. **Present summary and request user review** (see `review-protocol.md` § After Phase 2). **Flag any Shared Kernel relationships with their justification** for explicit user approval.
 6. Update manifest
 
 ---
@@ -436,37 +227,30 @@ This is where context window savings are realized. Each FQBC is a separate file 
 ### Actions
 
 1. Check manifest for next pending context (status = `pending`)
-   - If the context's status is already `complete`, prompt the user for confirmation before regenerating: "Context [name] already has a complete FQBC. Regenerate? This will overwrite the existing file."
+   - If the context's status is already `complete`, prompt the user for confirmation before regenerating
 2. Set that context's status to `in_progress` in the manifest
 3. Read minimal required sections
 4. Generate FQBC following fqbc-template.md
-5. **Propagate Source Refs**: When populating FQBC Section 9 (Traceability), carry forward Source Ref IDs from the PRD Traceability Index into the PRD References table. This preserves the chain from original source documents (Jira, Notion, etc.) through FR IDs to FQBC behaviors.
+5. **Propagate Source Refs**: When populating FQBC Section 9 (Traceability), carry forward Source Ref IDs from the PRD Traceability Index into the PRD References table.
 6. **Apply authorization pattern from manifest:**
    - For each Command and Query, specify required permissions
-   - Document how the Permissions object is used (if Permissions Object Pattern)
+   - Document how the Permissions object is used
    - Specify authorization failure responses (403 Forbidden)
-7. **If context exposes HTTP API** (skip if context is purely event-driven):
+7. **If context exposes HTTP API** (skip if purely event-driven):
    - Read api-conventions.md for project-wide HTTP standards
    - Generate "API Binding" section (Section 7) with concrete paths
-   - Map Commands to appropriate HTTP methods per conventions
-   - Map Queries to GET endpoints with standard parameter names
+   - Map Commands/Queries to appropriate HTTP methods per conventions
    - Specify request/response schemas matching the response envelope
-   - Document error codes for each failure scenario (including 403 for authorization)
+   - Document error codes for each failure scenario (including 403)
 8. **Detect and highlight inconsistencies:**
    - Compare with previously generated FQBCs for path collisions
    - Check for queries that traverse the same relationship (consolidation candidates)
    - Flag any deviations from api-conventions.md
-   - Note overlapping functionality with other contexts
 9. Write `fqbc/[context-name].md`
-10. **Present summary and request user review** (see User Review Protocol)
-    - Show API binding table (if context exposes HTTP API)
-    - List any detected inconsistencies or consolidation opportunities
-    - Wait for user confirmation before proceeding
+10. **Present summary and request user review** (see `review-protocol.md` § After Each FQBC)
 11. Update manifest
 
 ### API Binding Guidance
-
-When generating API bindings:
 
 | Domain Concept | HTTP Binding |
 |----------------|--------------|
@@ -476,32 +260,20 @@ When generating API bindings:
 | Query (list) | GET collection with filters |
 | Query (single) | GET resource by ID |
 
-**Context slug**: Derive from context name using kebab-case (see `api-conventions.md` § Context Slug Derivation for rules and examples)
+**Context slug**: Derive from context name using kebab-case (see `api-conventions.md` § Context Slug Derivation)
 
 **Base path**: `/api/{context-slug}/v1/` (version is per-context, enabling independent evolution)
 
 ### Endpoint Consolidation Opportunities
 
-**Important**: Multiple interfaces may bind to the same underlying endpoint. When you detect this pattern, **highlight it for user review** and suggest consolidation.
-
-**Example**: Consider "listing users assigned to a role" and "listing roles assigned to a user":
-- Naive approach: Two separate endpoints
-  - `GET /api/users/v1/users/{userId}/roles`
-  - `GET /api/roles/v1/roles/{roleId}/users`
-- Consolidated approach: One assignments endpoint with query params
-  - `GET /api/role-assignments/v1/assignments?userId={userId}`
-  - `GET /api/role-assignments/v1/assignments?roleId={roleId}`
+Multiple interfaces may bind to the same underlying endpoint. When you detect this pattern, **highlight it for user review** and suggest consolidation.
 
 **When to suggest consolidation**:
 - Queries that traverse the same relationship in different directions
 - Operations that share 80%+ of their data model
 - CRUD operations on junction/association tables
 
-**Action**: When you detect potential consolidation opportunities:
-1. Flag the overlap in the FQBC summary
-2. Present both the context-specific and consolidated options
-3. **Ask the user to decide** which approach aligns with their service design
-4. Suggest reviewing the service boundaries if many consolidation opportunities arise—this may indicate the contexts need restructuring into a more coherent design
+**Action**: Flag the overlap in the FQBC summary, present both options, and **ask the user to decide**. If many consolidation opportunities arise, suggest reviewing service boundaries.
 
 ---
 
@@ -520,103 +292,19 @@ When generating API bindings:
 2. **Terminology Consistency**: Shared terms compatible?
 3. **Coverage**: Every PRD requirement covered?
 4. **Relationship Validation**: Upstream/downstream match?
-5. **Authorization Consistency**:
-   - Pattern applied uniformly: All contexts use the same authorization pattern from manifest
-   - Permission naming: Similar operations use consistent permission names
-   - Permissions object usage: All contexts expect permissions passed the same way
-   - Failure responses: All contexts return 403 with consistent error structure
-6. **API Surface Validation**:
-   - Path uniqueness: No collisions across contexts
-   - Method consistency: Similar operations use same HTTP methods
-   - Parameter naming: All contexts use standard names (offset, limit, etc.)
-   - Response envelope: All contexts use consistent envelope structure
-   - Error codes: Consistent error code usage across contexts
+5. **Authorization Consistency**: Pattern applied uniformly, permission naming consistent, 403 responses uniform
+6. **API Surface Validation**: Path uniqueness, method consistency, parameter naming, response envelope, error codes
 
 ### Output: `bcr/coherence-review.md`
 
-The coherence review document uses this structure:
+The coherence review document includes:
 
 1. **Cross-Context Consistency** — Interface compatibility, terminology, coverage checks
-2. **API Surface Inventory** — All endpoints table + validation checklist
-3. **Authorization Consistency** — Pattern, permission inventory, validation checklist
-4. **API Binding Issues** — Table of issues found (if any)
-5. **Consolidation Opportunities** — Overlapping queries across contexts (if any)
+2. **API Surface Inventory** — All endpoints table with validation checklist (path collisions, method consistency, parameter names, envelope, error codes)
+3. **Authorization Consistency** — Pattern validation, permission inventory table, authorization checklist
+4. **API Binding Issues** — Table of issues found: path collisions, method inconsistencies, non-standard parameters
+5. **Consolidation Opportunities** — Overlapping queries across contexts. If 3+ detected, recommend reviewing bounded context boundaries
 6. **Recommendations** — Summary of actions needed
-
-Include an API Surface Inventory section:
-
-```markdown
-## API Surface Inventory
-
-### All Endpoints
-
-| Context | Operation | Method | Full Path |
-|---------|-----------|--------|-----------|
-| role-management | ListRoles | GET | `/api/role-management/v1/roles` |
-| role-management | AssignRole | POST | `/api/role-management/v1/assignments` |
-| surveillance-items | ListItems | GET | `/api/surveillance-items/v1/items` |
-| surveillance-items | UpdateStatus | PATCH | `/api/surveillance-items/v1/items/{id}/status` |
-| ... | ... | ... | ... |
-
-### Validation Results
-
-- [ ] No path collisions detected
-- [ ] HTTP methods consistent across similar operations
-- [ ] Query parameter names follow conventions
-- [ ] Response envelopes consistent
-- [ ] Error codes standardized
-
-## Authorization Consistency
-
-### Pattern Applied
-
-**Authorization Pattern**: [From manifest — e.g., Permissions Object Pattern]
-
-### Permission Inventory
-
-| Context | Operation | Required Permission |
-|---------|-----------|---------------------|
-| ordering | CreateOrder | `permissions.hasAnyRole('Customer', 'Admin')` |
-| ordering | CancelOrder | `permissions.hasAnyRole('Admin')` |
-| inventory | UpdateStock | `permissions.hasAnyRole('WarehouseStaff', 'Admin')` |
-| ... | ... | ... |
-
-### Authorization Validation
-
-- [ ] All contexts use the same authorization pattern
-- [ ] Permission checks use consistent method names
-- [ ] 403 responses use consistent error structure
-- [ ] No context queries external role services (Permissions Object Pattern)
-```
-
-### Coherence Issues
-
-If API binding issues are found, document them:
-
-```markdown
-### API Binding Issues
-
-| Issue | Context | Details | Recommendation |
-|-------|---------|---------|----------------|
-| Path collision | A, B | Both use `/api/v1/items` | Prefix with context slug |
-| Method inconsistency | A | Uses PUT for partial update | Change to PATCH |
-| Non-standard param | C | Uses `page` instead of `offset` | Rename to `offset` |
-```
-
-### Endpoint Consolidation Review
-
-In Phase 4, scan all FQBC API bindings for consolidation opportunities across contexts:
-
-```markdown
-### Consolidation Opportunities
-
-| Contexts | Overlapping Queries | Suggested Consolidation |
-|----------|---------------------|------------------------|
-| A, B | A.ListXByY, B.ListYByX | Single `xy-assignments` resource with filters |
-| C, D | C.GetStatus, D.GetStatus | Shared status endpoint or shared service |
-
-**Recommendation**: If 3+ consolidation opportunities are detected, consider whether the bounded context boundaries need revision. Many overlaps suggest the service design should be reviewed for a more coherent structure.
-```
 
 **Action when consolidation opportunities found:**
 1. Document each opportunity with affected contexts
@@ -630,169 +318,17 @@ If any contexts are flagged as `needsRevision` in the coherence review:
 
 1. Check manifest for contexts with `status: "needsRevision"`
 2. Present the specific coherence findings for that context to the user
-3. Ask user whether to:
-   a. **Revise** — Update the FQBC to address findings, then set status back to `complete`
-   b. **Accept as-is** — Acknowledge the finding and set status to `complete` without changes
-   c. **Defer** — Leave as `needsRevision` for later resolution
-4. For revisions: re-read the FQBC, apply changes, update manifest status and `updated` timestamp
+3. Ask user whether to: **Revise** (update FQBC), **Accept as-is** (set to complete), or **Defer** (leave as needsRevision)
+4. For revisions: re-read the FQBC, apply changes, update manifest
 5. After all `needsRevision` contexts are resolved, set `currentPhase` to `complete`
 
 ---
 
 ## User Review Protocol
 
-**Important Goal**: The BCR process should help the user develop a deep understanding of what will be built. Each phase produces artifacts that shape the final system—user review ensures alignment before proceeding.
+**Reference**: See `review-protocol.md` for all response templates, phase review summaries, chat transition guidance, and session resumption procedures.
 
-### After Phase 1: Context Discovery
-
-Present a summary and **ask the user to review** before proceeding:
-
-```markdown
-**Phase 1 Complete: Context Discovery**
-
-I've identified [N] candidate bounded contexts:
-- [Context A] — [brief rationale]
-- [Context B] — [brief rationale]
-- ...
-
-Full details written to `bcr/context-discovery.md`.
-
-**Please review the context boundaries before we proceed.**
-
-Questions to consider:
-- Do these boundaries match your mental model of the domain?
-- Are any contexts too broad (doing too much) or too narrow (artificial splits)?
-- Are the rationales for each context clear and convincing?
-
-Ready to proceed to Phase 2: Context Mapping?
-```
-
-### After Phase 2: Context Mapping
-
-Present the context map and **ask the user to review** relationships:
-
-```markdown
-**Phase 2 Complete: Context Mapping**
-
-Context relationships defined:
-- [Context A] → [Pattern] → [Context B]
-- ...
-
-Full details and diagram written to `bcr/context-map.md`.
-
-**Please review the context relationships before we proceed.**
-
-Questions to consider:
-- Do upstream/downstream relationships feel correct?
-- Are integration patterns appropriate? (Default to ACL over Shared Kernel — see context-mapping-patterns.md for criteria)
-- Will these relationships scale as the system grows?
-
-Ready to proceed to Phase 3: FQBC Generation?
-```
-
-### After Each FQBC (Phase 3)
-
-**Critical**: FQBC API bindings require careful user review. Present a summary and **explicitly ask the user to validate**:
-
-```markdown
-**[Context] FQBC Complete** ([N]/[Total])
-
-**API Bindings for [Context]:**
-| Operation | Method | Path |
-|-----------|--------|------|
-| [Op1] | POST | `/api/[context]/v1/[resource]` |
-| [Op2] | GET | `/api/[context]/v1/[resource]` |
-| ... | ... | ... |
-
-Full specification written to `fqbc/[context-name].md`.
-
-**Please review before proceeding—especially the API bindings:**
-
-1. **Path Alignment**: Do the paths follow your API standards and conventions?
-2. **Redundancy Check**: Could any endpoints be consolidated with other contexts?
-3. **Functionality Clarity**: Does each endpoint have a clear, single purpose?
-
-[If inconsistencies detected, list them here]
-
-Ready to generate FQBC for **[next context]**? Or would you like to adjust this specification first?
-```
-
-### Chat Transition Guidance
-
-### After Each Phase
-
-```markdown
-**Phase [N] complete.**
-
-Next: Phase [N+1] — [name]
-
-Continue now, or pause and resume later with `/ddd-model`
-```
-
-### After FQBC (Mid-Phase 3)
-
-```markdown
-**[Context] FQBC complete.** ([N]/[Total])
-
-Next: Generate FQBC for **[next context]**
-
-Continue, or pause here—good stopping point.
-```
-
-### Workflow Complete
-
-```markdown
-## BCR Workflow Complete!
-
-### Deliverables
-
-All artifacts in `ddd-workspace/`:
-
-**Bounded Context Review:**
-- bcr/context-discovery.md
-- bcr/context-map.md
-- bcr/coherence-review.md
-
-**FQBCs:**
-- fqbc/[context-name].md (one per context)
-
-These are ready to feed into Claude Code for implementation.
-```
-
----
-
-## Resuming a Session
-
-When re-invoking `/ddd-model` in a new chat:
-
-1. Read `ddd-workspace/ddd-model.manifest.json`
-2. Report current progress (see "Response Template: Resuming Work")
-3. Identify the next incomplete item and offer to continue
-
-**Example**: FQBC generation interrupted after 2 of 3 contexts:
-
-```
-User: /ddd-model
-
-Claude:
-## BCR Workflow Status
-
-**Project**: E-Commerce Platform
-**Current Phase**: FQBC Generation (2/3 complete)
-
-### Progress
-- [x] Phase 1: Context Discovery (3 contexts)
-- [x] Phase 2: Context Mapping
-- [ ] Phase 3: FQBC Generation
-  - [x] Ordering
-  - [x] Inventory
-  - [ ] Fulfillment ← **Next**
-- [ ] Phase 4: Coherence Review
-
-Ready to generate FQBC for **Fulfillment**?
-```
-
-The manifest preserves all state — no need to re-read previously processed contexts.
+**Key rule**: Pause and ask user to validate after every phase. The goal is user understanding of what will be built. API binding review is especially critical — explicitly ask user to verify paths and functionality.
 
 ---
 
@@ -801,32 +337,18 @@ The manifest preserves all state — no need to re-read previously processed con
 ### Mid-Phase Failure
 
 If a phase fails partway through (e.g., context window exhaustion during FQBC generation):
-
 1. The manifest reflects the last completed unit of work
 2. Partially written files may exist — check the workspace
-3. If the FQBC file is incomplete, delete it and regenerate from scratch. An FQBC is incomplete if:
-   - The file is truncated (does not end with Section 9: Traceability)
-   - Any section from 1–8 in fqbc-template.md is missing entirely
-   - The context's manifest status is `in_progress` (generation was interrupted before confirmation)
-4. The manifest's per-context status tracks which FQBCs are `complete` vs `pending`
-
-**Recovery steps**:
-1. Re-invoke `/ddd-model`
-2. The skill reads the manifest and identifies the incomplete context
-3. Regenerate only the incomplete FQBC
+3. If the FQBC file is incomplete (truncated, missing sections, or status is `in_progress`), delete it and regenerate
+4. Re-invoke `/ddd-model` — the skill reads the manifest and identifies the incomplete context
 
 ### Manifest Missing or Corrupted
 
-1. Scan workspace for existing artifacts
-2. Reconstruct manifest from what exists
-3. Confirm with user
+Scan workspace for existing artifacts, reconstruct manifest from what exists, and confirm with user.
 
 ### PRD Missing or Incomplete
 
-If PRD lacks required sections (Glossary, Business Rules, Functional Areas):
-- List what's missing
-- Direct user to complete PRD first
-- Cannot proceed without PRD
+List what's missing, direct user to complete PRD first. Cannot proceed without required sections.
 
 ---
 
@@ -834,13 +356,12 @@ If PRD lacks required sections (Glossary, Business Rules, Functional Areas):
 
 1. **PRD is prerequisite** — must exist before starting
 2. **Authorization pattern** — Permissions Object Pattern is the only supported pattern; inform user if PRD doesn't specify one
-3. **Single service deployment** — all contexts deploy in one service for POC (microservices follow full pipeline independently)
+3. **Single service deployment** — all contexts deploy in one service for POC
 4. **Read manifest first** — always check current state
 5. **Minimal context loading** — only read what current phase needs
 6. **Write files immediately** — don't accumulate in conversation
 7. **One FQBC at a time** — Phase 3 is naturally chunked
 8. **Clear transition guidance** — tell user how to resume with `/ddd-model`
-9. **User review after each phase** — pause and ask user to validate before proceeding; the goal is user understanding of what will be built
-10. **API binding review is critical** — explicitly ask user to verify paths align with standards and functionality is not redundant
-11. **Highlight inconsistencies** — proactively flag any detected issues (path collisions, naming inconsistencies, consolidation opportunities)
-12. **Suggest service review for consolidation** — if multiple interfaces bind to the same data, suggest restructuring into a more coherent design
+9. **User review after each phase** — pause and ask user to validate before proceeding
+10. **API binding review is critical** — explicitly ask user to verify paths
+11. **Highlight inconsistencies** — proactively flag path collisions, naming issues, consolidation opportunities

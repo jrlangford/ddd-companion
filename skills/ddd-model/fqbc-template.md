@@ -83,18 +83,10 @@ Functional requirements this context must fulfill. Each behavior maps to PRD req
 #### BH-01: [Behavior Name]
 
 **User Story**: As a [role], I want to [action], so that [benefit].
-
-**Preconditions**:
-- [What must be true before]
-
-**Postconditions**:
-- [What must be true after]
-
-**Business Rules Applied**:
-- BR-XX: [Rule that governs this behavior]
-
-**Acceptance Criteria**:
-- [ ] [Testable criterion]
+**Preconditions**: [What must be true before]
+**Postconditions**: [What must be true after]
+**Business Rules Applied**: BR-XX: [Rule that governs this behavior]
+**Acceptance Criteria**: [ ] [Testable criterion]
 ````
 
 ---
@@ -119,9 +111,7 @@ Rules that govern this context. These are first-class citizens of the model.
 ##### BR-XX: [Rule Name]
 
 **Statement**: [Full rule in domain language]
-
 **Rationale**: [Why this rule exists in the business]
-
 **Violation Handling**: [What happens when violated]
 
 ### Aggregates
@@ -131,20 +121,10 @@ Clusters of objects treated as a single unit for data changes.
 #### [Aggregate Name]
 
 **Root Entity**: [Entity that serves as the entry point]
-
-**Invariants Protected**:
-- [What must always be true within this aggregate]
-
-**Entities**:
-- [Entity]: [Identity, role in aggregate]
-
-**Value Objects**:
-- [VO]: [Attributes, role in aggregate]
-
-**Lifecycle**:
-```
-[State] → [State] → [State]
-```
+**Invariants Protected**: [What must always be true within this aggregate]
+**Entities**: [Entity]: [Identity, role in aggregate]
+**Value Objects**: [VO]: [Attributes, role in aggregate]
+**Lifecycle**: `[State] → [State] → [State]`
 
 ### Entities
 
@@ -212,19 +192,9 @@ Permissions used by this context:
 
 ### Authorization Boundary
 
-**This context expects**:
-- Authenticated identity (e.g., JWT claims) provided by upstream authentication
-- Service middleware builds Permissions object using this context's role definitions
-- Permissions object passed to handlers via request context (`auth.ClaimsContextKey`)
-
-**This context owns**:
-- Role definitions relevant to its domain (e.g., `OrderManager`, `InventoryClerk`)
-- Permission resolution logic in its middleware layer
-
-**This context does NOT**:
-- Rely on a central authorization service for role definitions
-- Query external services during permission checks
-- Share its role definitions with other contexts
+- **Expects**: Authenticated identity (JWT claims) from upstream; service middleware builds Permissions object using this context's role definitions; passed via request context (`auth.ClaimsContextKey`)
+- **Owns**: Role definitions relevant to its domain (e.g., `OrderManager`, `InventoryClerk`) and permission resolution logic
+- **Does NOT**: Rely on a central authorization service, query external services during permission checks, or share role definitions with other contexts
 
 ### Unauthorized Handling
 
@@ -523,63 +493,3 @@ Before marking an FQBC as complete, verify:
 - [ ] **Section 8 — Context Relationships**: Upstream dependencies and downstream consumers listed with integration patterns
 - [ ] **Section 9 — Traceability**: All behaviors and rules linked to PRD references; Source Refs propagated from PRD; design decisions documented
 
----
-
-## Output Format Notes
-
-### Mermaid Diagrams
-
-Useful diagrams for FQBC:
-
-**Aggregate Structure**:
-```mermaid
-classDiagram
-    class AggregateRoot {
-        +id: Identity
-        +method()
-    }
-    class Entity {
-        +id: Identity
-    }
-    class ValueObject {
-        +attributes
-    }
-    AggregateRoot *-- Entity
-    AggregateRoot *-- ValueObject
-```
-
-**State Machine**:
-```mermaid
-stateDiagram-v2
-    [*] --> Created
-    Created --> Active: activate
-    Active --> Suspended: suspend
-    Suspended --> Active: resume
-    Active --> Closed: close
-    Closed --> [*]
-```
-
-**Context Relationships**:
-```mermaid
-graph LR
-    ThisContext -->|Events| DownstreamA
-    ThisContext -->|Events| DownstreamB
-    UpstreamA -->|Commands| ThisContext
-```
-
-### Markdown Output
-
-For markdown, include Mermaid as fenced code blocks:
-
-~~~markdown
-```mermaid
-[diagram code]
-```
-~~~
-
-### Notion Output
-
-Use `Notion:notion-create-pages` with:
-- Toggle blocks for collapsible details
-- Database blocks for catalogs
-- Callout blocks for rules and warnings

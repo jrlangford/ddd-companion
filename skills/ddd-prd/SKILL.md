@@ -54,7 +54,7 @@ A lean PRD consists of these sections:
 | 13 | Non-Functional Requirements | Quality attributes |
 | 14 | Success Criteria | How we know it works |
 | 15 | Product Team Expectations | Technical context (not specs) |
-| 16 | Traceability Index | Requirement IDs for FQBC (Fully Qualified Bounded Context) citation |
+| 16 | Traceability Index | Requirement IDs for FQBC citation |
 | 17 | Appendix | References, links, supplementary material |
 
 ### Pipeline Context
@@ -103,39 +103,24 @@ Validate an existing PRD document against the schema.
 ```markdown
 ## PRD Validation: [filename]
 
-**Status symbols**: `✓` = present and complete | `⚠` = present but has issues | `✗` = missing or invalid | `—` = optional, not included
+**Status symbols**: `pass` = present and complete | `warn` = present but has issues | `fail` = missing or invalid | `skip` = optional, not included
 
 ### Section Compliance
 
 | Section | Status | Notes |
 |---------|--------|-------|
-| 1. Executive Summary | ✓ | — |
-| 2. Background & Context | ✓ | — |
-| 3. Scope | ✓ | — |
-| 4. Functional Areas | ⚠ | Missing cohesion rationale for Area 2 |
-| 5. Functional Requirements | ✓ | — |
-| 6. Domain Glossary | ⚠ | 3 terms used but not defined |
-| 7. Business Rules Catalog | ✗ | Missing — rules embedded in acceptance criteria |
-| 8. Conceptual Entity Map | ✓ | — |
-| 9. Integration Touchpoints | ✓ | — |
-| 10. Role-Capability Matrix | ✗ | Missing |
-| 11. Authorization Pattern | — | Optional, not included |
-| 12. API Design Principles | — | Optional, not included |
-| 13. Non-Functional Requirements | ✓ | — |
-| 14. Success Criteria | ✓ | — |
-| 15. Product Team Expectations | ✓ | — |
-| 16. Traceability Index | ⚠ | Incomplete — missing BR-* entries |
-| 17. Appendix | ✓ | — |
+| 1. Executive Summary | [status] | [notes] |
+| ... | ... | ... |
 
 ### Issues
 
 | Severity | Count | Examples |
 |----------|-------|----------|
-| High | 2 | Missing Business Rules Catalog, Missing Role-Capability Matrix |
-| Medium | 3 | Undefined terms: "threshold", "workflow", "escalation" |
-| Low | 1 | Area 2 missing cohesion rationale |
+| High | N | [examples] |
+| Medium | N | [examples] |
+| Low | N | [examples] |
 
-### Validation Result: **6 issues found**
+### Validation Result: **N issues found**
 
 Use `/ddd-prd edit [file]` to fix these issues interactively.
 ```
@@ -155,322 +140,7 @@ Generate an empty PRD template with all required sections.
 3. Write to `ddd-workspace/prd/prd-[project-name]-[scope].md`
 4. If no project name provided, ask for one
 
-### Output Template
-
-Generate the following structure (see [output-formats.md](output-formats.md) for formatting details):
-
-```markdown
-# Product Requirements Document
-## [Project Name] — [Scope]
-
-**Version**: 0.1 (Draft)
-**Date**: [Current Date]
-**Status**: Template
-
----
-
-## Table of Contents
-
-1. [Executive Summary](#1-executive-summary)
-2. [Background & Context](#2-background--context)
-3. [Scope](#3-scope)
-4. [Functional Areas](#4-functional-areas)
-5. [Functional Requirements](#5-functional-requirements)
-6. [Domain Glossary](#6-domain-glossary)
-7. [Business Rules Catalog](#7-business-rules-catalog)
-8. [Conceptual Entity Map](#8-conceptual-entity-map)
-9. [Integration Touchpoints](#9-integration-touchpoints)
-10. [Role-Capability Matrix](#10-role-capability-matrix)
-11. [Authorization Pattern](#11-authorization-pattern) *(optional)*
-12. [API Design Principles](#12-api-design-principles) *(optional)*
-13. [Non-Functional Requirements](#13-non-functional-requirements)
-14. [Success Criteria](#14-success-criteria)
-15. [Product Team Expectations](#15-product-team-expectations)
-16. [Traceability Index](#16-traceability-index)
-17. [Appendix](#17-appendix)
-
----
-
-## 1. Executive Summary
-
-<!--
-Briefly describe:
-- What this project is
-- What the project will validate
-- Key functional areas
--->
-
-This PRD defines the scope for [Project Name], focusing on [scope description].
-The project will validate [core hypothesis] before expanding to [future scope].
-
-**Objective**: [One sentence goal]
-
-**Functional Areas**: [N] areas identified as potential Bounded Context boundaries.
-
----
-
-## 2. Background & Context
-
-<!--
-Explain:
-- Why this project exists
-- Current state problems
-- Business drivers
--->
-
-[Background content]
-
----
-
-## 3. Scope
-
-### 3.1 In Scope
-
-<!--
-List capabilities included with brief rationale.
-See scoping-criteria.md for inclusion criteria.
--->
-
-- [Capability 1]: [Why included]
-- [Capability 2]: [Why included]
-
-### 3.2 Out of Scope
-
-| Feature | Reason | Mitigation | Dependency |
-|---------|--------|------------|------------|
-| [Feature] | [Why deferred] | [How handled in current scope] | [What would enable inclusion] |
-
----
-
-## 4. Functional Areas
-
-<!--
-Group features by cohesion (shared terminology, entities, rules).
-These are candidates for Bounded Contexts.
-See ddd-alignment.md for grouping guidance.
--->
-
-### 4.1 [Area Name]
-
-**Cohesion Rationale**: [Why these features belong together]
-**Key Terms**: [Domain terms specific to this area]
-**Key Entities**: [Entities owned by this area]
-**Stakeholder**: [Primary business owner]
-
-| ID | Feature | Description |
-|----|---------|-------------|
-| FR-[area]-01 | [Name] | [Brief description] |
-
----
-
-## 5. Functional Requirements
-
-### 5.1 [Area Name]
-
-#### FR-[area]-01: [Feature Name]
-
-**Source Ref**: [ID(s) from source documents, e.g., US-123, PROJ-456 — or —]
-
-**User Story**: As a [role], I want to [action], so that [benefit].
-
-**Acceptance Criteria**:
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
-
-**Business Rules**:
-- BR-XX: [Rule reference from catalog]
-
-**Conceptual Entities**:
-- [Entity]: [What it represents, key attributes]
-
-**Role-Capability**:
-- [Role] can: [capability]
-
----
-
-## 6. Domain Glossary
-
-<!--
-Define domain terms with specific meanings.
-These become Ubiquitous Language in FQBC.
--->
-
-| Term | Definition | Area | Notes |
-|------|------------|------|-------|
-| [Term] | [Domain-specific meaning] | [Area] | [Variants] |
-
----
-
-## 7. Business Rules Catalog
-
-<!--
-Explicit policies and constraints.
-Categorize as: Invariant, Precondition, Postcondition, Derivation.
-See ddd-alignment.md for guidance.
--->
-
-| ID | Rule | Type | Entities | Area |
-|----|------|------|----------|------|
-| BR-01 | [Rule statement] | [Type] | [Entities] | [Area] |
-
----
-
-## 8. Conceptual Entity Map
-
-<!--
-What things exist in the domain (not technical data models).
-Include identity, attributes, relationships, lifecycle.
--->
-
-| Entity | Description | Key Attributes | Relationships | Area |
-|--------|-------------|----------------|---------------|------|
-| [Entity] | [What it represents] | [Attributes] | [Related entities] | [Area] |
-
----
-
-## 9. Integration Touchpoints
-
-<!--
-Where functional areas or external systems interact.
-These inform Context Mapping in technical design.
--->
-
-| From | To | Trigger | Data Flow | Timing | Notes |
-|------|-----|---------|-----------|--------|-------|
-| [Area] | [Area/System] | [Event] | [Data] | Sync/Async | [Constraints] |
-
----
-
-## 10. Role-Capability Matrix
-
-| Role | Area | Capabilities | Restrictions |
-|------|------|--------------|--------------|
-| [Role] | [Area] | [What they can do] | [Limitations] |
-
----
-
-## 11. Authorization Pattern
-
-<!-- Optional: include if roles are defined and downstream modeling needs authorization guidance -->
-
-**Pattern**: [e.g., Permissions Object — each service resolves its own roles]
-
-**Identity Source**: [e.g., JWT claims from API gateway]
-
-**Role Resolution**: [Where and how roles are resolved]
-
-**Cross-Context Authorization**: [How authz works across contexts]
-
----
-
-## 12. API Design Principles
-
-<!-- Optional: include if the system exposes HTTP APIs and the team has conventions -->
-
-**URL Structure**: [e.g., /api/{context}/{resource}]
-
-**Versioning Strategy**: [e.g., URL path /v1/]
-
-**Response Format**: [e.g., envelope with data/meta/errors]
-
-**Authentication Approach**: [e.g., Bearer token]
-
-**Pagination**: [e.g., offset/limit with next/previous links]
-
----
-
-## 13. Non-Functional Requirements
-
-| Category | Requirement | Priority |
-|----------|-------------|----------|
-| Performance | [Requirement] | P1/P2/P3 |
-| Security | [Requirement] | P1/P2/P3 |
-
----
-
-## 14. Success Criteria
-
-The project is successful when:
-
-1. [Measurable outcome]
-2. [Measurable outcome]
-
----
-
-## 15. Product Team Expectations
-
-<!--
-Technical concepts from source docs — context for engineering, not specs.
--->
-
-**Assumptions**: [What product team assumed]
-
-**Technical Concepts**: [What they envisioned]
-
----
-
-## 16. Traceability Index
-
-### Functional Requirements
-| ID | Name | Area | Source Ref |
-|----|------|------|------------|
-| FR-[area]-01 | [Name] | [Area] | [ID(s) or —] |
-
-### Business Rules
-| ID | Summary |
-|----|---------|
-| BR-01 | [Brief] |
-
-### Conceptual Entities
-| ID | Entity |
-|----|--------|
-| CE-01 | [Name] |
-
-### Integration Touchpoints
-| ID | From → To |
-|----|-----------|
-| IT-01 | [Area] → [Area/System] |
-```
-
----
-
-## 17. Appendix
-
-<!--
-References, links, and supplementary material.
--->
-
-- [Reference 1]: [URL or description]
-- [Reference 2]: [URL or description]
-```
-
-### Confirmation
-
-```markdown
-## Template Generated
-
-**File**: `ddd-workspace/prd/prd-[project-name]-[scope].md`
-
-The template includes all 17 sections (15 required, 2 optional: sections 11 and 12) with placeholder guidance.
-
-**When to use which command**:
-- **Have source docs?** Use `/ddd-extract-prd [source]` to populate the PRD automatically
-- **Starting from scratch?** Fill sections in the recommended order below
-- **Refining an existing PRD?** Use `/ddd-prd edit [file]` for guided improvements
-
-**Recommended fill-in order** (each section builds on earlier ones):
-1. Executive Summary & Background (set the stage)
-2. Scope & Functional Areas (define boundaries)
-3. Domain Glossary (establish shared language)
-4. Functional Requirements (detail each area using the glossary)
-5. Business Rules Catalog (extract from requirements)
-6. Conceptual Entity Map (derive from requirements and rules)
-7. Remaining sections (roles, touchpoints, NFRs, traceability, etc.)
-
-**Optional sections**: Include Section 11 (Authorization Pattern) when the PRD defines roles in Section 10 — see [schema.md](schema.md) for inclusion criteria. Include Section 12 (API Design Principles) when source docs specify HTTP/API conventions — see [../ddd-model/api-conventions.md](../ddd-model/api-conventions.md) for default conventions.
-
-Use [scoping-criteria.md](scoping-criteria.md) to determine what goes in Section 3 (Scope).
-```
+**Reference**: See `prd-template.md` for the full template content and post-generation guidance.
 
 ---
 
@@ -482,23 +152,7 @@ Show the template and guidance for a specific PRD section.
 
 ### Valid Section Names
 
-- `executive-summary`
-- `background`
-- `scope`
-- `functional-areas`
-- `requirements`
-- `glossary`
-- `business-rules`
-- `entities`
-- `touchpoints`
-- `roles`
-- `nfr`
-- `success-criteria`
-- `expectations`
-- `traceability`
-- `authorization` *(optional)*
-- `api` *(optional)*
-- `appendix`
+`executive-summary`, `background`, `scope`, `functional-areas`, `requirements`, `glossary`, `business-rules`, `entities`, `touchpoints`, `roles`, `nfr`, `success-criteria`, `expectations`, `traceability`, `authorization` *(optional)*, `api` *(optional)*, `appendix`
 
 ### Actions
 
@@ -542,10 +196,10 @@ Capture explicit policies and constraints that govern the domain. Business rules
 
 ### Common Mistake
 Rules embedded in acceptance criteria:
-> ❌ "System rejects if total > $10,000"
+> Bad: "System rejects if total > $10,000"
 
 Should be extracted:
-> ✓ BR-01: Submissions exceeding $10,000 require manager approval (Precondition)
+> Good: BR-01: Submissions exceeding $10,000 require manager approval (Precondition)
 
 See [ddd-alignment.md](ddd-alignment.md) for full guidance.
 ```
@@ -556,315 +210,16 @@ See [ddd-alignment.md](ddd-alignment.md) for full guidance.
 
 **Usage**: `/ddd-prd edit [file-path]`
 
-Interactively review and refine an existing PRD document.
+Interactively review and refine an existing PRD document through a three-phase workflow: Load & Validate → Guided Editing → Apply Changes.
 
-### Purpose
+**Reference**: See `edit-workflow.md` for the complete phase-by-phase workflow, output templates, interaction modes, and error handling.
 
-Use this command when you have an existing PRD that needs:
-- Structural validation and fixes
-- Content refinement or expansion
-- DDD readiness review
-- Addition of missing sections
+**Quick summary**:
+1. **Phase 1**: Load PRD, validate against schema, present compliance report with issues and statistics
+2. **Phase 2**: Based on user choice — fix structural issues, refine a section, add new content, or run DDD readiness review
+3. **Phase 3**: Compile approved changes, present summary, write updated PRD after approval
 
-### Input
-
-Provide the path to an existing PRD file:
-- Absolute path: `/path/to/prd-project-mvp.md`
-- Relative path: `ddd-workspace/prd/prd-project-mvp.md`
-
----
-
-### Phase 1: Load & Validate
-
-**Goal**: Understand the current state of the PRD and identify gaps.
-
-#### Actions
-
-1. Read the PRD from the provided path
-2. Validate structure against [schema.md](schema.md)
-3. Check for:
-   - Missing required sections
-   - Business rules embedded in acceptance criteria (should be extracted)
-   - Undefined domain terms (referenced but not in glossary)
-   - Entities without relationships
-   - Missing traceability IDs
-4. Calculate statistics
-
-#### Present to User
-
-```markdown
-## PRD Review: [Document Name]
-
-**Location**: [File path]
-**Last Modified**: [Date if available]
-
-### Structure Compliance
-
-| Section | Status | Notes |
-|---------|--------|-------|
-| Executive Summary | ✓ Present | — |
-| Background & Context | ✓ Present | — |
-| Scope | ✓ Present | — |
-| Functional Areas | ✓ Present | — |
-| Functional Requirements | ✓ Present | — |
-| Domain Glossary | ⚠ Incomplete | 3 terms undefined |
-| Business Rules Catalog | ✗ Missing | Rules embedded in acceptance criteria |
-| Conceptual Entity Map | ✓ Present | — |
-| Integration Touchpoints | ✓ Present | — |
-| Role-Capability Matrix | ✗ Missing | — |
-| Non-Functional Requirements | ✓ Present | — |
-| Success Criteria | ✓ Present | — |
-| Product Team Expectations | ✓ Present | — |
-| Traceability Index | ⚠ Incomplete | Missing BR-* IDs |
-
-### Issues Found
-
-| Severity | Issue | Location |
-|----------|-------|----------|
-| High | Entity "Order" referenced but not defined | FR-02, FR-05 |
-| Medium | Business rules embedded in acceptance criteria | FR-03, FR-07 |
-| Medium | Term "threshold" used but not in glossary | FR-04 |
-| Low | Missing cohesion rationale | Functional Area 2 |
-
-### Statistics
-
-- **Functional Areas**: 3
-- **Functional Requirements**: 12
-- **Business Rules**: 5 (+ ~3 embedded)
-- **Glossary Terms**: 8 defined, 3 undefined
-- **Entities**: 6
-- **Integration Touchpoints**: 4
-
----
-
-**What would you like to do?**
-
-1. **Fix structural issues** — Extract embedded rules, define missing terms, add missing sections
-2. **Refine a specific section** — Deep dive into one area
-3. **Add new content** — Add requirements, rules, or entities
-4. **DDD readiness review** — Evaluate for Bounded Context work
-```
-
-Wait for user selection.
-
----
-
-### Phase 2: Guided Editing
-
-Based on user selection, provide targeted assistance.
-
-#### Option 1: Fix Structural Issues
-
-For each issue found, propose a fix:
-
-```markdown
-## Proposed Fixes
-
-### 1. Extract Embedded Business Rules
-
-**From FR-03 Acceptance Criteria**:
-> "System rejects submission if total exceeds $10,000"
-
-**Proposed Rule**:
-| ID | Rule | Type | Entities | Area |
-|----|------|------|----------|------|
-| BR-06 | Submissions with total exceeding $10,000 must be rejected | Precondition | Submission | Approval |
-
-**Updated Acceptance Criterion**:
-- [ ] System enforces BR-06 (submission total limit)
-
----
-
-### 2. Define Missing Glossary Terms
-
-| Term | Proposed Definition | Area |
-|------|---------------------|------|
-| Threshold | A configurable limit value that triggers system behavior when exceeded | Monitoring |
-
----
-
-### 3. Add Missing Entity
-
-**Entity**: Order
-**Description**: [Need input — what does Order represent in this domain?]
-**Proposed Attributes**: [Based on usage in FR-02, FR-05]
-**Relationships**: [To be determined]
-
-**Please provide a definition for "Order" or confirm the proposed attributes.**
-
----
-
-**Apply these fixes?** (I'll show you the changes before writing)
-```
-
-#### Option 2: Refine Specific Section
-
-Ask which section, then:
-
-```markdown
-## Section Review: [Section Name]
-
-### Current Content
-[Show current section content]
-
-### Suggestions
-1. [Specific improvement suggestion]
-2. [Specific improvement suggestion]
-
-### Questions
-- [Clarifying question about ambiguous content]
-
-**What changes would you like to make?**
-```
-
-#### Option 3: Add New Content
-
-```markdown
-## Add New Content
-
-**What would you like to add?**
-
-1. **New Functional Requirement** — I'll guide you through the template
-2. **New Business Rule** — Define a policy or constraint
-3. **New Entity** — Add to the conceptual model
-4. **New Glossary Term** — Define domain terminology
-5. **New Integration Touchpoint** — Document an external interaction
-
-[Based on selection, present appropriate template and guide completion]
-```
-
-#### Option 4: DDD Readiness Review
-
-Evaluate the PRD for downstream Bounded Context work:
-
-```markdown
-## DDD Readiness Assessment
-
-### Functional Area Cohesion
-
-| Area | Cohesion Score | Assessment |
-|------|----------------|------------|
-| [Area 1] | Strong | Clear terminology, shared entities, well-defined rules |
-| [Area 2] | Weak | Mixed terminology, entities shared with Area 3 |
-| [Area 3] | Moderate | Good rule isolation, but lifecycle unclear |
-
-### Terminology Consistency
-
-| Term | Usage Consistency | Issue |
-|------|-------------------|-------|
-| Customer | ⚠ Inconsistent | Different meaning in Area 1 vs Area 2 — potential context boundary |
-| Order | ✓ Consistent | Same meaning across all areas |
-
-### Context Boundary Signals
-
-**Strong Boundaries Detected**:
-- Area 1 ↔ Area 2: Different terminology for same concepts suggests natural split
-
-**Weak Boundaries**:
-- Area 2 ↔ Area 3: Heavy entity sharing, may be single context
-
-### Recommendations
-
-1. **Clarify "Customer" terminology** — Consider splitting into "Sales Customer" and "Support Customer" or document that these are the same
-2. **Review Area 2/3 boundary** — May benefit from merging or clearer interface definition
-3. **Add lifecycle diagrams** — [Entity] state transitions are unclear
-
-### Readiness Score: 7/10
-
-**Ready for Bounded Context Review with minor improvements.**
-```
-
----
-
-### Phase 3: Apply Changes
-
-**Goal**: Make approved changes to the PRD document.
-
-#### Actions
-
-1. Compile all approved changes from Phase 2
-2. Present unified diff showing all modifications
-3. Wait for user approval
-4. Write updated PRD to the same location (or new location if specified)
-
-#### Present to User
-
-```markdown
-## Proposed Changes Summary
-
-### Additions
-- Business Rules Catalog section (new)
-- 3 business rules extracted from acceptance criteria
-- 2 glossary terms defined
-- 1 entity added to Conceptual Entity Map
-
-### Modifications
-- FR-03: Updated acceptance criteria to reference BR-06
-- FR-07: Updated acceptance criteria to reference BR-07
-- Traceability Index: Added BR-06, BR-07, BR-08
-
-### Files
-- **Updated**: ddd-workspace/prd/prd-project-mvp.md
-
-**Apply these changes?**
-```
-
-After approval, write the file and confirm:
-
-```markdown
-## Changes Applied
-
-Updated: `ddd-workspace/prd/prd-project-mvp.md`
-
-### Summary
-- Added Business Rules Catalog with 3 rules
-- Defined 2 glossary terms
-- Added Order entity
-- Updated 2 functional requirements
-- Updated Traceability Index
-
-**PRD is now compliant with schema. Ready for Bounded Context Review.**
-```
-
----
-
-### Edit Interaction Modes
-
-#### Interactive (Default)
-
-Step-by-step review with approval at each change. Best for:
-- First-time PRD refinement
-- Complex structural issues
-- When user wants to understand each change
-
-#### Batch Mode
-
-User can specify multiple changes upfront as natural language:
-
-```
-/ddd-prd edit ddd-workspace/prd/prd-project-mvp.md extract embedded rules, define missing terms, add role-capability matrix
-```
-
-Process all requested changes, then present unified review before applying.
-
----
-
-### Edit Error Handling
-
-#### File Not Found
-- Verify the path with the user
-- Suggest checking `ddd-workspace/` directory
-- Offer to list available PRD files
-
-#### Invalid PRD Format
-- If file exists but isn't recognizable as a PRD, inform user
-- Offer to analyze structure and suggest how to proceed
-- May need extraction from source instead (`/ddd-extract-prd`)
-
-#### Conflicting Edits
-- If user has made changes since loading, warn before overwriting
-- Offer to reload and re-apply changes
-- Consider creating backup before writing
+Supports interactive (step-by-step) and batch modes.
 
 ---
 
@@ -878,6 +233,8 @@ This skill includes these reference documents:
 | [ddd-alignment.md](ddd-alignment.md) | Guidance for extracting DDD artifacts |
 | [output-formats.md](output-formats.md) | Markdown and Mermaid formatting |
 | [scoping-criteria.md](scoping-criteria.md) | Criteria for minimum viable scope feature selection |
+| [prd-template.md](prd-template.md) | Full PRD template for `/ddd-prd template` |
+| [edit-workflow.md](edit-workflow.md) | Edit command phases and interaction modes |
 
 Related skills:
 - `/ddd-extract-prd` — extract PRD from source documentation (Notion, HTML, Markdown)

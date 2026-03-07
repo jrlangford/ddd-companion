@@ -329,7 +329,7 @@ For each context, read files in `{context}application/`.
 
 ### Phase 6: Driving Adapter Validation
 
-**Reference**: `generators/golang/patterns/adapters.md` — Driving Adapter Patterns section
+**Reference**: `generators/golang/patterns/adapters-driving.md`
 
 #### HTTP Handler
 
@@ -450,33 +450,11 @@ Only if TypeSpec contracts exist in `api/`:
 
 ## Execution Workflow
 
-### Step 1: Announce Scope
-
-Before validating, tell the user:
-- What project you are validating
-- How many contexts were discovered
-- Which layers exist per context
-- What the validation will cover
-
-### Step 2: Run Phases Sequentially
-
-Execute Phase 0 through Phase 8 in order. Use subagents for Phase 2–7 if there are many contexts, processing one context per subagent to manage context window.
-
-### Step 3: Compile Report
-
-Aggregate all findings into the report format. Sort findings within each section by severity (errors first, then warnings, then info).
-
-### Step 4: Write Report
-
-Write the report to `ddd-validation-report.md` in the project root.
-
-### Step 5: Present Summary
-
-Show the user:
-1. Total finding counts by severity
-2. The most critical errors (if any)
-3. Contexts with the most findings
-4. A one-line verdict: whether the project conforms, mostly conforms, or has significant violations
+1. **Announce scope** — Tell the user what project, how many contexts discovered, which layers exist, and what will be checked
+2. **Run phases sequentially** — Execute Phase 0–8 in order. Use subagents for Phases 2–7 if many contexts (one context per subagent)
+3. **Compile report** — Aggregate findings into report format, sorted by severity (errors first)
+4. **Write report** — Save to `ddd-validation-report.md` in the project root
+5. **Present summary** — Total counts by severity, critical errors, most-affected contexts, and a one-line conformance verdict
 
 ---
 
@@ -501,16 +479,6 @@ When running partial validation, still execute Phase 0 (discovery) to establish 
 
 ## Using With and Without a Manifest
 
-### With manifest (`ddd-implement.manifest.json`)
+**With manifest** (`ddd-implement.manifest.json`): Use `contexts[]` for expected context/entity names, `generatedFiles` for expected paths. Validate names in code match manifest declarations. Report discrepancies as warnings.
 
-- Use `contexts[]` to know exactly which contexts and entities to expect
-- Use `generatedFiles` to verify expected files exist
-- Validate that entity/VO/event names in code match manifest declarations
-- Report discrepancies between manifest and actual code as warnings
-
-### Without manifest
-
-- Discover contexts from directory structure: any directory under `internal/` containing a `{name}domain/` subdirectory
-- Infer entity names from files in domain packages
-- Cannot validate completeness (whether all expected entities exist), only correctness of what does exist
-- Report as info that no manifest was found and completeness checks were skipped
+**Without manifest**: Discover contexts from directory structure (any `internal/` subdirectory containing `{name}domain/`). Infer entity names from domain package files. Completeness checks are skipped (report as info).
