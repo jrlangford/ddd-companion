@@ -70,3 +70,12 @@ Exits non-zero on errors (frontmatter violations). Warnings flag size regression
 - Generator pattern files (`patterns/*.md`) define exact code generation rules per architectural layer — when changing generated output structure, update the relevant pattern file
 - Output artifacts (PRDs, BCR docs, FQBCs) use Markdown with Mermaid diagrams, optimized for Obsidian rendering
 - The `justfile` `skills` variable must be updated when adding or removing skills
+
+### Responding to Size Warnings
+
+`just lint` flags files that exceed line or token thresholds. When reducing file size, **preserve all behavioral information** — the goal is to make skills smaller without making them less capable. Follow these rules:
+
+- **Split, don't delete.** Extract sections into new supporting docs and replace them with a reference link. Every rule, example, or constraint in the original must appear in exactly one file after the split.
+- **Compress prose, not rules.** Tighten wording, remove filler, and deduplicate — but do not drop decision rules, edge-case handling, constraints, or examples that illustrate non-obvious behavior.
+- **Preserve examples that earn their bytes.** If an example clarifies a rule that would be ambiguous without it, keep it. Only remove examples that are redundant with another example or that restate what the prose already makes obvious.
+- **Audit after splitting.** After any split, verify that (1) every rule from the original still exists in exactly one file, (2) SKILL.md links to the new file, and (3) `just lint` passes with no new link-missing warnings.
