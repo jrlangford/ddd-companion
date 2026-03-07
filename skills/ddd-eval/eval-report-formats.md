@@ -272,6 +272,11 @@ Scanned the project but found no recognizable DDD patterns:
 - No `domain/`, `ports/`, `adapters/` directory structure
 - No entity, repository, or domain event files
 
+**Possible reasons**:
+- The project doesn't follow DDD patterns
+- The project uses a different directory convention
+- DDD patterns exist but use non-standard naming
+
 **To get started with DDD**:
 1. `/ddd-extract-prd [source]` — extract a PRD from your documentation
 2. `/ddd-model` — model bounded contexts

@@ -93,7 +93,10 @@ Look for `ddd-model.manifest.json` in the workspace:
 ### Step 2: Resume or Start
 
 **If manifest found:**
-- Read it and validate against `manifest.schema.json` — report any missing required fields or invalid values before continuing
+- Read it and validate against `manifest.schema.json` — report any missing required fields or invalid values before continuing. Examples:
+  - Missing required field: `prd.format is required but missing — add "format": "md" or "html"`
+  - Invalid enum value: `context status "waiting" is invalid — must be one of: pending, in_progress, complete, needsRevision`
+  - If manifest is too corrupted to repair, suggest reconstructing from existing artifact files or starting fresh
 - Report status, offer to continue (see `review-protocol.md` § Resuming Work template)
 
 **If no manifest:**
@@ -268,12 +271,24 @@ This is where context window savings are realized. Each FQBC is a separate file 
 
 Multiple interfaces may bind to the same underlying endpoint. When you detect this pattern, **highlight it for user review** and suggest consolidation.
 
+**Example**: Consider "listing users assigned to a role" and "listing roles assigned to a user":
+- Naive approach: Two separate endpoints
+  - `GET /api/users/v1/users/{userId}/roles`
+  - `GET /api/roles/v1/roles/{roleId}/users`
+- Consolidated approach: One assignments endpoint with query params
+  - `GET /api/role-assignments/v1/assignments?userId={userId}`
+  - `GET /api/role-assignments/v1/assignments?roleId={roleId}`
+
 **When to suggest consolidation**:
 - Queries that traverse the same relationship in different directions
 - Operations that share 80%+ of their data model
 - CRUD operations on junction/association tables
 
-**Action**: Flag the overlap in the FQBC summary, present both options, and **ask the user to decide**. If many consolidation opportunities arise, suggest reviewing service boundaries.
+**Action**: When you detect potential consolidation opportunities:
+1. Flag the overlap in the FQBC summary
+2. Present both the context-specific and consolidated options
+3. **Ask the user to decide** which approach aligns with their service design
+4. Suggest reviewing the service boundaries if many consolidation opportunities arise — this may indicate the contexts need restructuring into a more coherent design
 
 ---
 
@@ -297,14 +312,89 @@ Multiple interfaces may bind to the same underlying endpoint. When you detect th
 
 ### Output: `bcr/coherence-review.md`
 
-The coherence review document includes:
+The coherence review document uses this structure:
 
 1. **Cross-Context Consistency** — Interface compatibility, terminology, coverage checks
-2. **API Surface Inventory** — All endpoints table with validation checklist (path collisions, method consistency, parameter names, envelope, error codes)
-3. **Authorization Consistency** — Pattern validation, permission inventory table, authorization checklist
-4. **API Binding Issues** — Table of issues found: path collisions, method inconsistencies, non-standard parameters
-5. **Consolidation Opportunities** — Overlapping queries across contexts. If 3+ detected, recommend reviewing bounded context boundaries
+2. **API Surface Inventory** — All endpoints table + validation checklist
+3. **Authorization Consistency** — Pattern, permission inventory, validation checklist
+4. **API Binding Issues** — Table of issues found (if any)
+5. **Consolidation Opportunities** — Overlapping queries across contexts (if any)
 6. **Recommendations** — Summary of actions needed
+
+Include an API Surface Inventory section:
+
+```markdown
+## API Surface Inventory
+
+### All Endpoints
+
+| Context | Operation | Method | Full Path |
+|---------|-----------|--------|-----------|
+| role-management | ListRoles | GET | `/api/role-management/v1/roles` |
+| role-management | AssignRole | POST | `/api/role-management/v1/assignments` |
+| surveillance-items | ListItems | GET | `/api/surveillance-items/v1/items` |
+| surveillance-items | UpdateStatus | PATCH | `/api/surveillance-items/v1/items/{id}/status` |
+| ... | ... | ... | ... |
+
+### Validation Results
+
+- [ ] No path collisions detected
+- [ ] HTTP methods consistent across similar operations
+- [ ] Query parameter names follow conventions
+- [ ] Response envelopes consistent
+- [ ] Error codes standardized
+
+## Authorization Consistency
+
+### Pattern Applied
+
+**Authorization Pattern**: [From manifest — e.g., Permissions Object Pattern]
+
+### Permission Inventory
+
+| Context | Operation | Required Permission |
+|---------|-----------|---------------------|
+| ordering | CreateOrder | `permissions.hasAnyRole('Customer', 'Admin')` |
+| ordering | CancelOrder | `permissions.hasAnyRole('Admin')` |
+| inventory | UpdateStock | `permissions.hasAnyRole('WarehouseStaff', 'Admin')` |
+| ... | ... | ... |
+
+### Authorization Validation
+
+- [ ] All contexts use the same authorization pattern
+- [ ] Permission checks use consistent method names
+- [ ] 403 responses use consistent error structure
+- [ ] No context queries external role services (Permissions Object Pattern)
+```
+
+### Coherence Issues
+
+If API binding issues are found, document them:
+
+```markdown
+### API Binding Issues
+
+| Issue | Context | Details | Recommendation |
+|-------|---------|---------|----------------|
+| Path collision | A, B | Both use `/api/v1/items` | Prefix with context slug |
+| Method inconsistency | A | Uses PUT for partial update | Change to PATCH |
+| Non-standard param | C | Uses `page` instead of `offset` | Rename to `offset` |
+```
+
+### Endpoint Consolidation Review
+
+In Phase 4, scan all FQBC API bindings for consolidation opportunities across contexts:
+
+```markdown
+### Consolidation Opportunities
+
+| Contexts | Overlapping Queries | Suggested Consolidation |
+|----------|---------------------|------------------------|
+| A, B | A.ListXByY, B.ListYByX | Single `xy-assignments` resource with filters |
+| C, D | C.GetStatus, D.GetStatus | Shared status endpoint or shared service |
+
+**Recommendation**: If 3+ consolidation opportunities are detected, consider whether the bounded context boundaries need revision.
+```
 
 **Action when consolidation opportunities found:**
 1. Document each opportunity with affected contexts
@@ -365,3 +455,4 @@ List what's missing, direct user to complete PRD first. Cannot proceed without r
 9. **User review after each phase** — pause and ask user to validate before proceeding
 10. **API binding review is critical** — explicitly ask user to verify paths
 11. **Highlight inconsistencies** — proactively flag path collisions, naming issues, consolidation opportunities
+12. **Suggest service review for consolidation** — if multiple interfaces bind to the same data, suggest restructuring into a more coherent design

@@ -281,6 +281,26 @@ For contexts with API Binding (FQBC Section 7) — skip event-driven-only contex
 5. Generate routes file with all endpoint registrations
 6. Generate DTO types matching FQBC request/response schemas
 
+**Generation Prompt Pattern** (for subagent delegation):
+```
+Generate HTTP handlers for context "{context.name}":
+
+Primary Port Interface:
+[Go interface definition]
+
+FQBC API Binding:
+[API Binding table from FQBC Section 7]
+
+FQBC Context Contract:
+[Command/Query details from FQBC Section 6]
+
+Requirements:
+1. Routes must match FQBC API Binding paths exactly
+2. Request/Response types must match FQBC schemas
+3. Call primary port methods for business logic
+4. Handle errors according to FQBC failure scenarios
+```
+
 #### 4b: Internal HTTP Handlers
 
 For contexts with Internal Endpoints defined in FQBC Section 7:
@@ -335,9 +355,76 @@ TypeSpec is generated as a **documentation artifact** — it produces OpenAPI sp
    3. In the subscribing context, create an integration event handler per `adapters.md` Event Handler Pattern
    4. Wire the subscription: `eventBus.Subscribe("{EventName}", handler)`
 4. Support APP_MODE env var (default: live, set to "mock" for test data). In mock mode, create the mock application (which embeds the real service), populate test data through it, and wire handlers to it. Only one service instance should exist per context in either mode. See `generators/golang/patterns/mock.md` for the wiring pattern.
-5. **Generate `README.md`** with: quick start (prerequisites, run commands for live/mock modes), API endpoints summary (from FQBC Section 7), project structure overview, and development notes (TODO markers, test/build commands)
+5. **Generate `README.md`** with usage instructions (see README template below)
 
 **Checkpoint**: Update `infrastructure.mainWiring`
+
+#### README Generation
+
+Generate a `README.md` file with the following sections:
+
+```markdown
+# {Project Name}
+
+{Brief description from BCR context-map}
+
+## Quick Start
+
+### Prerequisites
+- Go 1.21+
+
+### Running the Server
+
+\`\`\`bash
+# Run in live mode (default)
+go run ./cmd/server
+
+# Run in mock mode (uses in-memory repositories with test data)
+APP_MODE=mock go run ./cmd/server
+\`\`\`
+
+The server starts on `http://localhost:8080` by default.
+
+### API Endpoints
+
+{For each context with an API binding, list key endpoints from FQBC Section 7, e.g.:}
+{**Context Name**}
+{- `POST /api/{context-slug}/v1/{resource}` — Create resource}
+{- `GET /api/{context-slug}/v1/{resource}/{id}` — Get resource by ID}
+
+## Project Structure
+
+\`\`\`
+cmd/server/       - Application entry point
+internal/
+  {context}/      - Bounded context implementation
+    domain/       - Domain entities, value objects, events
+    application/  - Use case orchestration
+    ports/        - Primary (inbound) and secondary (outbound) interfaces
+    mock/         - Mock implementation with test data
+  adapters/       - Infrastructure adapters
+  support/        - Shared infrastructure (auth, logging, etc.)
+api/              - TypeSpec API contracts
+\`\`\`
+
+## Development
+
+### Adding Business Logic
+
+Look for `// TODO:` markers in application services to implement actual business logic.
+
+### Running Tests
+
+\`\`\`bash
+go test ./...
+\`\`\`
+
+### Building
+
+\`\`\`bash
+go build ./cmd/server
+\`\`\`
+```
 
 ### Phase 7: Validation (`validation`)
 

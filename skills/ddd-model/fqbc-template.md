@@ -493,3 +493,47 @@ Before marking an FQBC as complete, verify:
 - [ ] **Section 8 — Context Relationships**: Upstream dependencies and downstream consumers listed with integration patterns
 - [ ] **Section 9 — Traceability**: All behaviors and rules linked to PRD references; Source Refs propagated from PRD; design decisions documented
 
+---
+
+## Output Format Notes
+
+### Mermaid Diagrams
+
+Useful diagrams for FQBC:
+
+**Aggregate Structure**:
+```mermaid
+classDiagram
+    class AggregateRoot {
+        +id: Identity
+        +method()
+    }
+    class Entity {
+        +id: Identity
+    }
+    class ValueObject {
+        +attributes
+    }
+    AggregateRoot *-- Entity
+    AggregateRoot *-- ValueObject
+```
+
+**State Machine**:
+```mermaid
+stateDiagram-v2
+    [*] --> Created
+    Created --> Active: activate
+    Active --> Suspended: suspend
+    Suspended --> Active: resume
+    Active --> Closed: close
+    Closed --> [*]
+```
+
+**Context Relationships**:
+```mermaid
+graph LR
+    ThisContext -->|Events| DownstreamA
+    ThisContext -->|Events| DownstreamB
+    UpstreamA -->|Commands| ThisContext
+```
+

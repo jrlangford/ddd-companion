@@ -103,24 +103,39 @@ Validate an existing PRD document against the schema.
 ```markdown
 ## PRD Validation: [filename]
 
-**Status symbols**: `pass` = present and complete | `warn` = present but has issues | `fail` = missing or invalid | `skip` = optional, not included
+**Status symbols**: `✓` = present and complete | `⚠` = present but has issues | `✗` = missing or invalid | `—` = optional, not included
 
 ### Section Compliance
 
 | Section | Status | Notes |
 |---------|--------|-------|
-| 1. Executive Summary | [status] | [notes] |
-| ... | ... | ... |
+| 1. Executive Summary | ✓ | — |
+| 2. Background & Context | ✓ | — |
+| 3. Scope | ✓ | — |
+| 4. Functional Areas | ⚠ | Missing cohesion rationale for Area 2 |
+| 5. Functional Requirements | ✓ | — |
+| 6. Domain Glossary | ⚠ | 3 terms used but not defined |
+| 7. Business Rules Catalog | ✗ | Missing — rules embedded in acceptance criteria |
+| 8. Conceptual Entity Map | ✓ | — |
+| 9. Integration Touchpoints | ✓ | — |
+| 10. Role-Capability Matrix | ✗ | Missing |
+| 11. Authorization Pattern | — | Optional, not included |
+| 12. API Design Principles | — | Optional, not included |
+| 13. Non-Functional Requirements | ✓ | — |
+| 14. Success Criteria | ✓ | — |
+| 15. Product Team Expectations | ✓ | — |
+| 16. Traceability Index | ⚠ | Incomplete — missing BR-* entries |
+| 17. Appendix | ✓ | — |
 
 ### Issues
 
 | Severity | Count | Examples |
 |----------|-------|----------|
-| High | N | [examples] |
-| Medium | N | [examples] |
-| Low | N | [examples] |
+| High | 2 | Missing Business Rules Catalog, Missing Role-Capability Matrix |
+| Medium | 3 | Undefined terms: "threshold", "workflow", "escalation" |
+| Low | 1 | Area 2 missing cohesion rationale |
 
-### Validation Result: **N issues found**
+### Validation Result: **6 issues found**
 
 Use `/ddd-prd edit [file]` to fix these issues interactively.
 ```

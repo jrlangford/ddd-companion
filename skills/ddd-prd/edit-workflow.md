@@ -44,17 +44,29 @@ Provide the path to an existing PRD file (absolute or relative to workspace).
 
 | Section | Status | Notes |
 |---------|--------|-------|
-| Executive Summary | [status] | [notes] |
-| Background & Context | [status] | [notes] |
-| ... | ... | ... |
+| Executive Summary | ✓ Present | — |
+| Background & Context | ✓ Present | — |
+| Scope | ✓ Present | — |
+| Functional Areas | ✓ Present | — |
+| Functional Requirements | ✓ Present | — |
+| Domain Glossary | ⚠ Incomplete | 3 terms undefined |
+| Business Rules Catalog | ✗ Missing | Rules embedded in acceptance criteria |
+| Conceptual Entity Map | ✓ Present | — |
+| Integration Touchpoints | ✓ Present | — |
+| Role-Capability Matrix | ✗ Missing | — |
+| Non-Functional Requirements | ✓ Present | — |
+| Success Criteria | ✓ Present | — |
+| Product Team Expectations | ✓ Present | — |
+| Traceability Index | ⚠ Incomplete | Missing BR-* IDs |
 
 ### Issues Found
 
 | Severity | Issue | Location |
 |----------|-------|----------|
-| High | [issue] | [where] |
-| Medium | [issue] | [where] |
-| Low | [issue] | [where] |
+| High | Entity "Order" referenced but not defined | FR-02, FR-05 |
+| Medium | Business rules embedded in acceptance criteria | FR-03, FR-07 |
+| Medium | Term "threshold" used but not in glossary | FR-04 |
+| Low | Missing cohesion rationale | Functional Area 2 |
 
 ### Statistics
 
@@ -87,16 +99,65 @@ Based on user selection, provide targeted assistance.
 
 For each issue found, propose a fix:
 
-- **Embedded business rules**: Extract to Business Rules Catalog with proper IDs, update acceptance criteria to reference the rule
-- **Missing glossary terms**: Propose definitions based on usage context
-- **Missing entities**: Identify from requirement references, ask user for definitions
-- **Missing sections**: Generate from existing content where possible
+```markdown
+## Proposed Fixes
 
-Present all proposed fixes, then ask: **Apply these fixes?** (show changes before writing)
+### 1. Extract Embedded Business Rules
+
+**From FR-03 Acceptance Criteria**:
+> "System rejects submission if total exceeds $10,000"
+
+**Proposed Rule**:
+| ID | Rule | Type | Entities | Area |
+|----|------|------|----------|------|
+| BR-06 | Submissions with total exceeding $10,000 must be rejected | Precondition | Submission | Approval |
+
+**Updated Acceptance Criterion**:
+- [ ] System enforces BR-06 (submission total limit)
+
+---
+
+### 2. Define Missing Glossary Terms
+
+| Term | Proposed Definition | Area |
+|------|---------------------|------|
+| Threshold | A configurable limit value that triggers system behavior when exceeded | Monitoring |
+
+---
+
+### 3. Add Missing Entity
+
+**Entity**: Order
+**Description**: [Need input — what does Order represent in this domain?]
+**Proposed Attributes**: [Based on usage in FR-02, FR-05]
+**Relationships**: [To be determined]
+
+**Please provide a definition for "Order" or confirm the proposed attributes.**
+
+---
+
+**Apply these fixes?** (I'll show you the changes before writing)
+```
 
 ### Option 2: Refine Specific Section
 
-Ask which section, then show current content with specific improvement suggestions and clarifying questions. Wait for user direction.
+Ask which section, then present:
+
+```markdown
+## Section Review: [Section Name]
+
+### Current Content
+[Show current section content]
+
+### Suggestions
+1. [Specific improvement suggestion]
+2. [Specific improvement suggestion]
+
+### Questions
+- [Clarifying question about ambiguous content]
+
+**What changes would you like to make?**
+```
 
 ### Option 3: Add New Content
 
@@ -173,7 +234,22 @@ Evaluate the PRD for downstream Bounded Context work:
 **Apply these changes?**
 ```
 
-After approval, write the file and confirm with a summary of all changes applied.
+After approval, write the file and confirm:
+
+```markdown
+## Changes Applied
+
+Updated: `ddd-workspace/prd/prd-project-mvp.md`
+
+### Summary
+- Added Business Rules Catalog with 3 rules
+- Defined 2 glossary terms
+- Added Order entity
+- Updated 2 functional requirements
+- Updated Traceability Index
+
+**PRD is now compliant with schema. Ready for Bounded Context Review.**
+```
 
 ---
 
@@ -199,4 +275,4 @@ Process all requested changes, then present unified review before applying.
 
 - **File Not Found**: Verify path with user, suggest checking `ddd-workspace/`, offer to list available PRD files
 - **Invalid PRD Format**: Inform user, offer to analyze structure, suggest `/ddd-extract-prd` if needed
-- **Conflicting Edits**: Warn before overwriting if file changed since loading, offer to reload
+- **Conflicting Edits**: Warn before overwriting if file changed since loading, offer to reload. Consider creating backup before writing
