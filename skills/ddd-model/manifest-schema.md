@@ -40,7 +40,7 @@ The manifest file (`ddd-model.manifest.json`) tracks workflow state and enables 
     "fqbcGeneration": {
       "status": "pending|in_progress|complete",
       "contexts": {
-        "context_name": { "status": "pending|in_progress|complete|needsRevision" }
+        "context_name": { "status": "pending|in_progress|complete|needsRevision", "revisionCount": 0 }
       }
     },
     "coherenceReview": { 
@@ -275,6 +275,8 @@ pending → in_progress → complete
 - `in_progress`: Currently generating this FQBC
 - `complete`: FQBC written and confirmed by user
 - `needsRevision`: Coherence review (Phase 4) found issues requiring FQBC updates
+
+Each context tracks a `revisionCount` (integer, default 0) that increments each time the context transitions from `needsRevision` → `in_progress` for a revision. After 3+ revisions, the workflow surfaces an escalation suggesting the context boundary itself may need adjustment.
 
 When a context enters `needsRevision`, its FQBC must be updated and the status reset to `in_progress` → `complete` before the coherence review can pass.
 

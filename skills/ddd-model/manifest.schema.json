@@ -124,7 +124,13 @@
                 "type": "object",
                 "required": ["status"],
                 "properties": {
-                  "status": { "$ref": "#/$defs/fqbcContextStatus" }
+                  "status": { "$ref": "#/$defs/fqbcContextStatus" },
+                  "revisionCount": {
+                    "type": "integer",
+                    "description": "Number of times this context has been revised after coherence review. Escalate at 3+.",
+                    "default": 0,
+                    "minimum": 0
+                  }
                 }
               }
             }

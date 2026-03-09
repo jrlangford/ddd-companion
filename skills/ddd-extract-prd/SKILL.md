@@ -55,11 +55,16 @@ If the source type cannot be determined, ask the user to clarify.
 ### Actions
 
 1. Fetch the source document using the appropriate method:
-   - **Notion**: `Notion:notion-fetch` with the URL, then identify and fetch related databases and linked pages (limit to 1 level of linked pages to avoid runaway traversal; skip pages already fetched to prevent circular links; summarize skipped links for the user)
+   - **Notion**: `Notion:notion-fetch` with the URL, then identify and fetch related databases and linked pages (limit to 1 level of linked pages to avoid runaway traversal; limit to 10 linked pages; skip pages already fetched to prevent circular links; summarize skipped links for the user)
    - **HTML**: `WebFetch` for URLs or `Read` for local files
    - **Markdown**: `Read` the file directly
 
-2. Extract:
+2. **Assess source size** after fetching. If the fetched content is very large (estimated 80K+ tokens — roughly 300+ pages of prose or 6,000+ lines of markdown):
+   - Warn the user: "The source document is large (~{estimate}). Extracting from the full document may limit the quality of later phases."
+   - Suggest options: (a) proceed with full document, (b) identify and provide only the most relevant sections, or (c) split into multiple extraction runs per functional area
+   - For Notion sources that hit the 10-page limit, list the skipped pages and ask the user which (if any) are essential
+
+3. Extract:
    - Project name and ID (if available)
    - High-level goals and objectives
    - Key stakeholders/roles

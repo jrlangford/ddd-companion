@@ -408,9 +408,11 @@ If any contexts are flagged as `needsRevision` in the coherence review:
 
 1. Check manifest for contexts with `status: "needsRevision"`
 2. Present the specific coherence findings for that context to the user
-3. Ask user whether to: **Revise** (update FQBC), **Accept as-is** (set to complete), or **Defer** (leave as needsRevision)
-4. For revisions: re-read the FQBC, apply changes, update manifest
-5. After all `needsRevision` contexts are resolved, set `currentPhase` to `complete`
+3. **Check revision count** (`revisionCount` in manifest, default 0). If this context has already been revised 3+ times, escalate before offering options:
+   > "Context **{name}** has been revised {N} times for recurring coherence issues. This may indicate the context boundary itself needs adjustment rather than the FQBC content. Consider revisiting context discovery (Phase 1) boundaries before revising again."
+4. Ask user whether to: **Revise** (update FQBC), **Accept as-is** (set to complete), or **Defer** (leave as needsRevision)
+5. For revisions: re-read the FQBC, apply changes, increment `revisionCount` in manifest, update status
+6. After all `needsRevision` contexts are resolved, set `currentPhase` to `complete`
 
 ---
 
