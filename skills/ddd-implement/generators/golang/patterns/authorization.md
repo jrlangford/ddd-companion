@@ -231,7 +231,9 @@ func GenerateToken(subject, issuer, email string, roles []string, secret []byte,
 	return token.SignedString(secret)
 }
 
-// ParseToken validates a JWT string and returns Claims
+// ParseToken validates a JWT string and returns Claims.
+// It constructs Claims directly from the parsed JWT fields to preserve
+// the token's original timestamps (IssuedAt, ExpiresAt).
 func ParseToken(tokenString string, secret []byte) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &jwtClaims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -248,7 +250,23 @@ func ParseToken(tokenString string, secret []byte) (*Claims, error) {
 		return nil, NewAuthenticationError("invalid token claims")
 	}
 
-	return NewClaims(jc.Subject, jc.Issuer, jc.Email, jc.Roles, nil)
+	if jc.Subject == "" {
+		return nil, NewAuthenticationError("subject is required")
+	}
+
+	claims := &Claims{
+		Subject: jc.Subject,
+		Issuer:  jc.Issuer,
+		Email:   jc.Email,
+		Roles:   jc.Roles,
+	}
+	if jc.IssuedAt != nil {
+		claims.IssuedAt = jc.IssuedAt.Time
+	}
+	if jc.ExpiresAt != nil {
+		claims.ExpiresAt = jc.ExpiresAt.Time
+	}
+	return claims, nil
 }
 ```
 

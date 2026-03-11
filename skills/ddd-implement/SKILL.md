@@ -435,7 +435,20 @@ go build ./cmd/server
 **Actions**:
 1. Run `go build ./...`
 2. Run `go test ./...`
-3. Record results in `validation`
+3. **Token round-trip validation**: Verify that `gentoken` produces tokens the running server accepts and that roles are interpreted correctly:
+   1. Start the server in mock mode: `APP_MODE=mock go run ./cmd/server &`
+   2. **Authentication check** — admin token is accepted:
+      - Generate a token: `TOKEN=$(go run cmd/gentoken/main.go -roles "admin")`
+      - Hit a protected endpoint (use an actual endpoint from the FQBC, e.g., a GET list): `curl -s -w "\n%{http_code}" -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/{context-slug}/v1/{resource}`
+      - Verify the HTTP status is `200`. A `401` means the token was rejected (secret mismatch or timestamp loss). A `403` means Claims were parsed but roles were not mapped correctly.
+   3. **Role enforcement check** — restricted role is denied operations it lacks:
+      - Generate a non-admin token with a role that should lack write access (e.g., `readonly`): `TOKEN=$(go run cmd/gentoken/main.go -roles "readonly")`
+      - Hit a write endpoint (e.g., POST create): `curl -s -w "\n%{http_code}" -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{}' http://localhost:8080/api/{context-slug}/v1/{resource}`
+      - Verify the HTTP status is `403` (forbidden), confirming the permission check distinguished this role from admin.
+      - If the response is `200`, the role-to-permission mapping in `Require{Context}Permission` is too permissive or is not being called.
+   4. Stop the server
+   5. If any check fails, verify: (a) `gentoken` and `config.Load()` use the same default JWT secret, (b) `ParseToken` preserves the JWT's timestamps and `Roles` slice in the returned `Claims`, (c) `Require{Context}Permission` is called in the application service before executing business logic.
+4. Record results in `validation`
 
 **Checkpoint**: Update `validation.build` and `validation.tests`
 
